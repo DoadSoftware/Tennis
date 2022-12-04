@@ -389,7 +389,7 @@ function processTennisProcedures(whatToProcess, whichInput)
 	case 'UNDO':
 		value_to_process = $('#number_of_undo_txt').val();
 		break;
-	}
+}
 
 	$.ajax({    
         type : 'Get',     
@@ -408,10 +408,12 @@ function processTennisProcedures(whatToProcess, whichInput)
         		addItemsToList('LOAD_MATCH',data);
 				switch(whatToProcess) {
 				case 'LOG_SCORE':
-					if($('#select_scoring_type option:selected').val() == 'normal') {
-						processVariousStats('CHECK-GAME-WINNER');
-					}else if($('#select_scoring_type option:selected').val() == 'tie_break') {
-						processVariousStats('CHECK-TIE-BREAK-WINNER');
+					if(processVariousStats('CHECK-ADVANTAGE-POINT',value_to_process) == false) {
+						if($('#select_scoring_type option:selected').val() == 'normal') {
+							processVariousStats('CHECK-GAME-WINNER',null);
+						}else if($('#select_scoring_type option:selected').val() == 'tie_break') {
+							processVariousStats('CHECK-TIE-BREAK-WINNER',null);
+						}
 					}
 					break;
 				case 'LOAD_MATCH':
@@ -423,7 +425,7 @@ function processTennisProcedures(whatToProcess, whichInput)
 					if(whichInput == 'START') {
 						processUserSelection($('#select_serving_player'));
 					}else if(whichInput == 'END') {
-						processVariousStats('CHECK-SET-WINNER');
+						processVariousStats('CHECK-SET-WINNER',null);
 					}
 					break;
 				}
@@ -439,9 +441,22 @@ function processTennisProcedures(whatToProcess, whichInput)
 	    }    
 	});
 }
-function processVariousStats(whatToProcess)
+function processVariousStats(whatToProcess, whichInput)
 {
 	switch(whatToProcess){
+	case 'CHECK-ADVANTAGE-POINT':
+		if($('#homeScore').val() == 'ADVANTAGE' && $('#awayScore').val() == 'ADVANTAGE') {
+			if(whichInput.includes('increment')) { 
+				if(whichInput.includes('home')) { 
+					processUserSelection(document.getElementById('away_decrement_score_btn'));
+				}else if(whichInput.includes('away')) { 
+					processUserSelection(document.getElementById('home_decrement_score_btn'));
+				} 
+				return true;
+			}
+		} 
+		return false;
+		break;
 	case 'CHECK-SET-WINNER':
 		var home_game_wins = 0, away_game_wins = 0;
 		match_data.sets.forEach(function(set,set_index,set_arr){
@@ -568,218 +583,250 @@ function addItemsToList(whatToProcess, dataToProcess)
 		
 		$('#select_event_div').empty();
 
-   		div = document.createElement('div');
-		div.style = 'text-align:center;';
-		
-	    option = document.createElement('input');
-	    option.type = 'button';
-	    option.name = 'start_set_btn';
-	    option.value = 'Start Set';
-	    option.id = option.name;
-	    option.setAttribute('onclick','processUserSelection(this);');
-		div.appendChild(option);
 
-		select = document.createElement('select');
-		select.id = 'select_set_winner';
-		select.style = 'width:175px;';
-		option = document.createElement('option');
-		option.value = 'home';	
-		if(match_data.matchType.toLowerCase() == 'doubles' && match_data.homeSecondPlayerId > 0) {
-			option.text = match_data.homeFirstPlayer.full_name + '/' + match_data.homeSecondPlayer.full_name;
-		} else {
-			option.text = match_data.homeFirstPlayer.full_name;
-		}
-		select.appendChild(option);
-		option = document.createElement('option');
-		option.value = 'away';	
-		if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
-			option.text = match_data.awayFirstPlayer.full_name + '/' + match_data.awaySecondPlayer.full_name;
-		} else {
-			option.text = match_data.awayFirstPlayer.full_name;
-		}
-		select.appendChild(option);
-		
-		text = document.createElement('label');
-		text.innerHTML = 'Set Winner: '
-		text.htmlFor = select.id;
-		document.getElementById('select_event_div').appendChild(text).appendChild(select);
+        for(var i=0; i<=2; i++) {
 
-	    option = document.createElement('input');
-	    option.type = 'button';
-	    option.name = 'end_set_btn';
-	    option.value = 'End Set';
-	    option.id = option.name;
-	    option.setAttribute('onclick','processUserSelection(this);');
-		div.appendChild(option);
+			switch (i) {
+			case 0: case 1:
+				table = document.createElement('table');
+				table.setAttribute('class', 'table table-bordered');
+				tbody = document.createElement('tbody');
+				break;
+			case 2: 
+				table = document.createElement('table');
+				table.setAttribute('class', 'table table-bordered');
+				tbody = document.createElement('tbody');
+				break;
+			}
 
-	    option = document.createElement('input');
-	    option.type = 'button';
-	    option.name = 'reset_set_btn';
-	    option.value = 'RESET Set';
-	    option.id = option.name;
-	    option.setAttribute('onclick','processUserSelection(this);');
-		div.appendChild(option);
-
-		document.getElementById('select_event_div').appendChild(div);
-
-   		div = document.createElement('div');
-		div.style = 'text-align:center;';
-
-	    option = document.createElement('input');
-	    option.type = 'button';
-	    option.name = 'start_game_btn';
-	    option.value = 'Start Game';
-	    option.id = option.name;
-	    option.setAttribute('onclick','processUserSelection(this);');
-		div.appendChild(option);
-
-		select = document.createElement('select');
-		select.id = 'select_game_winner';
-		select.style = 'width:175px;';
-		option = document.createElement('option');
-		option.value = 'home';	
-		if(match_data.matchType.toLowerCase() == 'doubles' && match_data.homeSecondPlayerId > 0) {
-			option.text = match_data.homeFirstPlayer.full_name + '/' + match_data.homeSecondPlayer.full_name;
-		} else {
-			option.text = match_data.homeFirstPlayer.full_name;
-		}
-		select.appendChild(option);
-		option = document.createElement('option');
-		option.value = 'away';	
-		if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
-			option.text = match_data.awayFirstPlayer.full_name + '/' + match_data.awaySecondPlayer.full_name;
-		} else {
-			option.text = match_data.awayFirstPlayer.full_name;
-		}
-		select.appendChild(option);
-		
-		text = document.createElement('label');
-		text.innerHTML = 'Game Winner: '
-		text.htmlFor = select.id;
-		document.getElementById('select_event_div').appendChild(text).appendChild(select);
-
-	    option = document.createElement('input');
-	    option.type = 'button';
-	    option.name = 'end_game_btn';
-	    option.value = 'End Game';
-	    option.id = option.name;
-	    option.setAttribute('onclick','processUserSelection(this);');
-		div.appendChild(option);
-
-	    option = document.createElement('input');
-	    option.type = 'button';
-	    option.name = 'reset_game_btn';
-	    option.value = 'RESET Game';
-	    option.id = option.name;
-	    option.setAttribute('onclick','processUserSelection(this);');
-		div.appendChild(option);
-
-		document.getElementById('select_event_div').appendChild(div);
-				
-		table = document.createElement('table');
-		table.setAttribute('class', 'table table-bordered');
-		tbody = document.createElement('tbody');
-        for(var i=0; i<=0; i++) {
             row = tbody.insertRow(tbody.rows.length);
-    		for(var j=0; j<=2; j++) {
-        		div = document.createElement('div');
-   				div.style = 'text-align:center;';
-				switch (j) {
-				case 0: case 2:
-					header_text = document.createElement('label');
-	    			switch (j) {
-	    			case 0: //home
-						text = 'home';
-						if(match_data.matchType.toLowerCase() == 'doubles' && match_data.homeSecondPlayerId > 0) {
-							header_text.innerHTML = match_data.homeFirstPlayer.full_name + '/' + match_data.homeSecondPlayer.full_name;
-						} else {
-							header_text.innerHTML = match_data.homeFirstPlayer.full_name;
-						}
-	    				break;
-	    			case 2: //away
-						text = 'away';
-						if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
-							header_text.innerHTML = match_data.awayFirstPlayer.full_name + '/' + match_data.awaySecondPlayer.full_name;
-						} else {
-							header_text.innerHTML = match_data.awayFirstPlayer.full_name;
-						}
-	    				break;
-					}
-					div.appendChild(header_text);
-	        		link_div = document.createElement('div');
-					for(var k=0; k<=2; k++) {
-						switch (k) {
-						case 0: case 2:
-		        			option = document.createElement('input');
-		    				option.type = "button";
-		    				if (k == 0) {
-		        				option.id = text + '_increment_score_btn';
-		        				option.value="+";
-		        				option.setAttribute('onclick','processUserSelection(this);');
-		        				}
-		    				else {
-								option.id = text + '_decrement_score_btn';
-								option.value="-";
-								option.setAttribute('onclick','processUserSelection(this);');
-								break;
+
+			switch (i) {
+			case 0:
+
+		   		div = document.createElement('div');
+				div.style = 'text-align:center;';
+				
+			    option = document.createElement('input');
+			    option.type = 'button';
+			    option.name = 'start_set_btn';
+			    option.value = 'Start Set';
+			    option.id = option.name;
+			    option.setAttribute('onclick','processUserSelection(this);');
+				div.appendChild(option);
+		
+				select = document.createElement('select');
+				select.id = 'select_set_winner';
+				select.style = 'width:175px;display:none;';
+				option = document.createElement('option');
+				option.value = 'home';	
+				if(match_data.matchType.toLowerCase() == 'doubles' && match_data.homeSecondPlayerId > 0) {
+					option.text = match_data.homeFirstPlayer.full_name + '/' + match_data.homeSecondPlayer.full_name;
+				} else {
+					option.text = match_data.homeFirstPlayer.full_name;
+				}
+				select.appendChild(option);
+				option = document.createElement('option');
+				option.value = 'away';	
+				if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
+					option.text = match_data.awayFirstPlayer.full_name + '/' + match_data.awaySecondPlayer.full_name;
+				} else {
+					option.text = match_data.awayFirstPlayer.full_name;
+				}
+				select.appendChild(option);
+				
+				text = document.createElement('label');
+				text.innerHTML = 'Set Winner: '
+				text.htmlFor = select.id;
+				text.style = 'display:none;';
+				document.getElementById('select_event_div').appendChild(text).appendChild(select);
+		
+			    option = document.createElement('input');
+			    option.type = 'button';
+			    option.name = 'end_set_btn';
+			    option.value = 'End Set';
+			    option.id = option.name;
+			    option.setAttribute('onclick','processUserSelection(this);');
+				div.appendChild(option);
+		
+			    option = document.createElement('input');
+			    option.type = 'button';
+			    option.name = 'reset_set_btn';
+			    option.value = 'RESET Set';
+			    option.id = option.name;
+			    option.setAttribute('onclick','processUserSelection(this);');
+				div.appendChild(option);
+
+				row.insertCell(0).appendChild(div);
+
+				break;
+
+			case 1:
+
+		   		div = document.createElement('div');
+				div.style = 'text-align:center;';
+		
+				select = document.createElement('select');
+				select.id = 'select_scoring_type';
+				select.style = 'width:175px;';
+				
+				option = document.createElement('option');
+				option.value = 'normal';	
+				option.text = 'Normal';
+				select.appendChild(option);
+				
+				option = document.createElement('option');
+				option.value = 'tie_break';	
+				option.text = 'Tie Breaker';
+				select.appendChild(option);
+
+				text = document.createElement('label');
+				text.innerHTML = 'Score Type: '
+				text.htmlFor = select.id;
+
+				div.appendChild(text).appendChild(select);
+							
+			    option = document.createElement('input');
+			    option.type = 'button';
+			    option.name = 'start_game_btn';
+			    option.value = 'Start Game';
+			    option.id = option.name;
+			    option.setAttribute('onclick','processUserSelection(this);');
+				div.appendChild(option);
+		
+				select = document.createElement('select');
+				select.id = 'select_game_winner';
+				select.style = 'width:175px;display:none;';
+				option = document.createElement('option');
+				option.value = 'home';	
+				if(match_data.matchType.toLowerCase() == 'doubles' && match_data.homeSecondPlayerId > 0) {
+					option.text = match_data.homeFirstPlayer.full_name + '/' + match_data.homeSecondPlayer.full_name;
+				} else {
+					option.text = match_data.homeFirstPlayer.full_name;
+				}
+				select.appendChild(option);
+				option = document.createElement('option');
+				option.value = 'away';	
+				if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
+					option.text = match_data.awayFirstPlayer.full_name + '/' + match_data.awaySecondPlayer.full_name;
+				} else {
+					option.text = match_data.awayFirstPlayer.full_name;
+				}
+				select.appendChild(option);
+				
+				text = document.createElement('label');
+				text.innerHTML = 'Game Winner: '
+				text.style = 'display:none;';
+				text.htmlFor = select.id;
+				document.getElementById('select_event_div').appendChild(text).appendChild(select);
+		
+			    option = document.createElement('input');
+			    option.type = 'button';
+			    option.name = 'end_game_btn';
+			    option.value = 'End Game';
+			    option.id = option.name;
+			    option.setAttribute('onclick','processUserSelection(this);');
+				div.appendChild(option);
+		
+			    option = document.createElement('input');
+			    option.type = 'button';
+			    option.name = 'reset_game_btn';
+			    option.value = 'RESET Game';
+			    option.id = option.name;
+			    option.setAttribute('onclick','processUserSelection(this);');
+				div.appendChild(option);
+
+				row.insertCell(0).appendChild(div);
+
+				break;
+
+			case 2:
+
+	    		for(var j=0; j<=2; j++) {
+	        		div = document.createElement('div');
+	   				div.style = 'text-align:center;';
+					switch (j) {
+					case 0: case 2:
+						header_text = document.createElement('label');
+		    			switch (j) {
+		    			case 0: //home
+							text = 'home';
+							if(match_data.matchType.toLowerCase() == 'doubles' && match_data.homeSecondPlayerId > 0) {
+								header_text.innerHTML = match_data.homeFirstPlayer.full_name + '/' + match_data.homeSecondPlayer.full_name;
+							} else {
+								header_text.innerHTML = match_data.homeFirstPlayer.full_name;
 							}
-		    				option.style = 'text-align:center;';
-							break;
-						case 1: 
-		        			option = document.createElement('input');
-		    				option.type = "text";
-		    				option.id = text + 'Score';
-		    				option.style = 'width:25%;text-align:center;';
-							option.value = '0';
-							match_data.sets.forEach(function(set,set_index,set_arr){
-								set.games.forEach(function(game,game_index,game_arr){
-									switch(j) {
-									case 0:
-										option.value = game.home_score;
-										break;
-									case 2:
-										option.value = game.away_score;
-										break;
-									}
-								});
-							});
+		    				break;
+		    			case 2: //away
+							text = 'away';
+							if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
+								header_text.innerHTML = match_data.awayFirstPlayer.full_name + '/' + match_data.awaySecondPlayer.full_name;
+							} else {
+								header_text.innerHTML = match_data.awayFirstPlayer.full_name;
+							}
 		    				break;
 						}
-						link_div.appendChild(option);
-				    }	
-					div.appendChild(link_div);
-				    break;
-				
-				case 1:
-
-					select = document.createElement('select');
-					select.id = 'select_scoring_type';
-					select.style = 'width:175px;';
+						div.appendChild(header_text);
+		        		link_div = document.createElement('div');
+						for(var k=0; k<=2; k++) {
+							switch (k) {
+							case 0: case 2:
+			        			option = document.createElement('input');
+			    				option.type = "button";
+			    				if (k == 0) {
+			        				option.id = text + '_increment_score_btn';
+			        				option.value="+";
+			        				option.setAttribute('onclick','processUserSelection(this);');
+			        				}
+			    				else {
+									option.id = text + '_decrement_score_btn';
+									option.value="-";
+									option.setAttribute('onclick','processUserSelection(this);');
+									break;
+								}
+			    				option.style = 'text-align:center;';
+								break;
+							case 1: 
+			        			option = document.createElement('input');
+			    				option.type = "text";
+			    				option.id = text + 'Score';
+			    				option.style = 'width:25%;text-align:center;';
+								option.value = '0';
+								match_data.sets.forEach(function(set,set_index,set_arr){
+									set.games.forEach(function(game,game_index,game_arr){
+										switch(j) {
+										case 0:
+											option.value = game.home_score;
+											break;
+										case 2:
+											option.value = game.away_score;
+											break;
+										}
+									});
+								});
+			    				break;
+							}
+							link_div.appendChild(option);
+					    }	
+						div.appendChild(link_div);
+					    break;
 					
-					option = document.createElement('option');
-					option.value = 'normal';	
-					option.text = 'Normal';
-					select.appendChild(option);
-					
-					option = document.createElement('option');
-					option.value = 'tie_break';	
-					option.text = 'Tie Breaker';
-					select.appendChild(option);
-
-					text = document.createElement('label');
-					text.innerHTML = 'Score Type: '
-					text.htmlFor = select.id;
-
-					div.appendChild(text).appendChild(select);
-					
-					break;		
-			    }
-			    row.insertCell(j).appendChild(div);
-	     	 }	 
+					case 1:
+	
+						text = document.createElement('label');
+						text.innerHTML = 'Score'
+	
+						div.appendChild(text);
+						
+						break;		
+				    }
+				    row.insertCell(j).appendChild(div);
+		     	 }	 
+				break;
+			}
+			table.appendChild(tbody);
+			document.getElementById('select_event_div').appendChild(table);
 	    }		
-		table.appendChild(tbody);
-		
-		document.getElementById('select_event_div').appendChild(table);
 
 		if(match_data) {
 			match_data.sets.forEach(function(set,set_index,set_arr){
