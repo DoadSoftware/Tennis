@@ -73,6 +73,18 @@
 			    </div>
 			  </div>
 			  <div class="form-group row row-bottom-margin ml-2" style="margin-bottom:5px;">
+			    <label for="categoryType" class="col-sm-4 col-form-label text-left">Select Category Type
+			    	<i class="fas fa-asterisk fa-sm text-danger" style="font-size: 7px;"></i></label>
+			    <div class="col-sm-6 col-md-6">
+			      <select id="categoryType" name="categoryType" onchange="processUserSelection(this)"
+			      		class="browser-default custom-select custom-select-sm">
+				        <option value="mens">Mens</option>
+				        <option value="womens">Womens</option>
+				        <option value="mixed">Mixed</option>
+			      </select>
+			    </div>
+			  </div>
+			  <div class="form-group row row-bottom-margin ml-2" style="margin-bottom:5px;">
 			    <label for="matchType" class="col-sm-4 col-form-label text-left">Select Match Type
 			    	<i class="fas fa-asterisk fa-sm text-danger" style="font-size: 7px;"></i></label>
 			    <div class="col-sm-6 col-md-6">

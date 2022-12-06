@@ -50,14 +50,14 @@
 		             		class="form-control form-control-sm floatlabel" value="localhost"></input>
 			    </div>
 			  </div>
-			  <div class="form-group row row-bottom-margin ml-2" style="margin-bottom:5px;">
+			  <%-- <div class="form-group row row-bottom-margin ml-2" style="margin-bottom:5px;">
 			    <label for="vizScene" class="col-sm-4 col-form-label text-left">Viz Scene
 			    	<i class="fas fa-asterisk fa-sm text-danger" style="font-size: 7px;"></i></label>	
 			    <div class="col-sm-6 col-md-6">
 		             <input type="text" id="vizScene" name="vizScene" value="${session_Configurations.vizscene}"
 		             		class="form-control form-control-sm floatlabel"></input>
 			    </div>
-			  </div>
+			  </div> --%>
 			  &nbsp;
 		    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
 		  		name="load_scene_btn" id="load_scene_btn" onclick="processUserSelection(this)">

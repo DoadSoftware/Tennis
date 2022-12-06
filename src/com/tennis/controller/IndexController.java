@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -21,6 +22,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import com.tennis.containers.Scene;
+import com.tennis.containers.ScoreBug;
+import com.tennis.broadcaster.ATP_2022;
+import com.tennis.model.Clock;
 import com.tennis.model.Configurations;
 import com.tennis.model.Event;
 import com.tennis.model.EventFile;
@@ -41,10 +47,13 @@ public class IndexController
 	public static String expiry_date = "2022-12-31";
 	public static String current_date = "";
 	public static String error_message = "";
+	public static ATP_2022 this_ATP_2022;
 	public static Match session_match = new Match();
 	public static EventFile session_event = new EventFile();
+	public static Clock session_clock = new Clock();
 	public static Configurations session_Configurations = new Configurations();
 	
+	List<Scene> session_selected_scenes = new ArrayList<Scene>();
 	public static String session_selected_broadcaster;
 	public static Socket session_socket;
 	public static PrintWriter print_writer;
@@ -158,7 +167,17 @@ public class IndexController
 				print_writer = new PrintWriter(session_socket.getOutputStream(), true);
 			}
 			session_selected_broadcaster = selectedBroadcaster;
-
+			
+			switch (session_selected_broadcaster.toUpperCase()) {
+			case TennisUtil.ATP_2022:
+				session_selected_scenes.add(new Scene("/Default/ScoreBug-Single","FRONT_LAYER")); // Front layer
+				session_selected_scenes.add(new Scene("","MIDDLE_LAYER"));
+				session_selected_scenes.get(0).scene_load(print_writer, session_selected_broadcaster);
+				this_ATP_2022 = new ATP_2022();
+				this_ATP_2022.scorebug = new ScoreBug();
+				break;
+			}
+			
 			JAXBContext.newInstance(Configurations.class).createMarshaller().marshal(session_Configurations, 
 					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CONFIGURATIONS_DIRECTORY + 
 					TennisUtil.OUTPUT_XML));
@@ -246,12 +265,25 @@ public class IndexController
 	}
 	
 	@RequestMapping(value = {"/processTennisProcedures"}, method={RequestMethod.GET,RequestMethod.POST})    
-	public @ResponseBody String processFootballProcedures(
+	public @ResponseBody String processTennisProcedures(
 			@RequestParam(value = "whatToProcess", required = false, defaultValue = "") String whatToProcess,
 			@RequestParam(value = "valueToProcess", required = false, defaultValue = "") String valueToProcess)
 					throws JAXBException, IllegalAccessException, InvocationTargetException, IOException, NumberFormatException, InterruptedException
 	{	
 		switch (whatToProcess.toUpperCase()) {
+		case "READ_CLOCK":
+			if(new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CLOCK_XML).exists()) {
+				session_match.setClock((Clock) JAXBContext.newInstance(Clock.class).createUnmarshaller().unmarshal(
+					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CLOCK_XML)));
+			}
+			
+			switch (session_selected_broadcaster) {
+			case TennisUtil.ATP_2022:
+				this_ATP_2022.updateScoreBug(session_selected_scenes, session_match, print_writer);
+				break;
+			}
+			return JSONObject.fromObject(session_match).toString();
+			
 		case TennisUtil.LOAD_MATCH: case TennisUtil.LOAD_SETUP:
 
 			session_match = TennisFunctions.populateMatchVariables(tennisService, 
@@ -274,7 +306,10 @@ public class IndexController
 				session_match.getSets().get(session_match.getSets().size()-1).setSet_winner(valueToProcess.split(",")[1]);
 			}
 			
-			break;
+			JAXBContext.newInstance(Match.class).createMarshaller().marshal(session_match, 
+					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + session_match.getMatchFileName()));
+			
+			return JSONObject.fromObject(session_match).toString();
 			
 		case TennisUtil.LOG_GAME: case TennisUtil.LOG_SERVE:
 			
@@ -313,7 +348,10 @@ public class IndexController
 				break;
 			}
 
-			break;
+			JAXBContext.newInstance(Match.class).createMarshaller().marshal(session_match, 
+					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + session_match.getMatchFileName()));
+			
+			return JSONObject.fromObject(session_match).toString();
 
 		case TennisUtil.LOG_SCORE:
 			
@@ -361,12 +399,19 @@ public class IndexController
 					}
 				}
 			}
-			break;
+			JAXBContext.newInstance(Match.class).createMarshaller().marshal(session_match, 
+					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + session_match.getMatchFileName()));
+			
+			return JSONObject.fromObject(session_match).toString();
+			
+		default:
+			
+			switch (session_selected_broadcaster) {
+			case TennisUtil.ATP_2022:
+				this_ATP_2022.ProcessGraphicOption(whatToProcess, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);
+				break;
+			}
+			return JSONObject.fromObject(session_match).toString();
 		}
-		
-		JAXBContext.newInstance(Match.class).createMarshaller().marshal(session_match, 
-				new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + session_match.getMatchFileName()));
-		
-		return JSONObject.fromObject(session_match).toString();
 	}
 }

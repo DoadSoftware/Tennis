@@ -23,15 +23,34 @@ function afterPageLoad(whichPageHasLoaded)
 		break;
 	}
 }
+function secondsTimeSpanToHMS(s) {
+  var h = Math.floor(s / 3600); //Get whole hours
+  s -= h * 3600;
+  var m = Math.floor(s / 60); //Get remaining minutes
+  s -= m * 60;
+  return h + ":" + (m < 10 ? '0' + m : m) + ":" + (s < 10 ? '0' + s : s); //zero padding on minutes and seconds
+}
+function displayMatchTime() {
+	processTennisProcedures('READ_CLOCK',null);
+}
 function initialiseForm(whatToProcess, dataToProcess)
 {
 	switch (whatToProcess) {
+	case 'TIME':
+		if(match_data) {
+			if(document.getElementById('match_time_hdr')) {
+				document.getElementById('match_time_hdr').innerHTML = 'MATCH TIME : ' + 
+					secondsTimeSpanToHMS(match_data.clock.matchTotalSeconds);
+			}
+		}
+		break;
 	case 'SETUP':
 		
 		if(dataToProcess) {
 			document.getElementById('matchFileName').value = dataToProcess.matchFileName;
 			document.getElementById('tournament').value = dataToProcess.tournament;
 			document.getElementById('matchIdent').value = dataToProcess.matchIdent;
+			document.getElementById('categoryType').value = dataToProcess.categoryType;
 			document.getElementById('matchType').value = dataToProcess.matchType;
 			document.getElementById('homeFirstPlayerId').value = dataToProcess.homeFirstPlayerId;
 			document.getElementById('homeSecondPlayerId').value = dataToProcess.homeSecondPlayerId;
@@ -41,6 +60,7 @@ function initialiseForm(whatToProcess, dataToProcess)
 			document.getElementById('matchFileName').value = '';
 			document.getElementById('tournament').value = '';
 			document.getElementById('matchIdent').value = '';
+			document.getElementById('categoryType').selectedIndex = 0;
 			document.getElementById('matchType').selectedIndex = 0;
 			document.getElementById('homeFirstPlayerId').selectedIndex = 0;
 			document.getElementById('homeSecondPlayerId').selectedIndex = 0;
@@ -104,6 +124,25 @@ function uploadFormDataToSessionObjects(whatToProcess)
         }    
     });		
 	
+}
+function processUserSelectionData(whatToProcess,dataToProcess){
+	
+	switch (whatToProcess) {
+	case 'LOGGER_FORM_KEYPRESS':
+		switch (dataToProcess) {
+		case 32:
+			processTennisProcedures('CLEAR-ALL');
+			break;
+		case 187:
+			processTennisProcedures('ANIMATE-OUT-SCOREBUG');
+			break;
+		case 112:
+			processTennisProcedures('POPULATE-SCOREBUG');
+			break;			
+		}
+		
+		break;
+	}
 }
 function processUserSelection(whichInput)
 {	
@@ -226,10 +265,12 @@ function processUserSelection(whichInput)
 				if(confirm('Confirm ' + $('#select_game_winner option:selected').text() + ' wins this game?')) {
 					processWaitingButtonSpinner('START_WAIT_TIMER');
 					processTennisProcedures('LOG_GAME','END');
+				}else{
+					processWaitingButtonSpinner('START_WAIT_TIMER');
 				}
 				break;
 			case 'reset_game_btn':
-				if(confirm('Do you reallt wish to RESET this game?')) {
+				if(confirm('Do you really wish to RESET this game?')) {
 					processWaitingButtonSpinner('START_WAIT_TIMER');
 					processTennisProcedures('LOG_GAME','RESET');
 				}
@@ -389,6 +430,13 @@ function processTennisProcedures(whatToProcess, whichInput)
 	case 'UNDO':
 		value_to_process = $('#number_of_undo_txt').val();
 		break;
+	case 'POPULATE-SCOREBUG':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/ScoreBug-Single';
+			break;
+		}
+		break;	
 }
 
 	$.ajax({    
@@ -399,6 +447,14 @@ function processTennisProcedures(whatToProcess, whichInput)
         success : function(data) {
 			match_data = data;
         	switch(whatToProcess) {
+			case 'READ_CLOCK':
+				if(match_data.clock) {
+					if(document.getElementById('match_time_hdr')) {
+						document.getElementById('match_time_hdr').innerHTML = 'MATCH TIME : ' + 
+							secondsTimeSpanToHMS(match_data.clock.matchTotalSeconds);
+					}
+				}
+				break;
     		case 'UNDO':
         		addItemsToList('LOAD_MATCH',data);
 				addItemsToList('LOAD_EVENTS',data);
@@ -406,6 +462,7 @@ function processTennisProcedures(whatToProcess, whichInput)
         		break;
 			case 'LOG_SCORE': case 'LOAD_MATCH': case 'LOG_SET': case 'LOG_GAME':
         		addItemsToList('LOAD_MATCH',data);
+        		//addItemsToList('LOAD_EVENTS',data);
 				switch(whatToProcess) {
 				case 'LOG_SCORE':
 					if(processVariousStats('CHECK-ADVANTAGE-POINT',value_to_process) == false) {
@@ -418,8 +475,10 @@ function processTennisProcedures(whatToProcess, whichInput)
 					break;
 				case 'LOAD_MATCH':
 					addItemsToList('LOAD_EVENTS',data);
+					//addItemsToList('LOAD_MATCH',data);
 					document.getElementById('tennis_div').style.display = '';
 					document.getElementById('select_event_div').style.display = '';
+					setInterval(displayMatchTime, 500);
 					break;
 				case 'LOG_GAME':
 					if(whichInput == 'START') {
@@ -433,6 +492,15 @@ function processTennisProcedures(whatToProcess, whichInput)
         	case 'LOAD_SETUP':
         		initialiseForm('SETUP',data);
         		break;
+        	case 'POPULATE-SCOREBUG':
+        		if(confirm('Animate In?') == true){
+					switch(whatToProcess){
+					case 'POPULATE-SCOREBUG':
+						processTennisProcedures('ANIMATE-IN-SCOREBUG');				
+						break;
+					}
+				}
+				break;	
         	}
     		processWaitingButtonSpinner('END_WAIT_TIMER');
 	    },    
@@ -446,17 +514,19 @@ function processVariousStats(whatToProcess, whichInput)
 	switch(whatToProcess){
 	case 'CHECK-ADVANTAGE-POINT':
 		if($('#homeScore').val() == 'ADVANTAGE' && $('#awayScore').val() == 'ADVANTAGE') {
-			if(whichInput.includes('increment')) { 
-				if(whichInput.includes('home')) { 
+			if(whichInput.includes('increment')) {
+					processUserSelection(document.getElementById('away_decrement_score_btn'));
+					processUserSelection(document.getElementById('home_decrement_score_btn'));
+				/*if(whichInput.includes('home')) { 
 					processUserSelection(document.getElementById('away_decrement_score_btn'));
 				}else if(whichInput.includes('away')) { 
 					processUserSelection(document.getElementById('home_decrement_score_btn'));
-				} 
+				} */
 				return true;
 			}
 		} 
 		return false;
-		break;
+		//break;
 	case 'CHECK-SET-WINNER':
 		var home_game_wins = 0, away_game_wins = 0;
 		match_data.sets.forEach(function(set,set_index,set_arr){
@@ -582,7 +652,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 	case 'LOAD_EVENTS':
 		
 		$('#select_event_div').empty();
-
+		
 
         for(var i=0; i<=2; i++) {
 
@@ -600,10 +670,14 @@ function addItemsToList(whatToProcess, dataToProcess)
 			}
 
             row = tbody.insertRow(tbody.rows.length);
-
+			
 			switch (i) {
 			case 0:
-
+				header_text = document.createElement('h6');
+				header_text.id = 'match_time_hdr';
+				header_text.innerHTML = 'Match Time: 00:00:00';
+				row.insertCell(0).appendChild(header_text);
+				
 		   		div = document.createElement('div');
 				div.style = 'text-align:center;';
 				
@@ -611,13 +685,16 @@ function addItemsToList(whatToProcess, dataToProcess)
 			    option.type = 'button';
 			    option.name = 'start_set_btn';
 			    option.value = 'Start Set';
+			    option.style = 'width:80px;';
+			    option.style.backgroundColor = 'Pink';
 			    option.id = option.name;
 			    option.setAttribute('onclick','processUserSelection(this);');
 				div.appendChild(option);
-		
+				row.insertCell(1).appendChild(option);
+				
 				select = document.createElement('select');
 				select.id = 'select_set_winner';
-				select.style = 'width:175px;display:none;';
+				select.style = 'width:175px;';
 				option = document.createElement('option');
 				option.value = 'home';	
 				if(match_data.matchType.toLowerCase() == 'doubles' && match_data.homeSecondPlayerId > 0) {
@@ -645,30 +722,41 @@ function addItemsToList(whatToProcess, dataToProcess)
 			    option.type = 'button';
 			    option.name = 'end_set_btn';
 			    option.value = 'End Set';
+			    option.style = 'width:80px;';
+			    option.style.backgroundColor = 'Pink';
 			    option.id = option.name;
 			    option.setAttribute('onclick','processUserSelection(this);');
 				div.appendChild(option);
+				
+				row.insertCell(2).appendChild(option);
 		
 			    option = document.createElement('input');
 			    option.type = 'button';
 			    option.name = 'reset_set_btn';
 			    option.value = 'RESET Set';
+			    option.style = 'width:80px;';
+			    option.style.backgroundColor = 'Pink';
 			    option.id = option.name;
 			    option.setAttribute('onclick','processUserSelection(this);');
 				div.appendChild(option);
 
-				row.insertCell(0).appendChild(div);
+				row.insertCell(3).appendChild(option);
 
 				break;
 
 			case 1:
-
+				text = document.createElement('label');
+				text.innerHTML = 'GAME'
+				text.htmlFor = select.id;
+				
+				
 		   		div = document.createElement('div');
 				div.style = 'text-align:center;';
 		
 				select = document.createElement('select');
 				select.id = 'select_scoring_type';
 				select.style = 'width:175px;';
+				//select.style.backgroundColor = 'Pink';
 				
 				option = document.createElement('option');
 				option.value = 'normal';	
@@ -685,15 +773,20 @@ function addItemsToList(whatToProcess, dataToProcess)
 				text.htmlFor = select.id;
 
 				div.appendChild(text).appendChild(select);
+				
+				row.insertCell(0).appendChild(text).appendChild(select);
 							
 			    option = document.createElement('input');
 			    option.type = 'button';
 			    option.name = 'start_game_btn';
 			    option.value = 'Start Game';
+			    option.style = 'width:80px;';
+			    option.style.backgroundColor = 'LightGreen';
 			    option.id = option.name;
 			    option.setAttribute('onclick','processUserSelection(this);');
 				div.appendChild(option);
-		
+				row.insertCell(1).appendChild(option);
+				
 				select = document.createElement('select');
 				select.id = 'select_game_winner';
 				select.style = 'width:175px;display:none;';
@@ -724,24 +817,59 @@ function addItemsToList(whatToProcess, dataToProcess)
 			    option.type = 'button';
 			    option.name = 'end_game_btn';
 			    option.value = 'End Game';
+			    option.style = 'width:80px;';
+			   	option.style.backgroundColor = 'LightGreen';
 			    option.id = option.name;
 			    option.setAttribute('onclick','processUserSelection(this);');
 				div.appendChild(option);
-		
+				
+				row.insertCell(2).appendChild(option);
+				
 			    option = document.createElement('input');
 			    option.type = 'button';
 			    option.name = 'reset_game_btn';
 			    option.value = 'RESET Game';
+			    option.style = 'width:80px;';
+			    option.style.backgroundColor = 'LightGreen';
+			    //option.style.color = 'Red';
 			    option.id = option.name;
 			    option.setAttribute('onclick','processUserSelection(this);');
 				div.appendChild(option);
 
-				row.insertCell(0).appendChild(div);
+				row.insertCell(3).appendChild(option);
 
 				break;
 
 			case 2:
-
+				option = document.createElement('select');
+				option.id = 'select_serving_player';
+				option.name = option.id;
+				option.style = 'text-align:center;width:175px;';
+				//div.style = 'text-align:center;';
+				text = document.createElement('option');
+				text.value = 'home';	
+				if(match_data.matchType.toLowerCase() == 'doubles' && match_data.homeSecondPlayerId > 0) {
+					text.text = match_data.homeFirstPlayer.full_name + '/' + match_data.homeSecondPlayer.full_name;
+				} else {
+					text.text = match_data.homeFirstPlayer.full_name;
+				}
+				option.appendChild(text);
+				text = document.createElement('option');
+				text.value = 'away';	
+				if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
+					text.text = match_data.awayFirstPlayer.full_name + '/' + match_data.awaySecondPlayer.full_name;
+				} else {
+					text.text = match_data.awayFirstPlayer.full_name;
+				}
+				option.appendChild(text);
+				option.setAttribute('onchange','processUserSelection(this);');
+				option.appendChild(text);
+				
+				text = document.createElement('label');
+				text.innerHTML = 'Select Serve: '
+				text.htmlFor = option.id;
+				document.getElementById('select_event_div').appendChild(text).appendChild(option);
+				
 	    		for(var j=0; j<=2; j++) {
 	        		div = document.createElement('div');
 	   				div.style = 'text-align:center;';
@@ -838,7 +966,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 			});
 		}
 		
-		option = document.createElement('select');
+		/*option = document.createElement('select');
 		option.id = 'select_serving_player';
 		option.name = option.id;
 		option.style = 'width:175px;';
@@ -864,7 +992,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 		text = document.createElement('label');
 		text.innerHTML = 'Select Serve: '
 		text.htmlFor = option.id;
-		document.getElementById('select_event_div').appendChild(text).appendChild(option);
+		document.getElementById('select_event_div').appendChild(text).appendChild(option);*/
 		
 		break;
 				
