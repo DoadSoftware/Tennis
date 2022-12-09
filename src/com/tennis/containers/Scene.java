@@ -3,8 +3,6 @@ package com.tennis.containers;
 import java.io.PrintWriter;
 import java.util.concurrent.TimeUnit;
 
-import com.tennis.util.TennisUtil;
-
 public class Scene {
 	
 	private String scene_path;

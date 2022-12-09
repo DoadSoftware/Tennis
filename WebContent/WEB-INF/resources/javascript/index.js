@@ -133,12 +133,28 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 		case 32:
 			processTennisProcedures('CLEAR-ALL');
 			break;
+		case 189:
+			if(confirm('It will Also Delete Your Preview from Directory...\r\n\r\n Are You Sure To Animate Out?') == true){
+				processTennisProcedures('ANIMATE-OUT');
+			}
+			break;	
 		case 187:
 			processTennisProcedures('ANIMATE-OUT-SCOREBUG');
 			break;
 		case 112:
+			/*if(dataToProcess.sets != null){
+				processTennisProcedures('POPULATE-SCOREBUG');
+			}else{
+				alert('No Set Found In XML!\r\n\r\n Cannot populate ScoreBug');
+			}*/
 			processTennisProcedures('POPULATE-SCOREBUG');
-			break;			
+			break;
+		case 113:
+			processTennisProcedures('POPULATE-HEAD-TO-HEAD-LT');
+			break;
+		case 114:
+			processTennisProcedures('POPULATE-HEAD-TO-HEAD-FF');
+			break;				
 		}
 		
 		break;
@@ -265,9 +281,12 @@ function processUserSelection(whichInput)
 				if(confirm('Confirm ' + $('#select_game_winner option:selected').text() + ' wins this game?')) {
 					processWaitingButtonSpinner('START_WAIT_TIMER');
 					processTennisProcedures('LOG_GAME','END');
-				}else{
+				}/*else{
+					processUserSelection(document.getElementById('away_decrement_score_btn'));
+					processUserSelection(document.getElementById('home_decrement_score_btn'));
 					processWaitingButtonSpinner('START_WAIT_TIMER');
-				}
+					processTennisProcedures('LOG_SCORE',whichInput);
+				}*/
 				break;
 			case 'reset_game_btn':
 				if(confirm('Do you really wish to RESET this game?')) {
@@ -436,7 +455,21 @@ function processTennisProcedures(whatToProcess, whichInput)
 			value_to_process = '/Default/ScoreBug-Single';
 			break;
 		}
-		break;	
+		break;
+	case 'POPULATE-HEAD-TO-HEAD-LT':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/HeadToHeadFirstMeeting';
+			break;
+		}
+		break;
+	case 'POPULATE-HEAD-TO-HEAD-FF':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/FF_HeadToHead';
+			break;
+		}
+		break;		
 }
 
 	$.ajax({    
@@ -492,12 +525,18 @@ function processTennisProcedures(whatToProcess, whichInput)
         	case 'LOAD_SETUP':
         		initialiseForm('SETUP',data);
         		break;
-        	case 'POPULATE-SCOREBUG':
+        	case 'POPULATE-SCOREBUG': case 'POPULATE-HEAD-TO-HEAD-LT': case 'POPULATE-HEAD-TO-HEAD-FF':
         		if(confirm('Animate In?') == true){
 					switch(whatToProcess){
 					case 'POPULATE-SCOREBUG':
-						processTennisProcedures('ANIMATE-IN-SCOREBUG');				
+						processTennisProcedures('ANIMATE-IN-SCOREBUG');		
 						break;
+					case 'POPULATE-HEAD-TO-HEAD-LT':
+						processTennisProcedures('ANIMATE-IN-H2H_LT');				
+						break;
+					case 'POPULATE-HEAD-TO-HEAD-FF':
+						processTennisProcedures('ANIMATE-IN-H2H_FF');				
+						break;	
 					}
 				}
 				break;	
