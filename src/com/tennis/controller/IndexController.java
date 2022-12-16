@@ -60,8 +60,7 @@ public class IndexController
 	
 	@RequestMapping(value = {"/","/initialise"}, method={RequestMethod.GET,RequestMethod.POST}) 
 	public String initialisePage(ModelMap model) throws JAXBException, IOException, ParseException 
-	{
-		
+	{		
 		if(current_date == null || current_date.isEmpty()) {
 			current_date = TennisFunctions.getOnlineCurrentDate();
 		}

@@ -43,7 +43,7 @@
 					  </td>
 				      <td>
 					    <input id="ace_increment_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
-					    <input id="ace_increment_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="ace_txt" type="text" style="width:25%" value="0"></input>
 					    <input id="ace_decrement_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
 					  </td>
 				    </tr>

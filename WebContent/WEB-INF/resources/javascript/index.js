@@ -42,7 +42,9 @@ function initialiseForm(whatToProcess, dataToProcess)
 {
 	switch (whatToProcess) {
 	case 'LOAD_STAT':
-	
+
+		$('#ace_txt').val('0');
+			
 		if(match_data) {
 			match_data.sets.forEach(function(set,set_index,set_arr){
 				if(set.set_status.toLowerCase() == 'start') {
@@ -50,8 +52,9 @@ function initialiseForm(whatToProcess, dataToProcess)
 						if(game.game_status.toLowerCase() == 'start') {
 							game.stats.forEach(function(stat,stat_index,stat_arr){
 								if(stat.playerId == $('#stat_player_id').val()) {
-									$('#' + stat.statType.toLowerCase().split('_')[0] + '_increment_txt').val(
-										parseInt($('#' + stat.statType.toLowerCase().split('_')[0] + '_increment_txt').val()) + parseInt(1));
+									$('#' + stat.statType.toLowerCase().split('_')[0] + '_txt').val(
+										parseInt($('#' + stat.statType.toLowerCase().split('_')[0] 
+										+ '_txt').val()) + parseInt(1));
 								}
 							});
 						}
@@ -448,17 +451,17 @@ function processUserSelection(whichInput)
 					}
 				}
 
-/*				if(whichInput.id.includes('_increment_btn')) {
-					$('#' + whichInput.id.toLowerCase().split('_')[0] + '_increment_txt').val(
-						parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_increment_txt').val()) + parseInt(1));
+				if(whichInput.id.includes('_increment_btn')) {
+					$('#' + whichInput.id.toLowerCase().split('_')[0] + '_txt').val(
+						parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_txt').val()) + parseInt(1));
 				}else if(whichInput.id.includes('_decrement_btn')) {
-					if(parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_decrement_txt').val()) <= 0) {
+					if(parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_txt').val()) <= 0) {
 						alert('Cannot use decrement button when the value is zero');
 						return false;
 					}
-					$('#' + whichInput.id.toLowerCase().split('_')[0] + '_decrement_txt').val(
-						parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_decrement_txt').val()) - parseInt(1));
-				}*/
+					$('#' + whichInput.id.toLowerCase().split('_')[0] + '_txt').val(
+						parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_txt').val()) - parseInt(1));
+				}
 				
 				processWaitingButtonSpinner('START_WAIT_TIMER');
 				processTennisProcedures('LOG_STAT',whichInput);
