@@ -42,15 +42,14 @@ function initialiseForm(whatToProcess, dataToProcess)
 {
 	switch (whatToProcess) {
 	case 'LOAD_STAT':
+	
 		if(match_data) {
 			match_data.sets.forEach(function(set,set_index,set_arr){
-				alert('set.set_status = ' + set.set_status);
 				if(set.set_status.toLowerCase() == 'start') {
 					set.games.forEach(function(game,game_index,game_arr){
 						if(game.game_status.toLowerCase() == 'start') {
 							game.stats.forEach(function(stat,stat_index,stat_arr){
 								if(stat.playerId == $('#stat_player_id').val()) {
-									alert($('#' + stat.statType.toLowerCase().split('_')[0] + '_increment_txt').val());
 									$('#' + stat.statType.toLowerCase().split('_')[0] + '_increment_txt').val(
 										parseInt($('#' + stat.statType.toLowerCase().split('_')[0] + '_increment_txt').val()) + parseInt(1));
 								}
@@ -441,8 +440,15 @@ function processUserSelection(whichInput)
 				}
 				
 			} else if(whichInput.id.includes('_increment_btn') || whichInput.id.includes('_decrement_btn')) {
-				
-				if(whichInput.id.includes('_increment_btn')) {
+
+				if(whichInput.id.includes('_decrement_btn')) {
+					if(parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_decrement_txt').val()) <= 0) {
+						alert('Cannot use decrement button when the value is zero');
+						return false;
+					}
+				}
+
+/*				if(whichInput.id.includes('_increment_btn')) {
 					$('#' + whichInput.id.toLowerCase().split('_')[0] + '_increment_txt').val(
 						parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_increment_txt').val()) + parseInt(1));
 				}else if(whichInput.id.includes('_decrement_btn')) {
@@ -452,7 +458,8 @@ function processUserSelection(whichInput)
 					}
 					$('#' + whichInput.id.toLowerCase().split('_')[0] + '_decrement_txt').val(
 						parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_decrement_txt').val()) - parseInt(1));
-				}
+				}*/
+				
 				processWaitingButtonSpinner('START_WAIT_TIMER');
 				processTennisProcedures('LOG_STAT',whichInput);
 			}

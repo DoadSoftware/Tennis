@@ -342,14 +342,14 @@ public class ATP_2022 extends Scene {
 						for (int j = 0; j <= match.getSets().get(i).getGames().size() - 1; j++) {
 							if (match.getSets().get(i).getGames().get(j).getGame_status().toUpperCase()
 									.equalsIgnoreCase("START")) {
-								if (match.getSets().get(i).getGames().get(j).getServing_player().toUpperCase()
-										.equalsIgnoreCase("HOME")) {
-									print_writer.println(
-											"-1 RENDERER*FRONT_LAYER*TREE*$Main$All$ServiceDot*FUNCTION*Omo*vis_con SET 1 \0");
-								} else {
-									print_writer.println(
-											"-1 RENDERER*FRONT_LAYER*TREE*$Main$All$ServiceDot*FUNCTION*Omo*vis_con SET 2 \0");
-								}
+//								if (match.getSets().get(i).getGames().get(j).getServing_player().toUpperCase()
+//										.equalsIgnoreCase("HOME")) {
+//									print_writer.println(
+//											"-1 RENDERER*FRONT_LAYER*TREE*$Main$All$ServiceDot*FUNCTION*Omo*vis_con SET 1 \0");
+//								} else {
+//									print_writer.println(
+//											"-1 RENDERER*FRONT_LAYER*TREE*$Main$All$ServiceDot*FUNCTION*Omo*vis_con SET 2 \0");
+//								}
 								print_writer.println(
 										"-1 RENDERER*FRONT_LAYER*TREE*$Main$All$TopGrp$ScoreGrp$TopScore$GameScore*ACTIVE SET 1 \0");
 								print_writer.println(
