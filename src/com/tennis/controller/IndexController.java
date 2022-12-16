@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
 import com.tennis.containers.Scene;
 import com.tennis.containers.ScoreBug;
 import com.tennis.broadcaster.ATP_2022;
@@ -33,6 +32,7 @@ import com.tennis.model.EventFile;
 import com.tennis.model.Game;
 import com.tennis.model.Match;
 import com.tennis.model.Set;
+import com.tennis.model.Stat;
 import com.tennis.service.TennisService;
 import com.tennis.util.TennisFunctions;
 import com.tennis.util.TennisUtil;
@@ -119,6 +119,21 @@ public class IndexController
 		return "setup";
 	}
 
+	@RequestMapping(value = {"/stats_selection"}, method = RequestMethod.POST)
+	public String statsSelectionPage(ModelMap model) 
+	{
+		for(Set set : session_match.getSets()) {
+			if(set.getSet_status().equalsIgnoreCase(TennisUtil.START)) {
+				for(Game game : set.getGames()) {
+					if(game.getGame_status().equalsIgnoreCase(TennisUtil.START)) {
+						model.addAttribute("stat_player_id", game.getServing_player());
+					}
+				}
+			}
+		}
+		return "stat";
+	}
+	
 	@RequestMapping(value = {"/match"}, method = {RequestMethod.POST,RequestMethod.GET})
 	public String footballMatchPage(ModelMap model, 
 		@RequestParam(value = "selectedBroadcaster", required = false, defaultValue = "") String selectedBroadcaster,
@@ -172,7 +187,7 @@ public class IndexController
 			case TennisUtil.ATP_2022:
 				session_selected_scenes.add(new Scene("/Default/ScoreBug-Single","FRONT_LAYER")); // Front layer
 				session_selected_scenes.add(new Scene("","MIDDLE_LAYER"));
-				session_selected_scenes.get(0).scene_load(print_writer, session_selected_broadcaster);
+				//session_selected_scenes.get(0).scene_load(print_writer, session_selected_broadcaster);
 				this_ATP_2022 = new ATP_2022();
 				this_ATP_2022.scorebug = new ScoreBug();
 				break;
@@ -188,7 +203,7 @@ public class IndexController
 		}
 	}
 	
-	@RequestMapping(value = {"/back_to_match"}, method = RequestMethod.POST)
+	@RequestMapping(value = {"/setup_to_match","/stat_to_match"}, method = RequestMethod.POST)
 	public String backToMatchPage(ModelMap model) throws ParseException
 	{
 		if(current_date == null || current_date.isEmpty()) {
@@ -271,7 +286,8 @@ public class IndexController
 					throws JAXBException, IllegalAccessException, InvocationTargetException, IOException, NumberFormatException, InterruptedException
 	{	
 		switch (whatToProcess.toUpperCase()) {
-		case "READ_CLOCK":
+		case TennisUtil.READ_CLOCK:
+			
 			if(new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CLOCK_XML).exists()) {
 				session_match.setClock((Clock) JAXBContext.newInstance(Clock.class).createUnmarshaller().unmarshal(
 					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CLOCK_XML)));
@@ -284,11 +300,14 @@ public class IndexController
 			}
 			return JSONObject.fromObject(session_match).toString();
 			
-		case TennisUtil.LOAD_MATCH: case TennisUtil.LOAD_SETUP:
+		case TennisUtil.LOAD_MATCH: case TennisUtil.LOAD_SETUP: case "LOAD_MATCH_AFTER_STAT_LOG": case "READ_MATCH_FOR_STATS":
 
-			session_match = TennisFunctions.populateMatchVariables(tennisService, 
-					(Match) JAXBContext.newInstance(Match.class).createUnmarshaller().unmarshal(
-					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + valueToProcess)));
+			switch (whatToProcess.toUpperCase()) {
+			case TennisUtil.LOAD_MATCH: case TennisUtil.LOAD_SETUP: 
+				session_match = TennisFunctions.populateMatchVariables(tennisService, 
+						(Match) JAXBContext.newInstance(Match.class).createUnmarshaller().unmarshal(
+						new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + valueToProcess)));
+			}
 			
 			return JSONObject.fromObject(session_match).toString();
 			
@@ -324,7 +343,7 @@ public class IndexController
 				
 				session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
 					session_match.getSets().get(session_match.getSets().size()-1).getGames().size()-1)
-					.setServing_player(valueToProcess);
+					.setServing_player(Integer.valueOf(valueToProcess));
 				
 				break;
 				
@@ -348,6 +367,30 @@ public class IndexController
 				break;
 			}
 
+			JAXBContext.newInstance(Match.class).createMarshaller().marshal(session_match, 
+					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + session_match.getMatchFileName()));
+			
+			return JSONObject.fromObject(session_match).toString();
+
+		case TennisUtil.LOG_STAT:
+
+			if(session_match.getSets().get(session_match.getSets().size()-1)
+				.getGames().get(session_match.getSets().get(
+				session_match.getSets().size()-1).getGames().size()-1).getStats() == null) {
+				
+				session_match.getSets().get(session_match.getSets().size()-1)
+				.getGames().get(session_match.getSets().get(
+				session_match.getSets().size()-1).getGames().size()-1).setStats(new ArrayList<Stat>());
+			
+			}
+			
+			session_match.getSets().get(session_match.getSets().size()-1)
+				.getGames().get(session_match.getSets().get(
+				session_match.getSets().size()-1).getGames().size()-1).setStats(
+				TennisFunctions.processStats(session_match.getSets().get(session_match.getSets().size()-1)
+				.getGames().get(session_match.getSets().get(
+				session_match.getSets().size()-1).getGames().size()-1).getStats(), valueToProcess));
+			
 			JAXBContext.newInstance(Match.class).createMarshaller().marshal(session_match, 
 					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + session_match.getMatchFileName()));
 			

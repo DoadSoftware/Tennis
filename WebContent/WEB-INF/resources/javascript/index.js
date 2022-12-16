@@ -21,6 +21,11 @@ function afterPageLoad(whichPageHasLoaded)
 		$('#awayFirstPlayerId').select2();
 		$('#awaySecondPlayerId').select2();
 		break;
+	case 'MATCH':
+		if(window.location.href.toLowerCase().includes('/stat_to_match')) {
+			processTennisProcedures('LOAD_MATCH_AFTER_STAT_LOG',null);
+		}
+		break;
 	}
 }
 function secondsTimeSpanToHMS(s) {
@@ -36,14 +41,38 @@ function displayMatchTime() {
 function initialiseForm(whatToProcess, dataToProcess)
 {
 	switch (whatToProcess) {
+	case 'LOAD_STAT':
+		if(match_data) {
+			match_data.sets.forEach(function(set,set_index,set_arr){
+				alert('set.set_status = ' + set.set_status);
+				if(set.set_status.toLowerCase() == 'start') {
+					set.games.forEach(function(game,game_index,game_arr){
+						if(game.game_status.toLowerCase() == 'start') {
+							game.stats.forEach(function(stat,stat_index,stat_arr){
+								if(stat.playerId == $('#stat_player_id').val()) {
+									alert($('#' + stat.statType.toLowerCase().split('_')[0] + '_increment_txt').val());
+									$('#' + stat.statType.toLowerCase().split('_')[0] + '_increment_txt').val(
+										parseInt($('#' + stat.statType.toLowerCase().split('_')[0] + '_increment_txt').val()) + parseInt(1));
+								}
+							});
+						}
+					});
+				}			
+			});
+		}
+		break;
+		
 	case 'TIME':
+		
 		if(match_data) {
 			if(document.getElementById('match_time_hdr')) {
 				document.getElementById('match_time_hdr').innerHTML = 'MATCH TIME : ' + 
 					secondsTimeSpanToHMS(match_data.clock.matchTotalSeconds);
 			}
 		}
+		
 		break;
+	
 	case 'SETUP':
 		
 		if(dataToProcess) {
@@ -113,7 +142,7 @@ function uploadFormDataToSessionObjects(whatToProcess)
         		break;
         	case 'SAVE_MATCH':
         		document.setup_form.method = 'post';
-        		document.setup_form.action = 'back_to_match';
+        		document.setup_form.action = 'setup_to_match';
         	   	document.setup_form.submit();
         		break;
         	}
@@ -126,10 +155,15 @@ function uploadFormDataToSessionObjects(whatToProcess)
 	
 }
 function processUserSelectionData(whatToProcess,dataToProcess){
-	
+
 	switch (whatToProcess) {
 	case 'LOGGER_FORM_KEYPRESS':
 		switch (dataToProcess) {
+		case 13: // Enter key
+			document.tennis_stat_form.method = 'post';
+			document.tennis_stat_form.action = 'stat_to_match';
+		   	document.tennis_stat_form.submit();
+			break;
 		case 32:
 			processTennisProcedures('CLEAR-ALL');
 			break;
@@ -306,7 +340,7 @@ function processUserSelection(whichInput)
 		break;
 	case 'cancel_match_setup_btn':
 		document.setup_form.method = 'post';
-		document.setup_form.action = 'back_to_match';
+		document.setup_form.action = 'setup_to_match';
 	   	document.setup_form.submit();
 		break;
 	case 'matchFileName':
@@ -405,6 +439,22 @@ function processUserSelection(whichInput)
 						processTennisProcedures('LOG_SCORE',whichInput);
 					}
 				}
+				
+			} else if(whichInput.id.includes('_increment_btn') || whichInput.id.includes('_decrement_btn')) {
+				
+				if(whichInput.id.includes('_increment_btn')) {
+					$('#' + whichInput.id.toLowerCase().split('_')[0] + '_increment_txt').val(
+						parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_increment_txt').val()) + parseInt(1));
+				}else if(whichInput.id.includes('_decrement_btn')) {
+					if(parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_decrement_txt').val()) <= 0) {
+						alert('Cannot use decrement button when the value is zero');
+						return false;
+					}
+					$('#' + whichInput.id.toLowerCase().split('_')[0] + '_decrement_txt').val(
+						parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_decrement_txt').val()) - parseInt(1));
+				}
+				processWaitingButtonSpinner('START_WAIT_TIMER');
+				processTennisProcedures('LOG_STAT',whichInput);
 			}
 		}
 		break;
@@ -415,6 +465,9 @@ function processTennisProcedures(whatToProcess, whichInput)
 	var value_to_process; 
 	
 	switch(whatToProcess) {
+	case 'LOG_STAT':
+		value_to_process = whichInput.id + ',' + $('#stat_player_id').val();
+		break;
 	case 'LOG_SET': case 'LOG_GAME':
 		if(whichInput == 'START' || whichInput == 'RESET') {
 			value_to_process = whichInput;
@@ -470,7 +523,7 @@ function processTennisProcedures(whatToProcess, whichInput)
 			break;
 		}
 		break;		
-}
+	}
 
 	$.ajax({    
         type : 'Get',     
@@ -480,6 +533,9 @@ function processTennisProcedures(whatToProcess, whichInput)
         success : function(data) {
 			match_data = data;
         	switch(whatToProcess) {
+			case 'READ_MATCH_FOR_STATS': case 'LOG_STAT':
+				initialiseForm('LOAD_STAT',data);
+				break;
 			case 'READ_CLOCK':
 				if(match_data.clock) {
 					if(document.getElementById('match_time_hdr')) {
@@ -493,22 +549,16 @@ function processTennisProcedures(whatToProcess, whichInput)
 				addItemsToList('LOAD_EVENTS',data);
 				document.getElementById('select_event_div').style.display = 'none';
         		break;
-			case 'LOG_SCORE': case 'LOAD_MATCH': case 'LOG_SET': case 'LOG_GAME':
+			case 'LOG_SCORE': case 'LOAD_MATCH': case 'LOG_SET': case 'LOG_GAME': case 'LOAD_MATCH_AFTER_STAT_LOG':
         		addItemsToList('LOAD_MATCH',data);
-        		//addItemsToList('LOAD_EVENTS',data);
 				switch(whatToProcess) {
 				case 'LOG_SCORE':
-					if(processVariousStats('CHECK-ADVANTAGE-POINT',value_to_process) == false) {
-						if($('#select_scoring_type option:selected').val() == 'normal') {
-							processVariousStats('CHECK-GAME-WINNER',null);
-						}else if($('#select_scoring_type option:selected').val() == 'tie_break') {
-							processVariousStats('CHECK-TIE-BREAK-WINNER',null);
-						}
-					}
+					document.tennis_form.method = 'post';
+					document.tennis_form.action = 'stats_selection';
+				   	document.tennis_form.submit();
 					break;
-				case 'LOAD_MATCH':
+				case 'LOAD_MATCH': case 'LOAD_MATCH_AFTER_STAT_LOG':
 					addItemsToList('LOAD_EVENTS',data);
-					//addItemsToList('LOAD_MATCH',data);
 					document.getElementById('tennis_div').style.display = '';
 					document.getElementById('select_event_div').style.display = '';
 					setInterval(displayMatchTime, 500);
@@ -884,25 +934,27 @@ function addItemsToList(whatToProcess, dataToProcess)
 				option.id = 'select_serving_player';
 				option.name = option.id;
 				option.style = 'text-align:center;width:175px;';
-				//div.style = 'text-align:center;';
 				text = document.createElement('option');
-				text.value = 'home';	
+				text.value = match_data.homeFirstPlayerId;
+				text.text = match_data.homeFirstPlayer.full_name;
+				option.appendChild(text);
 				if(match_data.matchType.toLowerCase() == 'doubles' && match_data.homeSecondPlayerId > 0) {
-					text.text = match_data.homeFirstPlayer.full_name + '/' + match_data.homeSecondPlayer.full_name;
-				} else {
-					text.text = match_data.homeFirstPlayer.full_name;
+					text = document.createElement('option');
+					text.value = match_data.homeSecondPlayerId;
+					text.text = match_data.homeSecondPlayer.full_name;
+					option.appendChild(text);
 				}
-				option.appendChild(text);
 				text = document.createElement('option');
-				text.value = 'away';	
+				text.value = match_data.awayFirstPlayerId;
+				text.text = match_data.awayFirstPlayer.full_name;
+				option.appendChild(text);
 				if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
-					text.text = match_data.awayFirstPlayer.full_name + '/' + match_data.awaySecondPlayer.full_name;
-				} else {
-					text.text = match_data.awayFirstPlayer.full_name;
+					text = document.createElement('option');
+					text.value = match_data.awaySecondPlayerId;
+					text.text = match_data.awaySecondPlayer.full_name;
+					option.appendChild(text);
 				}
-				option.appendChild(text);
 				option.setAttribute('onchange','processUserSelection(this);');
-				option.appendChild(text);
 				
 				text = document.createElement('label');
 				text.innerHTML = 'Select Serve: '
@@ -1004,34 +1056,6 @@ function addItemsToList(whatToProcess, dataToProcess)
 				});
 			});
 		}
-		
-		/*option = document.createElement('select');
-		option.id = 'select_serving_player';
-		option.name = option.id;
-		option.style = 'width:175px;';
-		text = document.createElement('option');
-		text.value = 'home';	
-		if(match_data.matchType.toLowerCase() == 'doubles' && match_data.homeSecondPlayerId > 0) {
-			text.text = match_data.homeFirstPlayer.full_name + '/' + match_data.homeSecondPlayer.full_name;
-		} else {
-			text.text = match_data.homeFirstPlayer.full_name;
-		}
-		option.appendChild(text);
-		text = document.createElement('option');
-		text.value = 'away';	
-		if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
-			text.text = match_data.awayFirstPlayer.full_name + '/' + match_data.awaySecondPlayer.full_name;
-		} else {
-			text.text = match_data.awayFirstPlayer.full_name;
-		}
-		option.appendChild(text);
-		option.setAttribute('onchange','processUserSelection(this);');
-		option.appendChild(text);
-		
-		text = document.createElement('label');
-		text.innerHTML = 'Select Serve: '
-		text.htmlFor = option.id;
-		document.getElementById('select_event_div').appendChild(text).appendChild(option);*/
 		
 		break;
 				

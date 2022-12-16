@@ -94,7 +94,7 @@
     
     
     
-    <wb-module deploy-name="Tennis-1.5">
+    <wb-module deploy-name="Tennis-1.6">
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
         
         
@@ -372,6 +372,9 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <dependent-module archiveName="TennisLibrary-1.4.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/TennisLibrary/TennisLibrary">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
         
         
