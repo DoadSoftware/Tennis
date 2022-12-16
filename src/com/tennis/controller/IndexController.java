@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ import com.tennis.model.Set;
 import com.tennis.service.TennisService;
 import com.tennis.util.TennisFunctions;
 import com.tennis.util.TennisUtil;
+
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 @Controller
@@ -276,6 +280,17 @@ public class IndexController
 				session_match.setClock((Clock) JAXBContext.newInstance(Clock.class).createUnmarshaller().unmarshal(
 					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CLOCK_XML)));
 			}
+			
+			
+			
+			
+			/*
+			 * if(session_match != null && !valueToProcess.equalsIgnoreCase(new
+			 * SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format( new
+			 * File(TennisUtil.TENNIS_DIRECTORY + "/Speeds/SPEED.txt").lastModified()))) {
+			 * 
+			 * }
+			 */
 			
 			switch (session_selected_broadcaster) {
 			case TennisUtil.ATP_2022:

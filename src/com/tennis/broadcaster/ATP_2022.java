@@ -2,9 +2,12 @@ package com.tennis.broadcaster;
 
 import com.tennis.containers.ScoreBug;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +16,8 @@ import javax.xml.bind.JAXBException;
 import com.tennis.model.Match;
 import com.tennis.model.Player;
 import com.tennis.service.TennisService;
+import com.tennis.util.TennisUtil;
+
 import com.tennis.containers.Scene;
 
 public class ATP_2022 extends Scene {
@@ -22,6 +27,8 @@ public class ATP_2022 extends Scene {
 	public ScoreBug scorebug = new ScoreBug();
 	public String which_graphics_onscreen = "";
 	public boolean is_infobar = false;
+	public long last_date = 0;
+	
 	/*
 	 * private String status; private String logo_path =
 	 * "D:\\DOAD_In_House_Everest\\Everest_Sports\\Everest_I-League_2022\\Logos\\";
@@ -185,13 +192,57 @@ public class ATP_2022 extends Scene {
 			break;
 		}
 	}
-
+	
+	public static List<String> getSpeed(String FileName) throws IOException {
+		long last_date = 0;
+		String filePath = TennisUtil.TENNIS_DIRECTORY + "/Speeds/" + FileName + ".txt";
+        File file = new File(filePath);
+        long lastModified = file.lastModified();
+		
+		List<String> allLines = new ArrayList<String>();
+		if(new File(TennisUtil.TENNIS_DIRECTORY + "/Speeds/" + FileName + ".txt").exists()) {
+			if(last_date == 0) {
+				last_date = lastModified;
+				allLines = Files.readAllLines(Paths.get(TennisUtil.TENNIS_DIRECTORY + "/Speeds/" + FileName + ".txt"));
+				System.out.println("1 = " + allLines.get(1));
+			}else if(last_date != 0 && last_date != lastModified) {
+				last_date = lastModified;
+				allLines = Files.readAllLines(Paths.get(TennisUtil.TENNIS_DIRECTORY + "/Speeds/" + FileName + ".txt"));
+				System.out.println("2 = " + allLines.get(1));
+			}
+		}
+		return allLines;
+	}
+	
 	public ScoreBug populateScoreBug(boolean is_this_updating, ScoreBug scorebug, PrintWriter print_writer,
-			String viz_sence_path, Match match, String selectedbroadcaster) {
+			String viz_sence_path, Match match, String selectedbroadcaster) throws IOException {
 		if (match == null) {
 			System.out.println("ERROR: ScoreBug -> Match is null");
 		} else {
-
+			getSpeed("SPEED");
+			/*
+			 * String filePath = TennisUtil.TENNIS_DIRECTORY + "/Speeds/SPEED.txt"; File
+			 * file = new File(filePath); long lastModified = file.lastModified();
+			 * 
+			 * List<String> allLines = new ArrayList<String>(); if(new
+			 * File(TennisUtil.TENNIS_DIRECTORY + "/Speeds/SPEED.txt").exists()) {
+			 * if(last_date == 0) { last_date = lastModified; allLines =
+			 * Files.readAllLines(Paths.get(TennisUtil.TENNIS_DIRECTORY +
+			 * "/Speeds/SPEED.txt")); System.out.println("1 = " + allLines.get(1)); }else
+			 * if(last_date != 0 && last_date != lastModified) { last_date = lastModified;
+			 * allLines = Files.readAllLines(Paths.get(TennisUtil.TENNIS_DIRECTORY +
+			 * "/Speeds/SPEED.txt")); System.out.println("2 = " + allLines.get(1)); } }
+			 */
+			/*
+			 * if(new File(TennisUtil.TENNIS_DIRECTORY + "/Speeds/SPEED.txt").exists() &&
+			 * !valueToProcess.equalsIgnoreCase(new
+			 * SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format( new
+			 * File(TennisUtil.TENNIS_DIRECTORY + "/Speeds/SPEED.txt").lastModified()))) {
+			 * allLines = Files.readAllLines(Paths.get(TennisUtil.TENNIS_DIRECTORY +
+			 * "/Speeds/SPEED.txt")); System.out.println(allLines); }
+			 */
+			
+			
 			List<String> home_data = new ArrayList<String>();
 			List<String> away_data = new ArrayList<String>();
 
@@ -465,10 +516,11 @@ public class ATP_2022 extends Scene {
 	}
 
 	public void populateLtH2H(PrintWriter print_writer, String viz_sence_path, List<Player> plyr, Match match,
-			String selectedbroadcaster) {
+			String selectedbroadcaster) throws IOException {
 		if (match == null) {
 			System.out.println("ERROR: H2H -> Match is null");
 		} else {
+			
 			if (match.getMatchType().toUpperCase().equalsIgnoreCase("SINGLES")) {
 
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET "
