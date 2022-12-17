@@ -43,7 +43,7 @@ function initialiseForm(whatToProcess, dataToProcess)
 	switch (whatToProcess) {
 	case 'LOAD_STAT':
 
-		$('#ace_txt').val('0');
+		$('input[id*="_txt"]').val('0');
 			
 		if(match_data) {
 			match_data.sets.forEach(function(set,set_index,set_arr){
@@ -51,10 +51,23 @@ function initialiseForm(whatToProcess, dataToProcess)
 					set.games.forEach(function(game,game_index,game_arr){
 						if(game.game_status.toLowerCase() == 'start') {
 							game.stats.forEach(function(stat,stat_index,stat_arr){
-								if(stat.playerId == $('#stat_player_id').val()) {
-									$('#' + stat.statType.toLowerCase().split('_')[0] + '_txt').val(
-										parseInt($('#' + stat.statType.toLowerCase().split('_')[0] 
-										+ '_txt').val()) + parseInt(1));
+								switch(stat.playerId) {
+								case match_data.homeFirstPlayerId:
+									$('#' + stat.statType + '_home_first_txt').val(
+										parseInt($('#' + stat.statType + '_home_first_txt').val()) + parseInt(1));
+									break;
+								case match_data.homeSecondPlayerId:
+									$('#' + stat.statType + '_home_second_txt').val(
+										parseInt($('#' + stat.statType + '_home_second_txt').val()) + parseInt(1));
+									break;
+								case match_data.awayFirstPlayerId:
+									$('#' + stat.statType + '_away_first_txt').val(
+										parseInt($('#' + stat.statType + '_away_first_txt').val()) + parseInt(1));
+									break;
+								case match_data.awaySecondPlayerId:
+									$('#' + stat.statType + '_away_second_txt').val(
+										parseInt($('#' + stat.statType + '_away_second_txt').val()) + parseInt(1));
+									break;
 								}
 							});
 						}
@@ -442,25 +455,21 @@ function processUserSelection(whichInput)
 					}
 				}
 				
-			} else if(whichInput.id.includes('_increment_btn') || whichInput.id.includes('_decrement_btn')) {
+			} else if(whichInput.id.includes('_increment_') || whichInput.id.includes('_decrement_')) {
 
-				if(whichInput.id.includes('_decrement_btn')) {
-					if(parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_decrement_txt').val()) <= 0) {
+				if(whichInput.id.includes('_decrement_')) {
+					if(parseInt($('#' + whichInput.id.replace('_decrement_','_').replace('_btn','_txt')).val()) <= 0) {
 						alert('Cannot use decrement button when the value is zero');
 						return false;
 					}
 				}
 
-				if(whichInput.id.includes('_increment_btn')) {
-					$('#' + whichInput.id.toLowerCase().split('_')[0] + '_txt').val(
-						parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_txt').val()) + parseInt(1));
-				}else if(whichInput.id.includes('_decrement_btn')) {
-					if(parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_txt').val()) <= 0) {
-						alert('Cannot use decrement button when the value is zero');
-						return false;
-					}
-					$('#' + whichInput.id.toLowerCase().split('_')[0] + '_txt').val(
-						parseInt($('#' + whichInput.id.toLowerCase().split('_')[0] + '_txt').val()) - parseInt(1));
+				if(whichInput.id.includes('_increment_')) {
+					$('#' + whichInput.id.replace('_increment_','_').replace('_btn','_txt')).val(
+						parseInt($('#' + whichInput.id.replace('_increment_','_').replace('_btn','_txt')).val()) + parseInt(1));
+				}else if(whichInput.id.includes('_decrement_')) {
+					$('#' + whichInput.id.replace('_decrement_','_').replace('_btn','_txt')).val(
+						parseInt($('#' + whichInput.id.replace('_increment_','_').replace('_btn','_txt')).val()) - parseInt(1));
 				}
 				
 				processWaitingButtonSpinner('START_WAIT_TIMER');

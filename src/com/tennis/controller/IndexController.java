@@ -121,15 +121,7 @@ public class IndexController
 	@RequestMapping(value = {"/stats_selection"}, method = RequestMethod.POST)
 	public String statsSelectionPage(ModelMap model) 
 	{
-		for(Set set : session_match.getSets()) {
-			if(set.getSet_status().equalsIgnoreCase(TennisUtil.START)) {
-				for(Game game : set.getGames()) {
-					if(game.getGame_status().equalsIgnoreCase(TennisUtil.START)) {
-						model.addAttribute("stat_player_id", game.getServing_player());
-					}
-				}
-			}
-		}
+		model.addAttribute("session_match", session_match);
 		return "stat";
 	}
 	
@@ -382,12 +374,7 @@ public class IndexController
 			
 			}
 			
-			session_match.getSets().get(session_match.getSets().size()-1)
-				.getGames().get(session_match.getSets().get(
-				session_match.getSets().size()-1).getGames().size()-1).setStats(
-				TennisFunctions.processStats(session_match.getSets().get(session_match.getSets().size()-1)
-				.getGames().get(session_match.getSets().get(
-				session_match.getSets().size()-1).getGames().size()-1).getStats(), valueToProcess));
+			session_match = TennisFunctions.processStats(session_match, valueToProcess);
 			
 			JAXBContext.newInstance(Match.class).createMarshaller().marshal(session_match, 
 					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + session_match.getMatchFileName()));
