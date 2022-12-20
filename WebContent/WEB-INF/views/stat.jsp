@@ -10,11 +10,6 @@
   <script type="text/javascript" src="<c:url value="/webjars/bootstrap/3.3.6/js/bootstrap.min.js"/>"></script>
   <script type="text/javascript" src="<c:url value="/resources/javascript/index.js"/>"></script>
   <link rel="stylesheet" href="<c:url value="/webjars/bootstrap/3.3.6/css/bootstrap.min.css"/>"/> 
-  <script type="text/javascript">
-	$(document).on("keydown", function(e){
-		processUserSelectionData('LOGGER_FORM_KEYPRESS',e.which);
-	});
-  </script>  
 </head>
 <body onload="processTennisProcedures('READ_MATCH_FOR_STATS',null)">
 <form:form name="tennis_stat_form" autocomplete="off">
@@ -26,8 +21,11 @@
          <div class="card card-outline-secondary">
           <div class="card-body">
 			<div class="row">
-			 <div class="col-lg-4">
 			    <h6>Tennis Stats</h6>
+			    <div class="col-sm-8 col-md-8">
+				    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
+				  		name="exit_stat_page_btn" id="exit_stat_page_btn" onclick="processUserSelection(this)">Exit</button>
+			    </div>			    
  				<table class="table table-bordered table-responsive">
 				  <thead>
 				    <tr>
@@ -74,30 +72,117 @@
 				    </tr>
 				    <tr>
 				      <td>
-					    <label>1st Serve Point</label>
+					    <label>1st Serve</label>
 					  </td>
 				      <td>
-					    <input id="firstServePoint_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
-					    <input id="firstServePoint_home_first_txt" type="text" style="width:25%" value="0"></input>
-					    <input id="firstServePoint_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					    <input id="firstServe_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="firstServe_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="firstServe_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
 					  </td>
 					  <c:if test = "${session_match.matchType == 'doubles'}">
 					      <td>
-						    <input id="firstServePoint_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
-						    <input id="firstServePoint_home_second_txt" type="text" style="width:25%" value="0"></input>
-						    <input id="firstServePoint_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						    <input id="firstServe_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="firstServe_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="firstServe_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
 						  </td>
 					  </c:if>
 				      <td>
-					    <input id="firstServePoint_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
-					    <input id="firstServePoint_away_first_txt" type="text" style="width:25%" value="0"></input>
-					    <input id="firstServePoint_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					    <input id="firstServe_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="firstServe_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="firstServe_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
 					  </td>
 					  <c:if test = "${session_match.matchType == 'doubles'}">
 					      <td>
-						    <input id="firstServePoint_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
-						    <input id="firstServePoint_away_second_txt" type="text" style="width:25%" value="0"></input>
-						    <input id="firstServePoint_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						    <input id="firstServe_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="firstServe_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="firstServe_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				    </tr>
+				    <tr>
+				      <td>
+					    <label>1st Serve Won</label>
+					  </td>
+				      <td>
+					    <input id="firstServeWon_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="firstServeWon_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="firstServeWon_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="firstServeWon_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="firstServeWon_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="firstServeWon_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				      <td>
+					    <input id="firstServeWon_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="firstServeWon_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="firstServeWon_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="firstServeWon_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="firstServeWon_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="firstServeWon_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				    </tr>
+				    <tr>
+				      <td>
+					    <label>2nd Serve</label>
+					  </td>
+				      <td>
+					    <input id="secondServe_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="secondServe_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="secondServe_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="secondServe_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="secondServe_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="secondServe_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				      <td>
+					    <input id="secondServe_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="secondServe_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="secondServe_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="secondServe_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="secondServe_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="secondServe_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				    </tr>
+				    <tr>
+				      <td>
+					    <label>2nd Serve Won</label>
+					  </td>
+				      <td>
+					    <input id="secondServeWon_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="secondServeWon_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="secondServeWon_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="secondServeWon_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="secondServeWon_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="secondServeWon_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				      <td>
+					    <input id="secondServeWon_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="secondServeWon_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="secondServeWon_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="secondServeWon_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="secondServeWon_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="secondServeWon_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
 						  </td>
 					  </c:if>
 				    </tr>
@@ -190,6 +275,35 @@
 				    </tr>
 				    <tr>
 				      <td>
+					    <label>Fault 1st Serve</label>
+					  </td>
+				      <td>
+					    <input id="firstServeFault_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="firstServeFault_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="firstServeFault_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="firstServeFault_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="firstServeFault_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="firstServeFault_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				      <td>
+					    <input id="firstServeFault_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="firstServeFault_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="firstServeFault_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="firstServeFault_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="firstServeFault_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="firstServeFault_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				    </tr>
+				    <tr>
+				      <td>
 					    <label>Double Fault</label>
 					  </td>
 				      <td>
@@ -217,6 +331,122 @@
 						  </td>
 					  </c:if>
 				    </tr>
+				    <tr>
+				      <td>
+					    <label>Unreturned Serves</label>
+					  </td>
+				      <td>
+					    <input id="unreturnedServe_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="unreturnedServe_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="unreturnedServe_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="unreturnedServe_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="unreturnedServe_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="unreturnedServe_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				      <td>
+					    <input id="unreturnedServe_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="unreturnedServe_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="unreturnedServe_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="unreturnedServe_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="unreturnedServe_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="unreturnedServe_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				    </tr>
+				    <tr>
+				      <td>
+					    <label>Unforced Error</label>
+					  </td>
+				      <td>
+					    <input id="unforcedError_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="unforcedError_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="unforcedError_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="unforcedError_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="unforcedError_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="unforcedError_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				      <td>
+					    <input id="unforcedError_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="unforcedError_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="unforcedError_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="unforcedError_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="unforcedError_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="unforcedError_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				    </tr>
+				    <tr>
+				      <td>
+					    <label>Baseline Points</label>
+					  </td>
+				      <td>
+					    <input id="baselinePoint_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="baselinePoint_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="baselinePoint_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="baselinePoint_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="baselinePoint_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="baselinePoint_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				      <td>
+					    <input id="baselinePoint_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="baselinePoint_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="baselinePoint_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="baselinePoint_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="baselinePoint_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="baselinePoint_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				    </tr>
+				    <tr>
+				      <td>
+					    <label>Net Points</label>
+					  </td>
+				      <td>
+					    <input id="netPoint_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="netPoint_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="netPoint_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="netPoint_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="netPoint_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="netPoint_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				      <td>
+					    <input id="netPoint_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="netPoint_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="netPoint_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="netPoint_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="netPoint_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="netPoint_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				    </tr>
 				  </tbody>
 				</table> 
 			  </div>
@@ -226,7 +456,6 @@
        </div>
     </div>
   </div>
- </div>
 </form:form>
 </body>
 </html>

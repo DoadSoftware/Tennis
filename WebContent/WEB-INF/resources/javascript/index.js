@@ -174,11 +174,6 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 	switch (whatToProcess) {
 	case 'LOGGER_FORM_KEYPRESS':
 		switch (dataToProcess) {
-		case 13: // Enter key
-			document.tennis_stat_form.method = 'post';
-			document.tennis_stat_form.action = 'stat_to_match';
-		   	document.tennis_stat_form.submit();
-			break;
 		case 32:
 			processTennisProcedures('CLEAR-ALL');
 			break;
@@ -214,6 +209,16 @@ function processUserSelection(whichInput)
 	var error_msg = '';
 
 	switch ($(whichInput).attr('name')) {
+	case 'exit_stat_page_btn':
+		document.tennis_stat_form.method = 'post';
+		document.tennis_stat_form.action = 'stat_to_match';
+	   	document.tennis_stat_form.submit();
+		break;
+	case 'load_stat':
+		document.tennis_form.method = 'post';
+		document.tennis_form.action = 'stats_selection';
+	   	document.tennis_form.submit();
+		break;
 	case 'select_serving_player':
 		if(match_data.sets.length <= 0) {
 			alert('No set started yet. Serve selection is not available');
@@ -463,7 +468,6 @@ function processUserSelection(whichInput)
 						return false;
 					}
 				}
-
 				if(whichInput.id.includes('_increment_')) {
 					$('#' + whichInput.id.replace('_increment_','_').replace('_btn','_txt')).val(
 						parseInt($('#' + whichInput.id.replace('_increment_','_').replace('_btn','_txt')).val()) + parseInt(1));
@@ -485,7 +489,7 @@ function processTennisProcedures(whatToProcess, whichInput)
 	
 	switch(whatToProcess) {
 	case 'LOG_STAT':
-		value_to_process = whichInput.id + ',' + $('#stat_player_id').val();
+		value_to_process = whichInput.id;
 		break;
 	case 'LOG_SET': case 'LOG_GAME':
 		if(whichInput == 'START' || whichInput == 'RESET') {
@@ -571,11 +575,6 @@ function processTennisProcedures(whatToProcess, whichInput)
 			case 'LOG_SCORE': case 'LOAD_MATCH': case 'LOG_SET': case 'LOG_GAME': case 'LOAD_MATCH_AFTER_STAT_LOG':
         		addItemsToList('LOAD_MATCH',data);
 				switch(whatToProcess) {
-				case 'LOG_SCORE':
-					document.tennis_form.method = 'post';
-					document.tennis_form.action = 'stats_selection';
-				   	document.tennis_form.submit();
-					break;
 				case 'LOAD_MATCH': case 'LOAD_MATCH_AFTER_STAT_LOG':
 					addItemsToList('LOAD_EVENTS',data);
 					document.getElementById('tennis_div').style.display = '';
@@ -760,23 +759,12 @@ function addItemsToList(whatToProcess, dataToProcess)
 	case 'LOAD_EVENTS':
 		
 		$('#select_event_div').empty();
-		
-
+	
         for(var i=0; i<=2; i++) {
 
-			switch (i) {
-			case 0: case 1:
-				table = document.createElement('table');
-				table.setAttribute('class', 'table table-bordered');
-				tbody = document.createElement('tbody');
-				break;
-			case 2: 
-				table = document.createElement('table');
-				table.setAttribute('class', 'table table-bordered');
-				tbody = document.createElement('tbody');
-				break;
-			}
-
+			table = document.createElement('table');
+			table.setAttribute('class', 'table table-bordered');
+			tbody = document.createElement('tbody');
             row = tbody.insertRow(tbody.rows.length);
 			
 			switch (i) {
@@ -857,14 +845,12 @@ function addItemsToList(whatToProcess, dataToProcess)
 				text.innerHTML = 'GAME'
 				text.htmlFor = select.id;
 				
-				
 		   		div = document.createElement('div');
 				div.style = 'text-align:center;';
 		
 				select = document.createElement('select');
 				select.id = 'select_scoring_type';
 				select.style = 'width:175px;';
-				//select.style.backgroundColor = 'Pink';
 				
 				option = document.createElement('option');
 				option.value = 'normal';	
@@ -949,6 +935,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 				break;
 
 			case 2:
+
 				option = document.createElement('select');
 				option.id = 'select_serving_player';
 				option.name = option.id;
@@ -976,10 +963,10 @@ function addItemsToList(whatToProcess, dataToProcess)
 				option.setAttribute('onchange','processUserSelection(this);');
 				
 				text = document.createElement('label');
-				text.innerHTML = 'Select Serve: '
+				text.innerHTML = 'Select Serve: ';
 				text.htmlFor = option.id;
 				document.getElementById('select_event_div').appendChild(text).appendChild(option);
-				
+
 	    		for(var j=0; j<=2; j++) {
 	        		div = document.createElement('div');
 	   				div.style = 'text-align:center;';
@@ -1053,8 +1040,17 @@ function addItemsToList(whatToProcess, dataToProcess)
 	
 						text = document.createElement('label');
 						text.innerHTML = 'Score'
+
+		    			option = document.createElement('input');
+						option.type = "button";
+						option.id = 'load_stat';
+						option.name = option.id;
+						option.value="Log Stat";
+						option.setAttribute('onclick','processUserSelection(this)');
 	
 						div.appendChild(text);
+						div.appendChild(document.createElement("br"));
+						div.appendChild(option);
 						
 						break;		
 				    }
