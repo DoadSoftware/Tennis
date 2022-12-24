@@ -372,6 +372,9 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <dependent-module archiveName="TennisLibrary-1.9.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/TennisLibrary/TennisLibrary">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
         
         

@@ -447,6 +447,93 @@
 						  </td>
 					  </c:if>
 				    </tr>
+				    <tr>
+				      <td>
+					    <label>Front Hand Error</label>
+					  </td>
+				      <td>
+					    <input id="frontHandError_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="frontHandError_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="frontHandError_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="frontHandError_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="frontHandError_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="frontHandError_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				      <td>
+					    <input id="frontHandError_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="frontHandError_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="frontHandError_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="frontHandError_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="frontHandError_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="frontHandError_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				    </tr>				    
+				    <tr>
+				      <td>
+					    <label>Back Hand Error</label>
+					  </td>
+				      <td>
+					    <input id="backHandError_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="backHandError_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="backHandError_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="backHandError_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="backHandError_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="backHandError_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				      <td>
+					    <input id="backHandError_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="backHandError_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="backHandError_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="backHandError_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="backHandError_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="backHandError_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				    </tr>				    
+				    <tr>
+				      <td>
+					    <label>Serve Error</label>
+					  </td>
+				      <td>
+					    <input id="serveError_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="serveError_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="serveError_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="serveError_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="serveError_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="serveError_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				      <td>
+					    <input id="serveError_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="serveError_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="serveError_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="serveError_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="serveError_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="serveError_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				    </tr>				    
 				  </tbody>
 				</table> 
 			  </div>

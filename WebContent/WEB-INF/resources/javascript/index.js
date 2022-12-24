@@ -431,6 +431,7 @@ function processUserSelection(whichInput)
 	default:
 		if(whichInput) {
 			if(whichInput.id.includes('_score_btn')) { 
+				
 				error_msg = 'Cannot find any started set. Please start a set first before logging an event';
 				match_data.sets.forEach(function(set,set_index,set_arr){
 					if(set.set_status.toLowerCase() == 'start') {
@@ -575,6 +576,11 @@ function processTennisProcedures(whatToProcess, whichInput)
 			case 'LOG_SCORE': case 'LOAD_MATCH': case 'LOG_SET': case 'LOG_GAME': case 'LOAD_MATCH_AFTER_STAT_LOG':
         		addItemsToList('LOAD_MATCH',data);
 				switch(whatToProcess) {
+				case 'LOG_SCORE':
+					if(processVariousStats('CHECK-ADVANTAGE-POINT',whichInput) == false) {
+						processVariousStats('CHECK-GAME-WINNER',whichInput);
+					}
+					break;
 				case 'LOAD_MATCH': case 'LOAD_MATCH_AFTER_STAT_LOG':
 					addItemsToList('LOAD_EVENTS',data);
 					document.getElementById('tennis_div').style.display = '';
@@ -621,19 +627,13 @@ function processVariousStats(whatToProcess, whichInput)
 	switch(whatToProcess){
 	case 'CHECK-ADVANTAGE-POINT':
 		if($('#homeScore').val() == 'ADVANTAGE' && $('#awayScore').val() == 'ADVANTAGE') {
-			if(whichInput.includes('increment')) {
-					processUserSelection(document.getElementById('away_decrement_score_btn'));
-					processUserSelection(document.getElementById('home_decrement_score_btn'));
-				/*if(whichInput.includes('home')) { 
-					processUserSelection(document.getElementById('away_decrement_score_btn'));
-				}else if(whichInput.includes('away')) { 
-					processUserSelection(document.getElementById('home_decrement_score_btn'));
-				} */
+			if(whichInput.id.includes('increment')) {
+				processUserSelection(document.getElementById('home_decrement_score_btn'));
+				processUserSelection(document.getElementById('away_decrement_score_btn'));
 				return true;
 			}
 		} 
 		return false;
-		//break;
 	case 'CHECK-SET-WINNER':
 		var home_game_wins = 0, away_game_wins = 0;
 		match_data.sets.forEach(function(set,set_index,set_arr){
