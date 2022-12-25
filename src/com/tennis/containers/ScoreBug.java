@@ -3,6 +3,7 @@ package com.tennis.containers;
 public class ScoreBug {
 	
 	private boolean scorebug_on_screen;
+	public boolean game_in = false;
 	public boolean start_pause;
 	private String team_score;
 	private String scorebug_stat;
@@ -38,6 +39,11 @@ public class ScoreBug {
 	public void setStart_pause(boolean start_pause) {
 		this.start_pause = start_pause;
 	}
-	
+	public boolean isGame_in() {
+		return game_in;
+	}
+	public void setGame_in(boolean game_in) {
+		this.game_in = game_in;
+	}
 	
 }
