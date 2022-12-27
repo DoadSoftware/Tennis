@@ -5,7 +5,6 @@ public class ScoreBug {
 	private boolean scorebug_on_screen;
 	public boolean game_in = false;
 	public boolean start_pause;
-	private String team_score;
 	private String scorebug_stat;
 	private String last_scorebug_stat;
 	
@@ -14,12 +13,6 @@ public class ScoreBug {
 	}
 	public void setScorebug_on_screen(boolean scorebug_on_screen) {
 		this.scorebug_on_screen = scorebug_on_screen;
-	}
-	public String getTeam_score() {
-		return team_score;
-	}
-	public void setTeam_score(String team_score) {
-		this.team_score = team_score;
 	}
 	public String getScorebug_stat() {
 		return scorebug_stat;

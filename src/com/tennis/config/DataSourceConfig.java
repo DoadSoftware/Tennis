@@ -14,7 +14,6 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.tennis.model.Player;
-import com.tennis.model.Team;
 
 @Configuration
 @EnableTransactionManagement
@@ -41,7 +40,6 @@ public class DataSourceConfig {
  LocalSessionFactoryBuilder builder = new LocalSessionFactoryBuilder(dataSource());
  builder.scanPackages("com.football.model").addProperties(getHibernateProperties());
  builder.addAnnotatedClasses(Player.class);
- builder.addAnnotatedClasses(Team.class);
  
  return builder.buildSessionFactory();
  }

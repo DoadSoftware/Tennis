@@ -185,19 +185,41 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 		case 187:
 			processTennisProcedures('ANIMATE-OUT-SCOREBUG');
 			break;
+		case 79:
+			processTennisProcedures('ANIMATE-OUT-SCOREBUG_STAT');
+			break;
 		case 112:
-			/*if(dataToProcess.sets != null){
-				processTennisProcedures('POPULATE-SCOREBUG');
-			}else{
-				alert('No Set Found In XML!\r\n\r\n Cannot populate ScoreBug');
-			}*/
 			processTennisProcedures('POPULATE-SCOREBUG');
 			break;
 		case 113:
-			processTennisProcedures('POPULATE-HEAD-TO-HEAD-LT');
+			processTennisProcedures('POPULATE-MATCHID');
 			break;
 		case 114:
-			processTennisProcedures('POPULATE-HEAD-TO-HEAD-FF');
+			processTennisProcedures('POPULATE-MATCHID_DOUBLE');
+			break;
+		case 115:
+			processTennisProcedures('POPULATE-LT-MATCHID');
+			break;
+		case 116:
+			processTennisProcedures('POPULATE-LT-MATCHID_DOUBLE');
+			break;
+		case 117:
+			processTennisProcedures('POPULATE-LT-MATCH_RESULTSINGLES');
+			break;
+			
+		case 73:
+			//$("#select_event_div").hide();
+			//$("#match_configuration").hide();
+			//$("#football_div").hide();
+			addItemsToList('SCOREBUG_OPTION',null);
+			//processTennisProcedures('APIDATA_GRAPHICS-OPTIONS'); 
+			break;
+		case 76:
+			//$("#select_event_div").hide();
+			//$("#match_configuration").hide();
+			//$("#football_div").hide();
+			addItemsToList('SCOREBUG-SET_OPTION',null);
+			//processTennisProcedures('APIDATA_GRAPHICS-OPTIONS'); 
 			break;				
 		}
 		
@@ -420,6 +442,13 @@ function processUserSelection(whichInput)
 		addItemsToList('LOAD_EVENTS',match_data); 
 		processWaitingButtonSpinner('END_WAIT_TIMER');
 		break;
+	case 'cancel_graphics_btn':
+		$('#select_graphic_options_div').empty();
+		document.getElementById('select_graphic_options_div').style.display = 'none';
+		//$("#select_event_div").show();
+		//$("#match_configuration").show();
+		//$("#football_div").show();
+		break;
 	case 'select_existing_tennis_matches':
 		if(whichInput.value.toLowerCase().includes('new_match')) {
 			initialiseForm('SETUP',null);
@@ -427,6 +456,12 @@ function processUserSelection(whichInput)
 			processWaitingButtonSpinner('START_WAIT_TIMER');
 			processTennisProcedures('LOAD_SETUP',$('#select_existing_tennis_matches option:selected'));
 		}
+		break;
+	case 'populate_stats_btn':
+		processTennisProcedures('POPULATE-SCOREBUG_STATS');
+		break;
+	case 'populate_stats_set_btn':
+		processTennisProcedures('POPULATE-SCOREBUG_SET_STATS');
 		break;
 	default:
 		if(whichInput) {
@@ -533,17 +568,45 @@ function processTennisProcedures(whatToProcess, whichInput)
 			break;
 		}
 		break;
-	case 'POPULATE-HEAD-TO-HEAD-LT':
+	case 'POPULATE-SCOREBUG_STATS': case 'POPULATE-SCOREBUG_SET_STATS':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
-			value_to_process = '/Default/HeadToHeadFirstMeeting';
+			value_to_process = $('#selectScorebugstats option:selected').val() ;
+			break;
+		}
+		break
+	case 'POPULATE-MATCHID':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/FF_MatchIdSingles';
 			break;
 		}
 		break;
-	case 'POPULATE-HEAD-TO-HEAD-FF':
+	case 'POPULATE-LT-MATCHID':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
-			value_to_process = '/Default/FF_HeadToHead';
+			value_to_process = '/Default/LtMatchIdentSingles';
+			break;
+		}
+		break;
+	case 'POPULATE-LT-MATCHID_DOUBLE':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/LtMatchIdentDoubles';
+			break;
+		}
+		break;
+	case 'POPULATE-MATCHID_DOUBLE':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/FF_MatchIdDoubles';
+			break;
+		}
+		break;
+	case 'POPULATE-LT-MATCH_RESULTSINGLES':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/LtMatchResultsSingles';
 			break;
 		}
 		break;		
@@ -599,18 +662,29 @@ function processTennisProcedures(whatToProcess, whichInput)
         	case 'LOAD_SETUP':
         		initialiseForm('SETUP',data);
         		break;
-        	case 'POPULATE-SCOREBUG': case 'POPULATE-HEAD-TO-HEAD-LT': case 'POPULATE-HEAD-TO-HEAD-FF':
+        	case 'POPULATE-SCOREBUG': case 'POPULATE-LT-MATCH_RESULTSINGLES': case 'POPULATE-LT-MATCHID': case 'POPULATE-MATCHID': case 'POPULATE-MATCHID_DOUBLE':
+        	case 'POPULATE-LT-MATCHID_DOUBLE':
         		if(confirm('Animate In?') == true){
 					switch(whatToProcess){
 					case 'POPULATE-SCOREBUG':
 						processTennisProcedures('ANIMATE-IN-SCOREBUG');		
 						break;
-					case 'POPULATE-HEAD-TO-HEAD-LT':
-						processTennisProcedures('ANIMATE-IN-H2H_LT');				
+					case 'POPULATE-MATCHID':
+						processTennisProcedures('ANIMATE-IN-MATCHID');				
 						break;
-					case 'POPULATE-HEAD-TO-HEAD-FF':
-						processTennisProcedures('ANIMATE-IN-H2H_FF');				
-						break;	
+					case 'POPULATE-MATCHID_DOUBLE':
+						processTennisProcedures('ANIMATE-IN-MATCHID_DOUBLE');				
+						break;
+					case 'POPULATE-LT-MATCHID':
+						processTennisProcedures('ANIMATE-IN-LT_MATCHID');				
+						break;
+					case 'POPULATE-LT-MATCHID_DOUBLE':
+						processTennisProcedures('ANIMATE-IN-LT-MATCHID_DOUBLE');				
+						break;
+					case 'POPULATE-LT-MATCH_RESULTSINGLES':
+						processTennisProcedures('ANIMATE-LT-MATCH_RESULTSINGLES');				
+						break;
+					
 					}
 				}
 				break;	
@@ -680,9 +754,151 @@ function processVariousStats(whatToProcess, whichInput)
 }
 function addItemsToList(whatToProcess, dataToProcess)
 {
-	var max_cols,div,anchor,row,header_text,select,option,tr,th,thead,text,table,tbody;
+	var max_cols,div,anchor,row,header_text,select,option,tr,th,thead,text,table,tbody,cellCount;
 	
 	switch (whatToProcess) {
+	case 'SCOREBUG_OPTION': case 'SCOREBUG-SET_OPTION':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+
+			$('#select_graphic_options_div').empty();
+	
+			header_text = document.createElement('h6');
+			header_text.innerHTML = 'Select Graphic Options';
+			document.getElementById('select_graphic_options_div').appendChild(header_text);
+			
+			table = document.createElement('table');
+			table.setAttribute('class', 'table table-bordered');
+					
+			tbody = document.createElement('tbody');
+	
+			table.appendChild(tbody);
+			document.getElementById('select_graphic_options_div').appendChild(table);
+			
+			row = tbody.insertRow(tbody.rows.length);
+			
+			switch(whatToProcess){
+				case 'SCOREBUG_OPTION':
+					select = document.createElement('select');
+					select.style = 'width:130px';
+					select.id = 'selectScorebugstats';
+					select.name = select.id;
+					
+					option = document.createElement('option');
+					option.value = 'firstServeWon';
+					option.text = '1st Serve Won';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'secondServeWon';
+					option.text = '2nd Serve Won';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'winner';
+					option.text = 'Winner';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'ace';
+					option.text = 'Aces';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'doubleFault';
+					option.text = 'Double Fault';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'error';
+					option.text = 'Error';
+					select.appendChild(option);
+
+					select.setAttribute('onchange',"processUserSelection(this)");
+					row.insertCell(cellCount).appendChild(select);
+					cellCount = cellCount + 1;
+					
+					break;
+					
+					case 'SCOREBUG-SET_OPTION':
+					select = document.createElement('select');
+					select.style = 'width:130px';
+					select.id = 'selectScorebugstats';
+					select.name = select.id;
+					
+					option = document.createElement('option');
+					option.value = 'setfirstServeWon';
+					option.text = '1st Serve Won';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'setsecondServeWon';
+					option.text = '2nd Serve Won';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'setwinner';
+					option.text = 'Winner';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'setace';
+					option.text = 'Aces';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'setdoubleFault';
+					option.text = 'Double Fault';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'seterror';
+					option.text = 'Error';
+					select.appendChild(option);
+
+					select.setAttribute('onchange',"processUserSelection(this)");
+					row.insertCell(cellCount).appendChild(select);
+					cellCount = cellCount + 1;
+					
+					break;
+				}
+			
+			option = document.createElement('input');
+		    option.type = 'button';
+			switch (whatToProcess) {
+			case 'SCOREBUG_OPTION':
+			    option.name = 'populate_stats_btn';
+			    option.value = 'Populate Stats';
+				break;
+			case 'SCOREBUG-SET_OPTION':
+				option.name = 'populate_stats_set_btn';
+			    option.value = 'Populate Set Stats';
+				break;
+			}
+		    option.id = option.name;
+		    option.setAttribute('onclick',"processUserSelection(this)");
+		    
+		    div = document.createElement('div');
+		    div.append(option);
+
+			option = document.createElement('input');
+			option.type = 'button';
+			option.name = 'cancel_graphics_btn';
+			option.id = option.name;
+			option.value = 'Cancel';
+			option.setAttribute('onclick','processUserSelection(this)');
+	
+		    div.append(option);
+		    
+		    row.insertCell(cellCount).appendChild(div);
+		    cellCount = cellCount + 1;
+		    
+			document.getElementById('select_graphic_options_div').style.display = '';
+
+			break;
+		}
+		break;
+	
 	case 'LOAD_UNDO':
 
 		$('#select_event_div').empty();
