@@ -206,6 +206,19 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 		case 117:
 			processTennisProcedures('POPULATE-LT-MATCH_RESULTSINGLES');
 			break;
+		case 118:
+			processTennisProcedures('POPULATE-LT-MATCH_RESULTDOUBLES');
+			break;
+		case 119:
+			processTennisProcedures('POPULATE-FF-MATCH_RESULTSINGLES');
+			break;
+		case 120:
+			processTennisProcedures('POPULATE-FF-MATCH_RESULTDOUBLES');
+			break;
+			
+		case 121:
+			processTennisProcedures('NAMESUPER_GRAPHICS-OPTIONS');
+			break;
 			
 		case 73:
 			//$("#select_event_div").hide();
@@ -463,6 +476,9 @@ function processUserSelection(whichInput)
 	case 'populate_stats_set_btn':
 		processTennisProcedures('POPULATE-SCOREBUG_SET_STATS');
 		break;
+	case 'populate_namesuper_btn':
+		processTennisProcedures('POPULATE-NAMESUPERDB');
+		break;
 	default:
 		if(whichInput) {
 			if(whichInput.id.includes('_score_btn')) { 
@@ -609,6 +625,35 @@ function processTennisProcedures(whatToProcess, whichInput)
 			value_to_process = '/Default/LtMatchResultsSingles';
 			break;
 		}
+		break;
+	case 'POPULATE-FF-MATCH_RESULTSINGLES':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/FF_MatchIdSingles';
+			break;
+		}
+		break;
+	case 'POPULATE-LT-MATCH_RESULTDOUBLES':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/LtMatchResultsDoubles';
+			break;
+		}
+		break;
+	case 'POPULATE-FF-MATCH_RESULTDOUBLES':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/FF_MatchIdDoubles';
+			break;
+		}
+		break;
+	case 'POPULATE-NAMESUPERDB':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/LtNameSuperCenter' + ',' + $('#selectNameSuper option:selected').val();;
+			break;
+		}
+		break;
 		break;		
 	}
 
@@ -663,7 +708,8 @@ function processTennisProcedures(whatToProcess, whichInput)
         		initialiseForm('SETUP',data);
         		break;
         	case 'POPULATE-SCOREBUG': case 'POPULATE-LT-MATCH_RESULTSINGLES': case 'POPULATE-LT-MATCHID': case 'POPULATE-MATCHID': case 'POPULATE-MATCHID_DOUBLE':
-        	case 'POPULATE-LT-MATCHID_DOUBLE':
+        	case 'POPULATE-LT-MATCHID_DOUBLE': case 'POPULATE-NAMESUPERDB': case 'POPULATE-LT-MATCH_RESULTDOUBLES': case 'POPULATE-FF-MATCH_RESULTSINGLES':
+        	case 'POPULATE-FF-MATCH_RESULTDOUBLES':
         		if(confirm('Animate In?') == true){
 					switch(whatToProcess){
 					case 'POPULATE-SCOREBUG':
@@ -684,9 +730,23 @@ function processTennisProcedures(whatToProcess, whichInput)
 					case 'POPULATE-LT-MATCH_RESULTSINGLES':
 						processTennisProcedures('ANIMATE-LT-MATCH_RESULTSINGLES');				
 						break;
-					
+					case 'POPULATE-NAMESUPERDB':
+						processTennisProcedures('ANIMATE-LT-NAMESUPERDB');				
+						break;
+					case 'POPULATE-LT-MATCH_RESULTDOUBLES':
+						processTennisProcedures('ANIMATE-LT-MATCH_RESULTDOUBLES');				
+						break;
+					case 'POPULATE-FF-MATCH_RESULTSINGLES':
+						processTennisProcedures('ANIMATE-FF-MATCH_RESULTSINGLES');				
+						break;
+					case 'POPULATE-FF-MATCH_RESULTDOUBLES':
+						processTennisProcedures('ANIMATE-FF-MATCH_RESULTDOUBLES');				
+						break;
 					}
 				}
+				break;
+			case 'NAMESUPER_GRAPHICS-OPTIONS':
+				addItemsToList('NAMESUPER-OPTIONS',data);
 				break;	
         	}
     		processWaitingButtonSpinner('END_WAIT_TIMER');
@@ -740,6 +800,7 @@ function processVariousStats(whatToProcess, whichInput)
 		}
 		break;
 	case 'CHECK-TIE-BREAK-WINNER':
+		alert(parseInt($('#homeScore').val()));
 		if(parseInt($('#homeScore').val()) >= 7 || parseInt($('#awayScore').val()) >= 7) {
 			if(parseInt($('#homeScore').val()) >= 7 && (parseInt($('#homeScore').val()) - parseInt($('#awayScore').val())) >= 2) {
 				$('#select_game_winner').val('home');
@@ -813,6 +874,11 @@ function addItemsToList(whatToProcess, dataToProcess)
 					option.value = 'error';
 					option.text = 'Error';
 					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'breakPointWon';
+					option.text = 'Break Point Won';
+					select.appendChild(option);
 
 					select.setAttribute('onchange',"processUserSelection(this)");
 					row.insertCell(cellCount).appendChild(select);
@@ -855,6 +921,11 @@ function addItemsToList(whatToProcess, dataToProcess)
 					option.value = 'seterror';
 					option.text = 'Error';
 					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'setbreakPointWon';
+					option.text = 'Break Point Won';
+					select.appendChild(option);
 
 					select.setAttribute('onchange',"processUserSelection(this)");
 					row.insertCell(cellCount).appendChild(select);
@@ -895,6 +966,76 @@ function addItemsToList(whatToProcess, dataToProcess)
 		    
 			document.getElementById('select_graphic_options_div').style.display = '';
 
+			break;
+		}
+		break;
+	case'NAMESUPER-OPTIONS':
+		switch ($('#selectedBroadcaster').val().toUpperCase()) {
+		case 'ATP_2022':
+
+			$('#select_graphic_options_div').empty();
+	
+			header_text = document.createElement('h6');
+			header_text.innerHTML = 'Select Graphic Options';
+			document.getElementById('select_graphic_options_div').appendChild(header_text);
+			
+			table = document.createElement('table');
+			table.setAttribute('class', 'table table-bordered');
+					
+			tbody = document.createElement('tbody');
+	
+			table.appendChild(tbody);
+			document.getElementById('select_graphic_options_div').appendChild(table);
+			
+			row = tbody.insertRow(tbody.rows.length);
+			
+			switch(whatToProcess){
+				case'NAMESUPER-OPTIONS':
+					select = document.createElement('select');
+					select.style = 'width:130px';
+					select.id = 'selectNameSuper';
+					select.name = select.id;
+					
+					dataToProcess.forEach(function(ns,index,arr1){
+						option = document.createElement('option');
+						option.value = ns.namesuperId;
+						option.text = ns.subHeader ;
+						select.appendChild(option);
+					});
+					
+					row.insertCell(cellCount).appendChild(select);
+					cellCount = cellCount + 1;
+					
+					break;
+			}
+			
+			switch (whatToProcess) {
+			case'NAMESUPER-OPTIONS':
+				option = document.createElement('input');
+		   	 	option.type = 'button';
+			    option.name = 'populate_namesuper_btn';
+			    option.value = 'Populate Namesuper';
+			    option.id = option.name;
+			    option.setAttribute('onclick',"processUserSelection(this)");
+			    
+			    div = document.createElement('div');
+			    div.append(option);
+	
+				option = document.createElement('input');
+				option.type = 'button';
+				option.name = 'cancel_graphics_btn';
+				option.id = option.name;
+				option.value = 'Cancel';
+				option.setAttribute('onclick','processUserSelection(this)');
+		
+			    div.append(option);
+			    
+			    row.insertCell(cellCount).appendChild(div);
+			    cellCount = cellCount + 1;
+			    
+				document.getElementById('select_graphic_options_div').style.display = '';
+				break;
+		}
 			break;
 		}
 		break;

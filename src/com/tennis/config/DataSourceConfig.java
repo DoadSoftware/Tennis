@@ -13,6 +13,7 @@ import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.tennis.model.NameSuper;
 import com.tennis.model.Player;
 
 @Configuration
@@ -38,9 +39,9 @@ public class DataSourceConfig {
  public SessionFactory sessionFactory() 
  {
  LocalSessionFactoryBuilder builder = new LocalSessionFactoryBuilder(dataSource());
- builder.scanPackages("com.football.model").addProperties(getHibernateProperties());
+ builder.scanPackages("com.tennis.model").addProperties(getHibernateProperties());
  builder.addAnnotatedClasses(Player.class);
- 
+ builder.addAnnotatedClasses(NameSuper.class);
  return builder.buildSessionFactory();
  }
  

@@ -533,6 +533,35 @@
 						    <input id="serveError_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
 						  </td>
 					  </c:if>
+				    </tr>
+				    <tr>
+				      <td>
+					    <label>Break Point Won</label>
+					  </td>
+				      <td>
+					    <input id="breakPointWon_increment_home_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="breakPointWon_home_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="breakPointWon_decrement_home_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="breakPointWon_increment_home_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="breakPointWon_home_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="breakPointWon_decrement_home_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
+				      <td>
+					    <input id="breakPointWon_increment_away_first_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+					    <input id="breakPointWon_away_first_txt" type="text" style="width:25%" value="0"></input>
+					    <input id="breakPointWon_decrement_away_first_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+					  </td>
+					  <c:if test = "${session_match.matchType == 'doubles'}">
+					      <td>
+						    <input id="breakPointWon_increment_away_second_btn" type="button" onclick="processUserSelection(this)" value="+"></input>
+						    <input id="breakPointWon_away_second_txt" type="text" style="width:25%" value="0"></input>
+						    <input id="breakPointWon_decrement_away_second_btn" type="button" onclick="processUserSelection(this)" value="-"></input>
+						  </td>
+					  </c:if>
 				    </tr>				    
 				  </tbody>
 				</table> 
