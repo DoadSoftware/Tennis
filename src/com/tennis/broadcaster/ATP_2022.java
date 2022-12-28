@@ -104,15 +104,16 @@ public class ATP_2022 extends Scene {
 					switch(scorebug.getLast_scorebug_stat()) {
 					case "doubleFault": case "ace": case "winner": case "firstServeWon": case "secondServeWon": case "error": case "breakPointWon":
 					case "setfirstServeWon": case "setsecondServeWon": case "setwinner": case "setace": case "setdoubleFault": case "seterror": case "setbreakPointWon":
+						TimeUnit.MILLISECONDS.sleep(500);
 						print_writer.println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*StatType1Out START \0");
 						break;
 					}
-					TimeUnit.MILLISECONDS.sleep(200);
+					TimeUnit.MILLISECONDS.sleep(500);
 					scorebug.setScorebug_stat(valueToProcess);
 					populateScoreBugStats(false,scorebug,print_writer,match,session_selected_broadcaster);
 				}else {
 					print_writer.println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*SoreAllOut START \0");
-					TimeUnit.MILLISECONDS.sleep(200);
+					TimeUnit.MILLISECONDS.sleep(500);
 					scorebug.setScorebug_stat(valueToProcess);
 					populateScoreBugStats(false,scorebug,print_writer,match,session_selected_broadcaster);
 				}
@@ -122,15 +123,16 @@ public class ATP_2022 extends Scene {
 					switch(scorebug.getLast_scorebug_stat()) {
 					case "doubleFault": case "ace": case "winner": case "firstServeWon": case "secondServeWon": case "error": case "breakPointWon":
 					case "setfirstServeWon": case "setsecondServeWon": case "setwinner": case "setace": case "setdoubleFault": case "seterror": case "setbreakPointWon":
+						TimeUnit.MILLISECONDS.sleep(500);
 						print_writer.println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*StatType1Out START \0");
 						break;
 					}
-					TimeUnit.MILLISECONDS.sleep(200);
+					TimeUnit.MILLISECONDS.sleep(500);
 					scorebug.setScorebug_stat(valueToProcess);
 					populateScoreBugStatsSet(false,scorebug,print_writer,match,session_selected_broadcaster);
 				}else {
 					print_writer.println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*SoreAllOut START \0");
-					TimeUnit.MILLISECONDS.sleep(200);
+					TimeUnit.MILLISECONDS.sleep(500);
 					scorebug.setScorebug_stat(valueToProcess);
 					populateScoreBugStatsSet(false,scorebug,print_writer,match,session_selected_broadcaster);
 				}
@@ -568,50 +570,52 @@ public class ATP_2022 extends Scene {
 			//System.out.println("STATS : " + match.getSets().get(0).getGames().get(0).getStats().size());
 			for (int i = 0; i <= match.getSets().size() - 1; i++) {
 				for (int j = 0; j <= match.getSets().get(i).getGames().size() - 1; j++) {
-					for(Stat st : match.getSets().get(i).getGames().get(j).getStats()) {
-						if(st.getStatType().equalsIgnoreCase("firstServeWon")) {
-							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-								Home_1won = Home_1won + 1;
-							}else {
-								Away_1won = Away_1won + 1;
-							}
-						}else if(st.getStatType().equalsIgnoreCase("secondServeWon")) {
-							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-								Home_2won = Home_2won + 1;
-							}else {
-								Away_2won = Away_2won + 1;
-							}
-						}else if(st.getStatType().equalsIgnoreCase(TennisUtil.FOREHAND_WINNER) || st.getStatType().equalsIgnoreCase(TennisUtil.BACKHAND_WINNER) ||
-								st.getStatType().equalsIgnoreCase(TennisUtil.SERVE_WINNER)) {
-							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-								Home_win = Home_win + 1;
-							}else {
-								Away_win = Away_win + 1;
-							}
-						}else if (st.getStatType().equalsIgnoreCase(TennisUtil.ACE)) {
-							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-								Home_ace = Home_ace + 1;
-							}else {
-								Away_ace = Away_ace + 1;
-							}
-						}else if(st.getStatType().equalsIgnoreCase(TennisUtil.DOUBLE_FAULT)) {
-							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-								Home_df = Home_df + 1;
-							}else {
-								Away_df = Away_df + 1;
-							}
-						}else if(st.getStatType().equalsIgnoreCase("frontHandError") || st.getStatType().equalsIgnoreCase("backHandError") ||
-								st.getStatType().equalsIgnoreCase("serveError")) {
-							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-								Home_error = Home_error + 1;
-							}else {
-								Away_error = Away_error + 1;
-							}
-						}else if(st.getStatType().equalsIgnoreCase("breakPointWon")) {
-							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-								Home_bpw = Home_bpw + 1;
-							}else {
-								Away_bpw = Away_bpw + 1;
+					if(match.getSets().get(i).getGames().get(j).getStats() != null) {
+						for(Stat st : match.getSets().get(i).getGames().get(j).getStats()) {
+							if(st.getStatType().equalsIgnoreCase("firstServeWon")) {
+								if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+									Home_1won = Home_1won + 1;
+								}else {
+									Away_1won = Away_1won + 1;
+								}
+							}else if(st.getStatType().equalsIgnoreCase("secondServeWon")) {
+								if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+									Home_2won = Home_2won + 1;
+								}else {
+									Away_2won = Away_2won + 1;
+								}
+							}else if(st.getStatType().equalsIgnoreCase(TennisUtil.FOREHAND_WINNER) || st.getStatType().equalsIgnoreCase(TennisUtil.BACKHAND_WINNER) ||
+									st.getStatType().equalsIgnoreCase(TennisUtil.SERVE_WINNER)) {
+								if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+									Home_win = Home_win + 1;
+								}else {
+									Away_win = Away_win + 1;
+								}
+							}else if (st.getStatType().equalsIgnoreCase(TennisUtil.ACE)) {
+								if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+									Home_ace = Home_ace + 1;
+								}else {
+									Away_ace = Away_ace + 1;
+								}
+							}else if(st.getStatType().equalsIgnoreCase(TennisUtil.DOUBLE_FAULT)) {
+								if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+									Home_df = Home_df + 1;
+								}else {
+									Away_df = Away_df + 1;
+								}
+							}else if(st.getStatType().equalsIgnoreCase("frontHandError") || st.getStatType().equalsIgnoreCase("backHandError") ||
+									st.getStatType().equalsIgnoreCase("serveError")) {
+								if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+									Home_error = Home_error + 1;
+								}else {
+									Away_error = Away_error + 1;
+								}
+							}else if(st.getStatType().equalsIgnoreCase("breakPointWon")) {
+								if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+									Home_bpw = Home_bpw + 1;
+								}else {
+									Away_bpw = Away_bpw + 1;
+								}
 							}
 						}
 					}
@@ -669,50 +673,52 @@ public class ATP_2022 extends Scene {
 	
 		if (match.getSets() != null) {
 			for (int j = 0; j <= match.getSets().get(match.getSets().size()-1).getGames().size() - 1; j++) {
-				for(Stat st : match.getSets().get(match.getSets().size()-1).getGames().get(j).getStats()) {
-					if(st.getStatType().equalsIgnoreCase("firstServeWon")) {
-						if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-							Home_1won = Home_1won + 1;
-						}else {
-							Away_1won = Away_1won + 1;
-						}
-					}else if(st.getStatType().equalsIgnoreCase("secondServeWon")) {
-						if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-							Home_2won = Home_2won + 1;
-						}else {
-							Away_2won = Away_2won + 1;
-						}
-					}else if(st.getStatType().equalsIgnoreCase(TennisUtil.FOREHAND_WINNER) || st.getStatType().equalsIgnoreCase(TennisUtil.BACKHAND_WINNER) ||
-							st.getStatType().equalsIgnoreCase(TennisUtil.SERVE_WINNER)) {
-						if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-							Home_win = Home_win + 1;
-						}else {
-							Away_win = Away_win + 1;
-						}
-					}else if (st.getStatType().equalsIgnoreCase(TennisUtil.ACE)) {
-						if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-							Home_ace = Home_ace + 1;
-						}else {
-							Away_ace = Away_ace + 1;
-						}
-					}else if(st.getStatType().equalsIgnoreCase(TennisUtil.DOUBLE_FAULT)) {
-						if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-							Home_df = Home_df + 1;
-						}else {
-							Away_df = Away_df + 1;
-						}
-					}else if(st.getStatType().equalsIgnoreCase("frontHandError") || st.getStatType().equalsIgnoreCase("backHandError") ||
-							st.getStatType().equalsIgnoreCase("serveError")) {
-						if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-							Home_error = Home_error + 1;
-						}else {
-							Away_error = Away_error + 1;
-						}
-					}else if(st.getStatType().equalsIgnoreCase("breakPointWon")) {
-						if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
-							Home_bpw = Home_bpw + 1;
-						}else {
-							Away_bpw = Away_bpw + 1;
+				if(match.getSets().get(match.getSets().size()-1).getGames().get(j).getStats() != null) {
+					for(Stat st : match.getSets().get(match.getSets().size()-1).getGames().get(j).getStats()) {
+						if(st.getStatType().equalsIgnoreCase("firstServeWon")) {
+							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+								Home_1won = Home_1won + 1;
+							}else {
+								Away_1won = Away_1won + 1;
+							}
+						}else if(st.getStatType().equalsIgnoreCase("secondServeWon")) {
+							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+								Home_2won = Home_2won + 1;
+							}else {
+								Away_2won = Away_2won + 1;
+							}
+						}else if(st.getStatType().equalsIgnoreCase(TennisUtil.FOREHAND_WINNER) || st.getStatType().equalsIgnoreCase(TennisUtil.BACKHAND_WINNER) ||
+								st.getStatType().equalsIgnoreCase(TennisUtil.SERVE_WINNER)) {
+							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+								Home_win = Home_win + 1;
+							}else {
+								Away_win = Away_win + 1;
+							}
+						}else if (st.getStatType().equalsIgnoreCase(TennisUtil.ACE)) {
+							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+								Home_ace = Home_ace + 1;
+							}else {
+								Away_ace = Away_ace + 1;
+							}
+						}else if(st.getStatType().equalsIgnoreCase(TennisUtil.DOUBLE_FAULT)) {
+							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+								Home_df = Home_df + 1;
+							}else {
+								Away_df = Away_df + 1;
+							}
+						}else if(st.getStatType().equalsIgnoreCase("frontHandError") || st.getStatType().equalsIgnoreCase("backHandError") ||
+								st.getStatType().equalsIgnoreCase("serveError")) {
+							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+								Home_error = Home_error + 1;
+							}else {
+								Away_error = Away_error + 1;
+							}
+						}else if(st.getStatType().equalsIgnoreCase("breakPointWon")) {
+							if(match.getHomeFirstPlayerId() == st.getPlayerId() || match.getHomeSecondPlayerId() == st.getPlayerId()) {
+								Home_bpw = Home_bpw + 1;
+							}else {
+								Away_bpw = Away_bpw + 1;
+							}
 						}
 					}
 				}
