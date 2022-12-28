@@ -653,7 +653,6 @@ function processTennisProcedures(whatToProcess, whichInput)
 			value_to_process = '/Default/LtNameSuperCenter' + ',' + $('#selectNameSuper option:selected').val();;
 			break;
 		}
-		break;
 		break;		
 	}
 
@@ -686,8 +685,16 @@ function processTennisProcedures(whatToProcess, whichInput)
 				switch(whatToProcess) {
 				case 'LOG_SCORE':
 					if(processVariousStats('CHECK-ADVANTAGE-POINT',whichInput) == false) {
-						processVariousStats('CHECK-GAME-WINNER',whichInput);
+						
+						alert(data.sets[data.sets.length - 1].games[data.sets[data.sets.length - 1].games.length - 1].gameType);
+						if(data.sets[data.sets.length - 1].games[data.sets[data.sets.length - 1]
+							.games.length - 1].gameType == 'tie_break'){
+							processVariousStats('CHECK-TIE-BREAK-WINNER',whichInput);
+						}else {
+							processVariousStats('CHECK-GAME-WINNER',whichInput);
+						}
 					}
+					
 					break;
 				case 'LOAD_MATCH': case 'LOAD_MATCH_AFTER_STAT_LOG':
 					addItemsToList('LOAD_EVENTS',data);
@@ -800,7 +807,7 @@ function processVariousStats(whatToProcess, whichInput)
 		}
 		break;
 	case 'CHECK-TIE-BREAK-WINNER':
-		alert(parseInt($('#homeScore').val()));
+		//alert(parseInt($('#homeScore').val()));
 		if(parseInt($('#homeScore').val()) >= 7 || parseInt($('#awayScore').val()) >= 7) {
 			if(parseInt($('#homeScore').val()) >= 7 && (parseInt($('#homeScore').val()) - parseInt($('#awayScore').val())) >= 2) {
 				$('#select_game_winner').val('home');
@@ -847,12 +854,12 @@ function addItemsToList(whatToProcess, dataToProcess)
 					
 					option = document.createElement('option');
 					option.value = 'firstServeWon';
-					option.text = '1st Serve Won';
+					option.text = '1st Serve Points Won';
 					select.appendChild(option);
 					
 					option = document.createElement('option');
 					option.value = 'secondServeWon';
-					option.text = '2nd Serve Won';
+					option.text = '2nd Serve Points Won';
 					select.appendChild(option);
 					
 					option = document.createElement('option');
@@ -877,7 +884,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 					
 					option = document.createElement('option');
 					option.value = 'breakPointWon';
-					option.text = 'Break Point Won';
+					option.text = 'Break Points Won';
 					select.appendChild(option);
 
 					select.setAttribute('onchange',"processUserSelection(this)");
@@ -894,12 +901,12 @@ function addItemsToList(whatToProcess, dataToProcess)
 					
 					option = document.createElement('option');
 					option.value = 'setfirstServeWon';
-					option.text = '1st Serve Won';
+					option.text = '1st Serve Points Won';
 					select.appendChild(option);
 					
 					option = document.createElement('option');
 					option.value = 'setsecondServeWon';
-					option.text = '2nd Serve Won';
+					option.text = '2nd Serve Points Won';
 					select.appendChild(option);
 					
 					option = document.createElement('option');
@@ -924,7 +931,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 					
 					option = document.createElement('option');
 					option.value = 'setbreakPointWon';
-					option.text = 'Break Point Won';
+					option.text = 'Break Points Won';
 					select.appendChild(option);
 
 					select.setAttribute('onchange',"processUserSelection(this)");
