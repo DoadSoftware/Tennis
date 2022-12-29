@@ -234,9 +234,11 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 		case 82:
 			processTennisProcedures('NAMESUPER-DP1_GRAPHICS-OPTIONS');
 			break;
-			
 		case 90:
 			addItemsToList('CROSS-OPTIONS',null);
+			break;
+		case 65:
+			processTennisProcedures('POPULATE-LT-MATCH_SCORESINGLES');
 			break;
 			
 		case 73:
@@ -653,7 +655,7 @@ function processTennisProcedures(whatToProcess, whichInput)
 			break;
 		}
 		break;
-	case 'POPULATE-LT-MATCH_RESULTSINGLES':
+	case 'POPULATE-LT-MATCH_RESULTSINGLES': case 'POPULATE-LT-MATCH_SCORESINGLES':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
 			value_to_process = '/Default/LtMatchResultsSingles';
@@ -788,7 +790,7 @@ function processTennisProcedures(whatToProcess, whichInput)
         	case 'POPULATE-SCOREBUG': case 'POPULATE-LT-MATCH_RESULTSINGLES': case 'POPULATE-LT-MATCHID': case 'POPULATE-MATCHID': case 'POPULATE-MATCHID_DOUBLE':
         	case 'POPULATE-LT-MATCHID_DOUBLE': case 'POPULATE-NAMESUPERDB': case 'POPULATE-LT-MATCH_RESULTDOUBLES': case 'POPULATE-FF-MATCH_RESULTSINGLES':
         	case 'POPULATE-FF-MATCH_RESULTDOUBLES': case 'POPULATE-NAMESUPER-SP': case 'POPULATE-NAMESUPER-DP': case 'POPULATE-NAMESUPER-SP1': case 'POPULATE-NAMESUPER-DP1':
-        	case 'POPULATE-CROSS':
+        	case 'POPULATE-CROSS': case "POPULATE-LT-MATCH_SCORESINGLES":
         		if(confirm('Animate In?') == true){
 					switch(whatToProcess){
 					case 'POPULATE-SCOREBUG':
@@ -835,6 +837,9 @@ function processTennisProcedures(whatToProcess, whichInput)
 						break;
 					case 'POPULATE-CROSS':
 						processTennisProcedures('ANIMATE-LT-CROSS');				
+						break;
+					case "POPULATE-LT-MATCH_SCORESINGLES":
+						processTennisProcedures('ANIMATE-LT-MATCH_SCORESINGLES');				
 						break;
 					}
 				}

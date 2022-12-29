@@ -76,7 +76,7 @@ public class ATP_2022 extends Scene {
 		switch (whatToProcess.toUpperCase()) {
 		case "POPULATE-SCOREBUG": case "POPULATE-SCOREBUG_STATS": case "POPULATE-SCOREBUG_SET_STATS":
 		case "POPULATE-LT-MATCH_RESULTSINGLES": case "POPULATE-LT-MATCH_RESULTDOUBLES": case "POPULATE-LT-MATCHID": case "POPULATE-LT-MATCHID_DOUBLE": case "POPULATE-NAMESUPERDB":
-		case "POPULATE-NAMESUPER-SP": case "POPULATE-NAMESUPER-DP": case "POPULATE-NAMESUPER-SP1": case "POPULATE-NAMESUPER-DP1":
+		case "POPULATE-NAMESUPER-SP": case "POPULATE-NAMESUPER-DP": case "POPULATE-NAMESUPER-SP1": case "POPULATE-NAMESUPER-DP1": case "POPULATE-LT-MATCH_SCORESINGLES":
 		case "POPULATE-MATCHID_DOUBLE": case "POPULATE-MATCHID": case "POPULATE-FF-MATCH_RESULTSINGLES": case "POPULATE-FF-MATCH_RESULTDOUBLES": 	
 		case "POPULATE-CROSS":
 			switch (whatToProcess.toUpperCase()) {
@@ -134,6 +134,9 @@ public class ATP_2022 extends Scene {
 					populateScoreBugStatsSet(false,scorebug,print_writer,match,session_selected_broadcaster);
 				}
 				break;
+			case "POPULATE-LT-MATCH_SCORESINGLES":
+				populateLtMatchScoreSingles(print_writer, valueToProcess.split(",")[0], match,session_selected_broadcaster);
+				break;
 			case "POPULATE-LT-MATCH_RESULTSINGLES":
 				populateLtMatchResultSingles(print_writer, valueToProcess.split(",")[0], match,session_selected_broadcaster);
 				break;
@@ -190,6 +193,7 @@ public class ATP_2022 extends Scene {
 		case "ANIMATE-IN-SCOREBUG":
 		case "ANIMATE-LT-MATCH_RESULTSINGLES": case "ANIMATE-LT-MATCH_RESULTDOUBLES": case "ANIMATE-IN-LT_MATCHID": case "ANIMATE-IN-LT-MATCHID_DOUBLE": case "ANIMATE-LT-NAMESUPERDB":
 		case "ANIMATE-LT-NAMESUPER_SP": case "ANIMATE-LT-NAMESUPER_DP": case "ANIMATE-LT-NAMESUPER_SP1": case "ANIMATE-LT-NAMESUPER_DP1":
+		case "ANIMATE-LT-MATCH_SCORESINGLES":
 		case "ANIMATE-IN-MATCHID_DOUBLE": case "ANIMATE-IN-MATCHID": case "ANIMATE-FF-MATCH_RESULTSINGLES": case "ANIMATE-FF-MATCH_RESULTDOUBLES":
 		case "ANIMATE-LT-CROSS":
 			
@@ -266,6 +270,10 @@ public class ATP_2022 extends Scene {
 				AnimateInGraphics(print_writer, "CROSS");
 				which_graphics_onscreen = "CROSS";
 				break;
+			case "ANIMATE-LT-MATCH_SCORESINGLES":
+				AnimateInGraphics(print_writer, "MATCH_SCORESINGLES");
+				which_graphics_onscreen = "MATCH_SCORESINGLES";
+				break;
 			case "CLEAR-ALL":
 				print_writer.println("-1 SCENE CLEANUP\0");
 				print_writer.println("-1 IMAGE CLEANUP\0");
@@ -331,7 +339,7 @@ public class ATP_2022 extends Scene {
 			case "ANIMATE-OUT":
 				switch (which_graphics_onscreen) {
 				case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB": case "NAMESUPER_SP": 
-				case "NAMESUPER_DP":case "NAMESUPER_SP1": case "NAMESUPER_DP1":
+				case "NAMESUPER_DP":case "NAMESUPER_SP1": case "NAMESUPER_DP1": case "MATCH_SCORESINGLES":
 				case "MATCHID_DOUBLE": case "MATCHID": case "FF-MATCH_RESULTSINGLES": case "FF-MATCH_RESULTDOUBLES":
 				case "CROSS":
 					AnimateOutGraphics(print_writer, which_graphics_onscreen);
@@ -352,7 +360,7 @@ public class ATP_2022 extends Scene {
 			print_writer.println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*In START \0");
 			break;
 		case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB": case "NAMESUPER_SP": 
-		case "NAMESUPER_DP": case "NAMESUPER_SP1": case "NAMESUPER_DP1":
+		case "NAMESUPER_DP": case "NAMESUPER_SP1": case "NAMESUPER_DP1": case "MATCH_SCORESINGLES":
 		case "MATCHID_DOUBLE": case "MATCHID": case "FF-MATCH_RESULTSINGLES": case "FF-MATCH_RESULTDOUBLES":
 		case "CROSS":
 			print_writer.println("-1 RENDERER*STAGE*DIRECTOR*In START \0");
@@ -366,7 +374,7 @@ public class ATP_2022 extends Scene {
 			print_writer.println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*Out START \0");
 			break;
 		case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB": case "NAMESUPER_SP": 
-		case "NAMESUPER_DP": case "NAMESUPER_SP1": case "NAMESUPER_DP1":
+		case "NAMESUPER_DP": case "NAMESUPER_SP1": case "NAMESUPER_DP1": case "MATCH_SCORESINGLES":
 		case "MATCHID_DOUBLE": case "MATCHID": case "FF-MATCH_RESULTSINGLES": case "FF-MATCH_RESULTDOUBLES":
 		case "CROSS":
 			print_writer.println("-1 RENDERER*STAGE*DIRECTOR*Out START \0");
@@ -819,6 +827,93 @@ public class ATP_2022 extends Scene {
 		}
 		scorebug.setLast_scorebug_stat(scorebug.getScorebug_stat());
 		return scorebug;
+	}
+	
+	public void populateLtMatchScoreSingles(PrintWriter print_writer, String viz_sence_path, Match match,String selectedbroadcaster) {
+		if (match == null) {
+			System.out.println("ERROR: MATCH RESULT -> Match is null");
+		} else {
+			
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tHeader" + " SET " + match.getMatchIdent() + "\0");
+			
+			if(match.getHomeFirstPlayer().getSurname() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + "" + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
+			}
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			if(match.getHomeFirstPlayer().getRankingSingle() == 0) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank1" + " SET " + match.getHomeFirstPlayer().getRankingSingle() + "\0");
+			}
+			
+			if(match.getAwayFirstPlayer().getSurname() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + "" + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
+			}
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			if(match.getAwayFirstPlayer().getRankingSingle() == 0) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank2" + " SET " + match.getAwayFirstPlayer().getRankingSingle() + "\0");
+			}
+			
+			List<String> home_data = new ArrayList<String>();
+			List<String> away_data = new ArrayList<String>();
+			
+			if(match.getSets() != null) {
+				
+				for (int i = 0; i <= match.getSets().size() - 1; i++) {
+					int home = 0, away = 0;
+					for (int j = 0; j <= match.getSets().get(i).getGames().size() - 1; j++) {
+						if (match.getSets().get(i).getGames().get(j).getGame_winner() != null) {
+							if (match.getSets().get(i).getGames().get(j).getGame_winner().equalsIgnoreCase(TennisUtil.HOME)) {
+								home = home + 1;
+							} else if (match.getSets().get(i).getGames().get(j).getGame_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
+								away = away + 1;
+							}
+						}
+					}
+					home_data.add(i, String.valueOf(home));
+					away_data.add(i, String.valueOf(away));
+				}
+				
+				if(match.getSets().size() <= 3) {
+					if(match.getSets().size()==1) {
+						if(Integer.valueOf(home_data.get(0)) > Integer.valueOf(away_data.get(0))) {
+							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "vSetStatus" + " SET " + "0" + "\0");
+							print_writer.println("-1 RENDERER*TREE*$Main$All$BottomGrp$SetAll$TopSetGrp$WW$SetsAll$Set1$SetBase*ACTIVE SET 0 \0");
+							print_writer.println("-1 RENDERER*TREE*$Main$All$BottomGrp$SetAll$BottomSetGrp$LL$SetsAll$Set1$SetBase*ACTIVE SET 0 \0");
+						}else if(Integer.valueOf(home_data.get(0)) < Integer.valueOf(away_data.get(0))) {
+							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "vSetStatus" + " SET " + "5" + "\0");
+							print_writer.println("-1 RENDERER*TREE*$Main$All$BottomGrp$SetAll$TopSetGrp$LL$SetsAll$Set1$SetBase*ACTIVE SET 0 \0");
+							print_writer.println("-1 RENDERER*TREE*$Main$All$BottomGrp$SetAll$BottomSetGrp$WW$SetsAll$Set1$SetBase*ACTIVE SET 0 \0");
+						}else if(Integer.valueOf(home_data.get(0)) == Integer.valueOf(away_data.get(0))){
+							print_writer.println("-1 RENDERER*TREE*$Main$All$BottomGrp$SetAll$TopSetGrp*FUNCTION*Omo*vis_con SET 5 \0");
+							print_writer.println("-1 RENDERER*TREE*$Main$All$BottomGrp$SetAll$BottomSetGrp*FUNCTION*Omo*vis_con SET 0 \0");
+						}
+						
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore1" + " SET " + "" + "\0");
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore1" + " SET " + "" + "\0");
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore2" + " SET " + "" + "\0");
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore2" + " SET " + "" + "\0");
+						
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopSetScore1" + " SET " + home_data.get(0) + "\0");
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomSetScore1" + " SET " + away_data.get(0) + "\0");
+						
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopSetScore2" + " SET " + "" + "\0");
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomSetScore2" + " SET " + "" + "\0");
+					}
+				}		
+			}
+			print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 1.220 \0");
+		}
 	}
 	
 	public void populateLtMatchResultSingles(PrintWriter print_writer, String viz_sence_path, Match match,String selectedbroadcaster) {
@@ -1701,8 +1796,7 @@ public class ATP_2022 extends Scene {
 		} else {
 			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tHeader" + " SET " + match.getTournament() + "\0");
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSubHeader" + " SET " + match.getCategoryType().toUpperCase() + " " + match.getMatchType().toUpperCase()
-					+ " - " + match.getMatchIdent() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSubHeader" + " SET " + match.getMatchIdent() + "\0");
 			
 			print_writer.println("-1 RENDERER*TREE*$Main$All$TopWithMask$TopGrp$HeaderGrp$Duration*ACTIVE SET 0 \0");
 			
@@ -1767,8 +1861,7 @@ public class ATP_2022 extends Scene {
 			//print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSubHeader" + " SET " + match.getCategoryType().toUpperCase() + " " + match.getMatchType().toUpperCase()
 					//+ " - " + match.getMatchIdent() + "\0");
 			//print_writer.println("-1 RENDERER*TREE*$Main$All$BottomOut$BottomGrp$BottttomGrp*FUNCTION*Omo*vis_con SET 0 \0");
-			print_writer.println("-1 RENDERER*TREE*$Main$All$TopGrp$HeaderGrp$Header*GEOM*TEXT SET " + match.getCategoryType().toUpperCase() + " " + match.getMatchType().toUpperCase()
-					+ " - " + match.getMatchIdent() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main$All$TopGrp$HeaderGrp$Header*GEOM*TEXT SET " + match.getMatchIdent() + "\0");
 			print_writer.println("-1 RENDERER*TREE*$Main$All$TopWithMask$TopGrp$HeaderGrp$Duration*ACTIVE SET 0 \0");
 			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "vResults" + " SET " + "0" + "\0");
