@@ -16,6 +16,7 @@ import javax.xml.bind.JAXBException;
 
 import com.tennis.model.Match;
 import com.tennis.model.NameSuper;
+import com.tennis.model.Player;
 import com.tennis.model.Stat;
 import com.tennis.service.TennisService;
 import com.tennis.util.TennisUtil;
@@ -55,15 +56,11 @@ public class ATP_2022 extends Scene {
 					
 			}else if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getGame_type().equalsIgnoreCase(TennisUtil.NORMAL)
 					&& (Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getHome_score()) > 0
-					&& Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getHome_score()) < 30
-					|| Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getAway_score()) > 0
-					&& Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getAway_score()) < 30)) {
+					|| Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getAway_score()) > 0)) {
 				scorebug = populateGameScore(false, scorebug, print_writer, match, session_selected_broadcaster);
 			}else if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getGame_type().equalsIgnoreCase(TennisUtil.TIE_BREAK)
-					&& (Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getHome_score()) == 0
-					&& Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getAway_score()) == 1
-					|| Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getHome_score()) == 1
-					&& Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getAway_score()) == 0)) {
+					&& (Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getHome_score()) > 0
+					|| Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getAway_score()) > 0)) {
 				scorebug = populateGameScore(false, scorebug, print_writer, match, session_selected_broadcaster);
 			}else {
 				scorebug = populateGameScore(true, scorebug, print_writer, match, session_selected_broadcaster);
@@ -79,15 +76,15 @@ public class ATP_2022 extends Scene {
 		switch (whatToProcess.toUpperCase()) {
 		case "POPULATE-SCOREBUG": case "POPULATE-SCOREBUG_STATS": case "POPULATE-SCOREBUG_SET_STATS":
 		case "POPULATE-LT-MATCH_RESULTSINGLES": case "POPULATE-LT-MATCH_RESULTDOUBLES": case "POPULATE-LT-MATCHID": case "POPULATE-LT-MATCHID_DOUBLE": case "POPULATE-NAMESUPERDB":
-		case "POPULATE-MATCHID_DOUBLE": case "POPULATE-MATCHID": case "POPULATE-FF-MATCH_RESULTSINGLES": case "POPULATE-FF-MATCH_RESULTDOUBLES":
+		case "POPULATE-NAMESUPER-SP": case "POPULATE-NAMESUPER-DP": case "POPULATE-NAMESUPER-SP1": case "POPULATE-NAMESUPER-DP1":
+		case "POPULATE-MATCHID_DOUBLE": case "POPULATE-MATCHID": case "POPULATE-FF-MATCH_RESULTSINGLES": case "POPULATE-FF-MATCH_RESULTDOUBLES": 	
+		case "POPULATE-CROSS":
 			switch (whatToProcess.toUpperCase()) {
 			
 			case "POPULATE-SCOREBUG_STATS": case "POPULATE-SCOREBUG_SET_STATS":
 				 break;
 			 
 			case "POPULATE-SCOREBUG":
-				// System.out.println("I_League :"+ valueToProcess.split(",")[0]);
-				//scenes.get(0).setScene_path(valueToProcess.split(",")[0]);
 				scenes.get(0).scene_load(print_writer, session_selected_broadcaster);
 				break;
 			default:
@@ -165,14 +162,36 @@ public class ATP_2022 extends Scene {
 				populateNameSuperDB(print_writer, valueToProcess.split(",")[0],Integer.valueOf(valueToProcess.split(",")[1]),tennisService.getNameSupers(),
 						match, session_selected_broadcaster);
 				break;
+			case "POPULATE-NAMESUPER-SP":
+				populateNameSuperSP(print_writer, valueToProcess.split(",")[0],Integer.valueOf(valueToProcess.split(",")[1]),tennisService.getAllPlayer(),
+						match, session_selected_broadcaster);
+				break;
+			case "POPULATE-NAMESUPER-SP1":
+				populateNameSuperSP1(print_writer, valueToProcess.split(",")[0],Integer.valueOf(valueToProcess.split(",")[1]),tennisService.getAllPlayer(),
+						match, session_selected_broadcaster);
+				break;
+			case "POPULATE-NAMESUPER-DP":
+				populateNameSuperDP(print_writer, valueToProcess.split(",")[0],valueToProcess.split(",")[1],tennisService.getAllPlayer(),match, session_selected_broadcaster);
+				break;
+			case "POPULATE-NAMESUPER-DP1":
+				populateNameSuperDP1(print_writer, valueToProcess.split(",")[0],Integer.valueOf(valueToProcess.split(",")[1]),Integer.valueOf(valueToProcess.split(",")[2]),
+						tennisService.getAllPlayer(),match, session_selected_broadcaster);
+				break;
+			case "POPULATE-CROSS":
+				populateCross(print_writer, valueToProcess.split(",")[0],valueToProcess.split(",")[1],valueToProcess.split(",")[2],
+						match, session_selected_broadcaster);
 			}
 			
 		case "NAMESUPER_GRAPHICS-OPTIONS": 
 			return JSONArray.fromObject(tennisService.getNameSupers()).toString();
+		case "NAMESUPER-SP_GRAPHICS-OPTIONS": case "NAMESUPER-SP1_GRAPHICS-OPTIONS": case "NAMESUPER-DP1_GRAPHICS-OPTIONS":
+			return JSONArray.fromObject(tennisService.getAllPlayer()).toString();
 
 		case "ANIMATE-IN-SCOREBUG":
 		case "ANIMATE-LT-MATCH_RESULTSINGLES": case "ANIMATE-LT-MATCH_RESULTDOUBLES": case "ANIMATE-IN-LT_MATCHID": case "ANIMATE-IN-LT-MATCHID_DOUBLE": case "ANIMATE-LT-NAMESUPERDB":
+		case "ANIMATE-LT-NAMESUPER_SP": case "ANIMATE-LT-NAMESUPER_DP": case "ANIMATE-LT-NAMESUPER_SP1": case "ANIMATE-LT-NAMESUPER_DP1":
 		case "ANIMATE-IN-MATCHID_DOUBLE": case "ANIMATE-IN-MATCHID": case "ANIMATE-FF-MATCH_RESULTSINGLES": case "ANIMATE-FF-MATCH_RESULTDOUBLES":
+		case "ANIMATE-LT-CROSS":
 			
 		case "CLEAR-ALL":
 		case "ANIMATE-OUT-SCOREBUG": case "ANIMATE-OUT-SCOREBUG_STAT":
@@ -226,6 +245,26 @@ public class ATP_2022 extends Scene {
 			case "ANIMATE-LT-NAMESUPERDB":
 				AnimateInGraphics(print_writer, "NAMESUPERDB");
 				which_graphics_onscreen = "NAMESUPERDB";
+				break;
+			case "ANIMATE-LT-NAMESUPER_SP":
+				AnimateInGraphics(print_writer, "NAMESUPER_SP");
+				which_graphics_onscreen = "NAMESUPER_SP";
+				break;
+			case "ANIMATE-LT-NAMESUPER_DP":
+				AnimateInGraphics(print_writer, "NAMESUPER_DP");
+				which_graphics_onscreen = "NAMESUPER_DP";
+				break;
+			case "ANIMATE-LT-NAMESUPER_SP1":
+				AnimateInGraphics(print_writer, "NAMESUPER_SP1");
+				which_graphics_onscreen = "NAMESUPER_SP1";
+				break;
+			case "ANIMATE-LT-NAMESUPER_DP1":
+				AnimateInGraphics(print_writer, "NAMESUPER_DP1");
+				which_graphics_onscreen = "NAMESUPER_DP1";
+				break;
+			case "ANIMATE-LT-CROSS":
+				AnimateInGraphics(print_writer, "CROSS");
+				which_graphics_onscreen = "CROSS";
 				break;
 			case "CLEAR-ALL":
 				print_writer.println("-1 SCENE CLEANUP\0");
@@ -291,8 +330,10 @@ public class ATP_2022 extends Scene {
 			
 			case "ANIMATE-OUT":
 				switch (which_graphics_onscreen) {
-				case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB":
+				case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB": case "NAMESUPER_SP": 
+				case "NAMESUPER_DP":case "NAMESUPER_SP1": case "NAMESUPER_DP1":
 				case "MATCHID_DOUBLE": case "MATCHID": case "FF-MATCH_RESULTSINGLES": case "FF-MATCH_RESULTDOUBLES":
+				case "CROSS":
 					AnimateOutGraphics(print_writer, which_graphics_onscreen);
 					which_graphics_onscreen = "";
 					break;
@@ -310,8 +351,10 @@ public class ATP_2022 extends Scene {
 		case "SCOREBUG":
 			print_writer.println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*In START \0");
 			break;
-		case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB":
+		case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB": case "NAMESUPER_SP": 
+		case "NAMESUPER_DP": case "NAMESUPER_SP1": case "NAMESUPER_DP1":
 		case "MATCHID_DOUBLE": case "MATCHID": case "FF-MATCH_RESULTSINGLES": case "FF-MATCH_RESULTDOUBLES":
+		case "CROSS":
 			print_writer.println("-1 RENDERER*STAGE*DIRECTOR*In START \0");
 			break;
 		}
@@ -322,8 +365,10 @@ public class ATP_2022 extends Scene {
 		case "SCOREBUG":
 			print_writer.println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*Out START \0");
 			break;
-		case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB":
+		case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB": case "NAMESUPER_SP": 
+		case "NAMESUPER_DP": case "NAMESUPER_SP1": case "NAMESUPER_DP1":
 		case "MATCHID_DOUBLE": case "MATCHID": case "FF-MATCH_RESULTSINGLES": case "FF-MATCH_RESULTDOUBLES":
+		case "CROSS":
 			print_writer.println("-1 RENDERER*STAGE*DIRECTOR*Out START \0");
 			break;
 		}
@@ -393,9 +438,11 @@ public class ATP_2022 extends Scene {
 			}
 
 			if (match.getSets() != null) {
-				if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getHomeFirstPlayer().getPlayerId()) {
+				if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getHomeFirstPlayer().getPlayerId() ||
+						match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getHomeSecondPlayer().getPlayerId()) {
 					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$All$MainScoreBug$ServiceDot*FUNCTION*Omo*vis_con SET 1 \0");
-				}else if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getAwayFirstPlayer().getPlayerId()) {
+				}else if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getAwayFirstPlayer().getPlayerId() || 
+						match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getAwaySecondPlayer().getPlayerId()) {
 					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$All$MainScoreBug$ServiceDot*FUNCTION*Omo*vis_con SET 2 \0");
 				}else {
 					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$All$MainScoreBug$ServiceDot*FUNCTION*Omo*vis_con SET 0 \0");
@@ -1450,6 +1497,200 @@ public class ATP_2022 extends Scene {
 		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + NameSuper.get(namesuperId-1).getFirstname() + "\0");
 		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + NameSuper.get(namesuperId-1).getSurname() + "\0");
 		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tInfo" + " SET " + NameSuper.get(namesuperId-1).getSubLine() + "\0");
+		
+		print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 0.980 \0");
+	}
+	public void populateNameSuperSP(PrintWriter print_writer, String viz_sence_path,int playerid,List<Player> Plyr,Match match,String selectedbroadcaster) {
+		
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName" + " SET " + Plyr.get(playerid-1).getFirstname() + "\0");
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName" + " SET " + Plyr.get(playerid-1).getSurname() + "\0");
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag" + " SET " + flag_path + 
+				Plyr.get(playerid-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+		
+		if(Plyr.get(playerid-1).getRankingSingle() == 0) {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed" + " SET " + "" + "\0");
+		}else {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed" + " SET " + Plyr.get(playerid-1).getRankingSingle() + "\0");
+		}
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tInfo" + " SET " + "TATA OPEN MAHARASHTRA 2023" + "\0");
+		
+		print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 0.980 \0");
+	}
+	public void populateNameSuperSP1(PrintWriter print_writer, String viz_sence_path,int playerid,List<Player> Plyr,Match match,String selectedbroadcaster) {
+		
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName" + " SET " + Plyr.get(playerid-1).getFirstname() + "\0");
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName" + " SET " + Plyr.get(playerid-1).getSurname() + "\0");
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag" + " SET " + flag_path + 
+				Plyr.get(playerid-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+		
+		if(Plyr.get(playerid-1).getRankingSingle() == 0) {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed" + " SET " + "" + "\0");
+		}else {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed" + " SET " + Plyr.get(playerid-1).getRankingSingle() + "\0");
+		}
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tInfo" + " SET " + "TATA OPEN MAHARASHTRA 2023" + "\0");
+		
+		print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 0.980 \0");
+	}
+	public void populateNameSuperDP(PrintWriter print_writer, String viz_sence_path,String teamtype,List<Player> Plyr,Match match,String selectedbroadcaster) {
+		
+		switch(teamtype.toUpperCase()) {
+		case TennisUtil.HOME:
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + Plyr.get(match.getHomeFirstPlayerId()-1).getFirstname() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + Plyr.get(match.getHomeFirstPlayerId()-1).getSurname() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag1" + " SET " + flag_path + 
+					Plyr.get(match.getHomeFirstPlayerId()-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			
+			if(Plyr.get(match.getHomeFirstPlayerId()-1).getRankingSingle() == 0) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed1" + " SET " + Plyr.get(match.getHomeFirstPlayerId()-1).getRankingSingle() + "\0");
+			}
+			
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + Plyr.get(match.getHomeSecondPlayerId()-1).getFirstname() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + Plyr.get(match.getHomeSecondPlayerId()-1).getSurname() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag2" + " SET " + flag_path + 
+					Plyr.get(match.getHomeSecondPlayerId()-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			
+			if(Plyr.get(match.getHomeSecondPlayerId()-1).getRankingSingle() == 0) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed2" + " SET " + Plyr.get(match.getHomeSecondPlayerId()-1).getRankingSingle() + "\0");
+			}
+			break;
+		case TennisUtil.AWAY:
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + Plyr.get(match.getAwayFirstPlayerId()-1).getFirstname() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + Plyr.get(match.getAwayFirstPlayerId()-1).getSurname() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag1" + " SET " + flag_path + 
+					Plyr.get(match.getAwayFirstPlayerId()-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			
+			if(Plyr.get(match.getAwayFirstPlayerId()-1).getRankingSingle() == 0) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed1" + " SET " + Plyr.get(match.getAwayFirstPlayerId()-1).getRankingSingle() + "\0");
+			}
+			
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + Plyr.get(match.getAwaySecondPlayerId()-1).getFirstname() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + Plyr.get(match.getAwaySecondPlayerId()-1).getSurname() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag2" + " SET " + flag_path + 
+					Plyr.get(match.getAwaySecondPlayerId()-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			
+			if(Plyr.get(match.getAwaySecondPlayerId()-1).getRankingSingle() == 0) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed2" + " SET " + Plyr.get(match.getAwaySecondPlayerId()-1).getRankingSingle() + "\0");
+			}
+			break;
+		}
+		
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tInfo" + " SET " + "TATA OPEN MAHARASHTRA 2023" + "\0");
+		
+		print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 0.980 \0");
+	}
+	public void populateNameSuperDP1(PrintWriter print_writer, String viz_sence_path,int firstPlayerId,int secondPlayerId,List<Player> Plyr,Match match,String selectedbroadcaster) {
+		
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + Plyr.get(firstPlayerId-1).getFirstname() + "\0");
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + Plyr.get(firstPlayerId-1).getSurname() + "\0");
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag1" + " SET " + flag_path + 
+				Plyr.get(firstPlayerId-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+		
+		if(Plyr.get(firstPlayerId-1).getRankingSingle() == 0) {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed1" + " SET " + "" + "\0");
+		}else {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed1" + " SET " + Plyr.get(firstPlayerId-1).getRankingSingle() + "\0");
+		}
+		
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + Plyr.get(secondPlayerId-1).getFirstname() + "\0");
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + Plyr.get(secondPlayerId-1).getSurname() + "\0");
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag2" + " SET " + flag_path + 
+				Plyr.get(secondPlayerId-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+		
+		if(Plyr.get(secondPlayerId-1).getRankingSingle() == 0) {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed2" + " SET " + "" + "\0");
+		}else {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed2" + " SET " + Plyr.get(secondPlayerId-1).getRankingSingle() + "\0");
+		}
+		
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tInfo" + " SET " + "TATA OPEN MAHARASHTRA 2023" + "\0");
+		
+		print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 0.980 \0");
+	}
+
+	public void populateCross(PrintWriter print_writer, String viz_sence_path,String type,String type1,Match match,String selectedbroadcaster) {
+		
+		switch(match.getMatchType().toUpperCase()) {
+		case TennisUtil.SINGLES:
+			if(type.equalsIgnoreCase(TennisUtil.HOME)) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FIRST-NAME01" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-LAST-NAME01" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FLAG-01" + " SET " + flag_path + 
+						match.getHomeFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			}else if(type.equalsIgnoreCase(TennisUtil.AWAY)) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FIRST-NAME01" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-LAST-NAME01" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FLAG-01" + " SET " + flag_path + 
+						match.getAwayFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			}
+			
+			if(type1.equalsIgnoreCase(TennisUtil.HOME)) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-FIRST-NAME-01" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-LAST-NAME-01" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "00-FLAG-01" + " SET " + flag_path + 
+						match.getHomeFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			}else if(type1.equalsIgnoreCase(TennisUtil.AWAY)) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-FIRST-NAME-01" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-LAST-NAME-01" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "00-FLAG-01" + " SET " + flag_path + 
+						match.getAwayFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			}
+			break;
+		case TennisUtil.DOUBLES:
+			if(type.equalsIgnoreCase(TennisUtil.HOME)) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FIRST-NAME01" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-LAST-NAME01" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FLAG-01" + " SET " + flag_path + 
+						match.getHomeFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+				
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FIRST-NAME02" + " SET " + match.getHomeSecondPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-LAST-NAME02" + " SET " + match.getHomeSecondPlayer().getSurname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FLAG-02" + " SET " + flag_path + 
+						match.getHomeSecondPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			}else if(type.equalsIgnoreCase(TennisUtil.AWAY)) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FIRST-NAME01" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-LAST-NAME01" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FLAG-01" + " SET " + flag_path + 
+						match.getAwayFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+				
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FIRST-NAME02" + " SET " + match.getAwaySecondPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-LAST-NAME02" + " SET " + match.getAwaySecondPlayer().getSurname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FLAG-02" + " SET " + flag_path + 
+						match.getAwaySecondPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			}
+			
+			if(type1.equalsIgnoreCase(TennisUtil.HOME)) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-FIRST-NAME-01" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-LAST-NAME-01" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "00-FLAG-01" + " SET " + flag_path + 
+						match.getHomeFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+				
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-FIRST-NAME02" + " SET " + match.getHomeSecondPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-LAST-NAME02" + " SET " + match.getHomeSecondPlayer().getSurname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-FLAG-02" + " SET " + flag_path + 
+						match.getHomeSecondPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			}else if(type1.equalsIgnoreCase(TennisUtil.AWAY)) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-FIRST-NAME-01" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-LAST-NAME-01" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "00-FLAG-01" + " SET " + flag_path + 
+						match.getAwayFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+				
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-FIRST-NAME02" + " SET " + match.getAwaySecondPlayer().getFirstname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-LAST-NAME02" + " SET " + match.getAwaySecondPlayer().getSurname() + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-FLAG-02" + " SET " + flag_path + 
+						match.getAwaySecondPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			}
+			break;
+		}
+		
 		
 		print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 0.980 \0");
 	}

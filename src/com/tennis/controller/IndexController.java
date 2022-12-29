@@ -277,7 +277,7 @@ public class IndexController
 					throws JAXBException, IllegalAccessException, InvocationTargetException, IOException, NumberFormatException, InterruptedException
 	{	
 		switch (whatToProcess.toUpperCase()) {
-		case "NAMESUPER_GRAPHICS-OPTIONS":
+		case "NAMESUPER_GRAPHICS-OPTIONS": case "NAMESUPER-SP_GRAPHICS-OPTIONS": case "NAMESUPER-SP1_GRAPHICS-OPTIONS": case "NAMESUPER-DP1_GRAPHICS-OPTIONS":
 			return (String) this_ATP_2022.ProcessGraphicOption(whatToProcess, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);
 		case TennisUtil.READ_CLOCK:
 			
