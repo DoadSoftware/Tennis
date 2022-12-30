@@ -217,43 +217,89 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 			break;
 			
 		case 121:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
 			processTennisProcedures('NAMESUPER_GRAPHICS-OPTIONS');
 			break;
 		case 122:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
 			home_team_id = match_data.homeFirstPlayerId;
 			away_team_id = match_data.awayFirstPlayerId;
 			processTennisProcedures('NAMESUPER-SP_GRAPHICS-OPTIONS');
 			break;
 		case 123:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
 			addItemsToList('NAMESUPER-DP-OPTIONS',null);
 			break;
 			
-		case 69:
+		case 84:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
 			processTennisProcedures('NAMESUPER-SP1_GRAPHICS-OPTIONS');
 			break;
-		case 82:
+		case 89:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
 			processTennisProcedures('NAMESUPER-DP1_GRAPHICS-OPTIONS');
 			break;
+			
+		case 69:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
+			processTennisProcedures('SINGLE-LT_MATCHPROMO_GRAPHICS-OPTIONS');
+			break;
+		case 82:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
+			processTennisProcedures('DOUBLE-LT_MATCHPROMO_GRAPHICS-OPTIONS');
+			break;
+			
+		case 81:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
+			processTennisProcedures('SINGLE-MATCHPROMO_GRAPHICS-OPTIONS');
+			break;
+		case 87:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
+			processTennisProcedures('DOUBLE-MATCHPROMO_GRAPHICS-OPTIONS');
+			break;
+		
 		case 90:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
 			addItemsToList('CROSS-OPTIONS',null);
 			break;
 		case 65:
 			processTennisProcedures('POPULATE-LT-MATCH_SCORESINGLES');
 			break;
+		case 68:
+			processTennisProcedures('POPULATE-LT-MATCH_SCOREDOUBLES');
+			break;
 			
 		case 73:
-			//$("#select_event_div").hide();
-			//$("#match_configuration").hide();
-			//$("#football_div").hide();
 			addItemsToList('SCOREBUG_OPTION',null);
-			//processTennisProcedures('APIDATA_GRAPHICS-OPTIONS'); 
 			break;
 		case 76:
-			//$("#select_event_div").hide();
-			//$("#match_configuration").hide();
-			//$("#football_div").hide();
-			addItemsToList('SCOREBUG-SET_OPTION',null);
-			//processTennisProcedures('APIDATA_GRAPHICS-OPTIONS'); 
+			addItemsToList('SCOREBUG-SET_OPTION',null); 
+			break;
+		case 72:
+			processTennisProcedures('POPULATE-SCOREBUG_HEADER');
+			break;
+		case 74:
+			processTennisProcedures('ANIMATE-OUT-SCOREBUG_HEADER');
 			break;				
 		}
 		
@@ -479,9 +525,9 @@ function processUserSelection(whichInput)
 	case 'cancel_graphics_btn':
 		$('#select_graphic_options_div').empty();
 		document.getElementById('select_graphic_options_div').style.display = 'none';
-		//$("#select_event_div").show();
-		//$("#match_configuration").show();
-		//$("#football_div").show();
+		$("#select_event_div").show();
+		$("#match_configuration").show();
+		$("#tennis_div").show();
 		break;
 	case 'select_existing_tennis_matches':
 		if(whichInput.value.toLowerCase().includes('new_match')) {
@@ -514,6 +560,18 @@ function processUserSelection(whichInput)
 		break;
 	case 'populate_cross_btn':
 		processTennisProcedures('POPULATE-CROSS');
+		break;
+	case 'populate_single_match_promo_btn':
+		processTennisProcedures('POPULATE-SINGLE_MATCHPROMO');
+		break;
+	case 'populate_single_ltmatch_promo_btn':
+		processTennisProcedures('POPULATE-SINGLE_LT_MATCHPROMO');
+		break;
+	case 'populate_double_match_promo_btn':
+		processTennisProcedures('POPULATE-DOUBLE_MATCHPROMO');
+		break;
+	case 'populate_lt_double_match_promo_btn':
+		processTennisProcedures('POPULATE-LT_DOUBLE_MATCHPROMO');
 		break;
 	default:
 		if(whichInput) {
@@ -634,6 +692,13 @@ function processTennisProcedures(whatToProcess, whichInput)
 			break;
 		}
 		break;
+	case 'POPULATE-SINGLE_MATCHPROMO':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/FF_MatchIdSingles' + ',' + $('#selectSingleMatchPromo option:selected').val();
+			break;
+		}
+		break;
 	case 'POPULATE-LT-MATCHID':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
@@ -641,10 +706,31 @@ function processTennisProcedures(whatToProcess, whichInput)
 			break;
 		}
 		break;
+	case 'POPULATE-SINGLE_LT_MATCHPROMO':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/LtMatchIdentSingles' + ',' + $('#selectSingleltMatchPromo option:selected').val();
+			break;
+		}
+		break;
+	case 'POPULATE-DOUBLE_MATCHPROMO':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/FF_MatchIdDoubles'  + ',' + $('#selectDoubleMatchPromo option:selected').val();
+			break;
+		}
+		break;
 	case 'POPULATE-LT-MATCHID_DOUBLE':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
 			value_to_process = '/Default/LtMatchIdentDoubles';
+			break;
+		}
+		break;
+	case 'POPULATE-LT_DOUBLE_MATCHPROMO':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/LtMatchIdentDoubles' + ',' + $('#selectltDoubleMatchPromo option:selected').val();
 			break;
 		}
 		break;
@@ -669,7 +755,7 @@ function processTennisProcedures(whatToProcess, whichInput)
 			break;
 		}
 		break;
-	case 'POPULATE-LT-MATCH_RESULTDOUBLES':
+	case 'POPULATE-LT-MATCH_RESULTDOUBLES': case 'POPULATE-LT-MATCH_SCOREDOUBLES':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
 			value_to_process = '/Default/LtMatchResultsDoubles';
@@ -790,7 +876,8 @@ function processTennisProcedures(whatToProcess, whichInput)
         	case 'POPULATE-SCOREBUG': case 'POPULATE-LT-MATCH_RESULTSINGLES': case 'POPULATE-LT-MATCHID': case 'POPULATE-MATCHID': case 'POPULATE-MATCHID_DOUBLE':
         	case 'POPULATE-LT-MATCHID_DOUBLE': case 'POPULATE-NAMESUPERDB': case 'POPULATE-LT-MATCH_RESULTDOUBLES': case 'POPULATE-FF-MATCH_RESULTSINGLES':
         	case 'POPULATE-FF-MATCH_RESULTDOUBLES': case 'POPULATE-NAMESUPER-SP': case 'POPULATE-NAMESUPER-DP': case 'POPULATE-NAMESUPER-SP1': case 'POPULATE-NAMESUPER-DP1':
-        	case 'POPULATE-CROSS': case "POPULATE-LT-MATCH_SCORESINGLES":
+        	case 'POPULATE-CROSS': case "POPULATE-LT-MATCH_SCORESINGLES": case 'POPULATE-SINGLE_MATCHPROMO': case 'POPULATE-DOUBLE_MATCHPROMO': case 'POPULATE-SINGLE_LT_MATCHPROMO':
+        	case 'POPULATE-LT_DOUBLE_MATCHPROMO': case 'POPULATE-LT-MATCH_SCOREDOUBLES':
         		if(confirm('Animate In?') == true){
 					switch(whatToProcess){
 					case 'POPULATE-SCOREBUG':
@@ -798,6 +885,12 @@ function processTennisProcedures(whatToProcess, whichInput)
 						break;
 					case 'POPULATE-MATCHID':
 						processTennisProcedures('ANIMATE-IN-MATCHID');				
+						break;
+					case 'POPULATE-SINGLE_MATCHPROMO':
+						processTennisProcedures('ANIMATE-IN-SINGLE_MATCHPROMO');				
+						break;
+					case 'POPULATE-DOUBLE_MATCHPROMO':
+						processTennisProcedures('ANIMATE-IN-DOUBLE_MATCHPROMO');				
 						break;
 					case 'POPULATE-MATCHID_DOUBLE':
 						processTennisProcedures('ANIMATE-IN-MATCHID_DOUBLE');				
@@ -841,8 +934,29 @@ function processTennisProcedures(whatToProcess, whichInput)
 					case "POPULATE-LT-MATCH_SCORESINGLES":
 						processTennisProcedures('ANIMATE-LT-MATCH_SCORESINGLES');				
 						break;
+					case 'POPULATE-LT-MATCH_SCOREDOUBLES':
+						processTennisProcedures('ANIMATE-LT-MATCH_SCOREDOUBLES');				
+						break;
+					case 'POPULATE-SINGLE_LT_MATCHPROMO':
+						processTennisProcedures('ANIMATE-LT-SINGLE_LT_MATCHPROMO');				
+						break;
+					case 'POPULATE-LT_DOUBLE_MATCHPROMO':
+						processTennisProcedures('ANIMATE-LT-DOUBLE_LT_MATCHPROMO');				
+						break;
 					}
 				}
+				break;
+			case 'SINGLE-MATCHPROMO_GRAPHICS-OPTIONS':
+				addItemsToList('SINGLE-MATCHPROMO-OPTIONS',data);
+				break;
+			case 'SINGLE-LT_MATCHPROMO_GRAPHICS-OPTIONS':
+				addItemsToList('SINGLE-LT_MATCHPROMO-OPTIONS',data);
+				break;
+			case 'DOUBLE-LT_MATCHPROMO_GRAPHICS-OPTIONS':
+				addItemsToList('DOUBLE-LT_MATCHPROMO-OPTIONS',data);
+				break;
+			case 'DOUBLE-MATCHPROMO_GRAPHICS-OPTIONS':
+				addItemsToList('DOUBLE-MATCHPROMO-OPTIONS',data);
 				break;
 			case 'NAMESUPER_GRAPHICS-OPTIONS':
 				addItemsToList('NAMESUPER-OPTIONS',data);
@@ -908,12 +1022,18 @@ function processVariousStats(whatToProcess, whichInput)
 		}
 		break;
 	case 'CHECK-TIE-BREAK-WINNER':
+		var race_number;
+		if(match_data.tierBreakerRule == 'race_to_7'){
+			race_number = 7;
+		}else if(match_data.tierBreakerRule == 'race_to_10'){
+			race_number = 10;
+		}
 		//alert(parseInt($('#homeScore').val()));
-		if(parseInt($('#homeScore').val()) >= 7 || parseInt($('#awayScore').val()) >= 7) {
-			if(parseInt($('#homeScore').val()) >= 7 && (parseInt($('#homeScore').val()) - parseInt($('#awayScore').val())) >= 2) {
+		if(parseInt($('#homeScore').val()) >= race_number || parseInt($('#awayScore').val()) >= race_number) {
+			if(parseInt($('#homeScore').val()) >= race_number && (parseInt($('#homeScore').val()) - parseInt($('#awayScore').val())) >= 2) {
 				$('#select_game_winner').val('home');
 				processUserSelection($('#end_game_btn'));
-			} else if (parseInt($('#awayScore').val()) >= 7 && (parseInt($('#awayScore').val()) - parseInt($('#homeScore').val())) >= 2) {
+			} else if (parseInt($('#awayScore').val()) >= race_number && (parseInt($('#awayScore').val()) - parseInt($('#homeScore').val())) >= 2) {
 				$('#select_game_winner').val('away');
 				processUserSelection($('#end_game_btn'));
 			}
@@ -1074,6 +1194,191 @@ function addItemsToList(whatToProcess, dataToProcess)
 		    
 			document.getElementById('select_graphic_options_div').style.display = '';
 
+			break;
+		}
+		break;
+	case 'SINGLE-MATCHPROMO-OPTIONS': case 'DOUBLE-MATCHPROMO-OPTIONS': case 'SINGLE-LT_MATCHPROMO-OPTIONS': case 'DOUBLE-LT_MATCHPROMO-OPTIONS':
+		switch ($('#selectedBroadcaster').val().toUpperCase()){
+		case 'ATP_2022':
+			$('#select_graphic_options_div').empty();
+	
+			header_text = document.createElement('h6');
+			header_text.innerHTML = 'Select Graphic Options';
+			document.getElementById('select_graphic_options_div').appendChild(header_text);
+			
+			table = document.createElement('table');
+			table.setAttribute('class', 'table table-bordered');
+					
+			tbody = document.createElement('tbody');
+	
+			table.appendChild(tbody);
+			document.getElementById('select_graphic_options_div').appendChild(table);
+			
+			row = tbody.insertRow(tbody.rows.length);
+			switch(whatToProcess){
+				case 'SINGLE-MATCHPROMO-OPTIONS':
+					select = document.createElement('select');
+					select.style = 'width:130px';
+					select.id = 'selectSingleMatchPromo';
+					select.name = select.id;
+					
+					match_data.forEach(function(smp,index,arr1){
+						if(smp.homePlayerSecond == 0 && smp.awayPlayerSecond == 0){
+							option = document.createElement('option');
+							option.value = smp.matchnumber;
+							option.text = smp.matchnumber + '. ' + smp.home_FirstPlayer.full_name + ' - ' + smp.away_FirstPlayer.full_name;
+							select.appendChild(option);
+						}
+					});
+					
+					row.insertCell(0).appendChild(select);
+					
+					option = document.createElement('input');
+			   	 	option.type = 'button';
+				    option.name = 'populate_single_match_promo_btn';
+				    option.value = 'Populate Matah Promo';
+				    option.id = option.name;
+				    option.setAttribute('onclick',"processUserSelection(this)");
+				    
+				    div = document.createElement('div');
+				    div.append(option);
+		
+					option = document.createElement('input');
+					option.type = 'button';
+					option.name = 'cancel_graphics_btn';
+					option.id = option.name;
+					option.value = 'Cancel';
+					option.setAttribute('onclick','processUserSelection(this)');
+			
+				    div.append(option);
+				    
+				    row.insertCell(1).appendChild(div);
+				    
+					document.getElementById('select_graphic_options_div').style.display = '';
+					break;
+				case 'SINGLE-LT_MATCHPROMO-OPTIONS':
+					select = document.createElement('select');
+					select.style = 'width:130px';
+					select.id = 'selectSingleltMatchPromo';
+					select.name = select.id;
+					
+					match_data.forEach(function(smp,index,arr1){
+						if(smp.homePlayerSecond == 0 && smp.awayPlayerSecond == 0){
+							option = document.createElement('option');
+							option.value = smp.matchnumber;
+							option.text = smp.matchnumber + '. ' +smp.home_FirstPlayer.full_name + ' - ' + smp.away_FirstPlayer.full_name ;
+							select.appendChild(option);
+						}
+					});
+					
+					row.insertCell(0).appendChild(select);
+					
+					option = document.createElement('input');
+			   	 	option.type = 'button';
+				    option.name = 'populate_single_ltmatch_promo_btn';
+				    option.value = 'Populate Matah Promo';
+				    option.id = option.name;
+				    option.setAttribute('onclick',"processUserSelection(this)");
+				    
+				    div = document.createElement('div');
+				    div.append(option);
+		
+					option = document.createElement('input');
+					option.type = 'button';
+					option.name = 'cancel_graphics_btn';
+					option.id = option.name;
+					option.value = 'Cancel';
+					option.setAttribute('onclick','processUserSelection(this)');
+			
+				    div.append(option);
+				    
+				    row.insertCell(1).appendChild(div);
+				    
+					document.getElementById('select_graphic_options_div').style.display = '';
+					break;
+				case 'DOUBLE-MATCHPROMO-OPTIONS':
+					select = document.createElement('select');
+					select.style = 'width:130px';
+					select.id = 'selectDoubleMatchPromo';
+					select.name = select.id;
+					
+					match_data.forEach(function(smp,index,arr1){
+						if(smp.homePlayerSecond != 0 && smp.awayPlayerSecond != 0){
+							option = document.createElement('option');
+							option.value = smp.matchnumber;
+							option.text = smp.matchnumber + '. ' +smp.home_FirstPlayer.ticker_name + ' / ' + smp.home_SecondPlayer.ticker_name + ' - ' + 
+								smp.away_FirstPlayer.ticker_name + ' / ' + smp.away_SecondPlayer.ticker_name;
+							select.appendChild(option);
+						}
+					});
+					
+					row.insertCell(0).appendChild(select);
+					
+					option = document.createElement('input');
+			   	 	option.type = 'button';
+				    option.name = 'populate_double_match_promo_btn';
+				    option.value = 'Populate Matah Promo';
+				    option.id = option.name;
+				    option.setAttribute('onclick',"processUserSelection(this)");
+				    
+				    div = document.createElement('div');
+				    div.append(option);
+		
+					option = document.createElement('input');
+					option.type = 'button';
+					option.name = 'cancel_graphics_btn';
+					option.id = option.name;
+					option.value = 'Cancel';
+					option.setAttribute('onclick','processUserSelection(this)');
+			
+				    div.append(option);
+				    
+				    row.insertCell(1).appendChild(div);
+				    
+					document.getElementById('select_graphic_options_div').style.display = '';
+					break;
+				case 'DOUBLE-LT_MATCHPROMO-OPTIONS':
+					select = document.createElement('select');
+					select.style = 'width:130px';
+					select.id = 'selectltDoubleMatchPromo';
+					select.name = select.id;
+					
+					match_data.forEach(function(smp,index,arr1){
+						if(smp.homePlayerSecond != 0 && smp.awayPlayerSecond != 0){
+							option = document.createElement('option');
+							option.value = smp.matchnumber;
+							option.text = smp.matchnumber + '. ' +smp.home_FirstPlayer.ticker_name + ' / ' + smp.home_SecondPlayer.ticker_name + ' - ' + 
+								smp.away_FirstPlayer.ticker_name + ' / ' + smp.away_SecondPlayer.ticker_name;
+							select.appendChild(option);
+						}
+					});
+					
+					row.insertCell(0).appendChild(select);
+					
+					option = document.createElement('input');
+			   	 	option.type = 'button';
+				    option.name = 'populate_lt_double_match_promo_btn';
+				    option.value = 'Populate Matah Promo';
+				    option.id = option.name;
+				    option.setAttribute('onclick',"processUserSelection(this)");
+				    
+				    div = document.createElement('div');
+				    div.append(option);
+		
+					option = document.createElement('input');
+					option.type = 'button';
+					option.name = 'cancel_graphics_btn';
+					option.id = option.name;
+					option.value = 'Cancel';
+					option.setAttribute('onclick','processUserSelection(this)');
+			
+				    div.append(option);
+				    
+				    row.insertCell(1).appendChild(div);
+				    
+					document.getElementById('select_graphic_options_div').style.display = '';
+					break;
+			}
 			break;
 		}
 		break;

@@ -102,6 +102,7 @@
 			      <select id="tierBreakerRule" name="tierBreakerRule"
 			      		class="browser-default custom-select custom-select-sm">
 				        <option value="race_to_7">Race To 7 Points</option>
+				        <option value="race_to_10">Race To 10 Points</option>
 			      </select>
 			    </div>
 			  </div>
