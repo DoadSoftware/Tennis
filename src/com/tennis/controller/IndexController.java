@@ -277,6 +277,29 @@ public class IndexController
 					throws JAXBException, IllegalAccessException, InvocationTargetException, IOException, NumberFormatException, InterruptedException
 	{	
 		switch (whatToProcess.toUpperCase()) {
+		case "LOG_SET_UNDO":
+			
+			for(Set set : session_match.getSets()) {
+				if(set.getSet_number() == Integer.valueOf(valueToProcess.split(",")[0])) {
+					for(Game game : set.getGames()) {
+						if(game.getGame_number() == Integer.valueOf(valueToProcess.split(",")[1])) {
+							if(valueToProcess.split(",")[2].equalsIgnoreCase(TennisUtil.GAME)) {
+								game.setGame_winner(TennisUtil.HOME);
+							}else if(valueToProcess.split(",")[3].equalsIgnoreCase(TennisUtil.GAME)) {
+								game.setGame_winner(TennisUtil.AWAY);
+							}
+							game.setHome_score(valueToProcess.split(",")[2]);
+							game.setAway_score(valueToProcess.split(",")[3]);
+						}
+					}
+				}
+			}
+			
+			JAXBContext.newInstance(Match.class).createMarshaller().marshal(session_match, 
+					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + session_match.getMatchFileName()));
+
+			return JSONObject.fromObject(session_match).toString();
+
 		case "NAMESUPER_GRAPHICS-OPTIONS": case "NAMESUPER-SP_GRAPHICS-OPTIONS": case "NAMESUPER-SP1_GRAPHICS-OPTIONS": case "NAMESUPER-DP1_GRAPHICS-OPTIONS":
 		case "SINGLE-MATCHPROMO_GRAPHICS-OPTIONS": case "DOUBLE-MATCHPROMO_GRAPHICS-OPTIONS": case "SINGLE-LT_MATCHPROMO_GRAPHICS-OPTIONS": case "DOUBLE-LT_MATCHPROMO_GRAPHICS-OPTIONS":
 			return (String) this_ATP_2022.ProcessGraphicOption(whatToProcess, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);

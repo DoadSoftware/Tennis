@@ -173,6 +173,9 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 
 	switch (whatToProcess) {
 	case 'LOGGER_FORM_KEYPRESS':
+		if($('#log_game_undo_btn')) { // Ignore keypress when user is working with UNDO
+			return false;
+		}
 		switch (dataToProcess) {
 		case 32:
 			processTennisProcedures('CLEAR-ALL');
@@ -311,6 +314,34 @@ function processUserSelection(whichInput)
 	var error_msg = '';
 
 	switch ($(whichInput).attr('name')) {
+	case 'log_game_undo_btn':
+		if($('#undo_home_score_txt').val().toUpperCase() != 'GAME' && $('#undo_away_score_txt').val().toUpperCase() != 'GAME') {
+			alert('Either the home score or the away score must have the value GAME');
+			return false;
+		}
+		processWaitingButtonSpinner('START_WAIT_TIMER');
+		processTennisProcedures('LOG_SET_UNDO',null);
+		break;
+	case 'select_undo_set_number':
+		addItemsToList('LOAD_GAMES', null);
+		break;
+	case 'select_undo_game_number':
+		addItemsToList('LOAD_GAME_SCORES', null);
+		break;
+	case 'undo_set_btn':
+		if(match_data.sets.length <= 0) {
+			alert('No set started yet. Undo is not available');
+			return false;			
+		}
+		error_msg = 'No Set/Game found. Undo not available';
+		match_data.sets.forEach(function(set,set_index,set_arr){
+			if(set.games.length <= 0) {
+				alert('No game started yet. Undo is not available');
+				return false;			
+			}
+		});
+		addItemsToList('LOAD_UNDO', match_data);
+		break;
 	case 'exit_stat_page_btn':
 		document.tennis_stat_form.method = 'post';
 		document.tennis_stat_form.action = 'stat_to_match';
@@ -517,7 +548,13 @@ function processUserSelection(whichInput)
 	case 'log_saves_btn':
 		processTennisProcedures('SAVES',match_data);
 		break;
-	case 'cancel_undo_btn': case 'cancel_overwrite_btn': case 'cancel_event_btn': case 'cancel_saves_btn':
+	case 'cancel_undo_btn':
+		addItemsToList('LOAD_EVENTS',match_data);
+		document.getElementById('tennis_div').style.display = '';
+		document.getElementById('select_event_div').style.display = '';
+		processWaitingButtonSpinner('END_WAIT_TIMER');
+		break;
+	case 'cancel_overwrite_btn': case 'cancel_event_btn': case 'cancel_saves_btn':
 		document.getElementById('select_event_div').style.display = 'none';
 		addItemsToList('LOAD_EVENTS',match_data); 
 		processWaitingButtonSpinner('END_WAIT_TIMER');
@@ -634,6 +671,10 @@ function processTennisProcedures(whatToProcess, whichInput)
 	var value_to_process; 
 	
 	switch(whatToProcess) {
+	case 'LOG_SET_UNDO':
+		value_to_process = $('#select_undo_set_number option:selected').val() + ',' + $('#select_undo_game_number option:selected').val()
+			+ ',' + $('#undo_home_score_txt').val() + ',' + $('#undo_away_score_txt').val();
+		break;
 	case 'LOG_STAT':
 		value_to_process = whichInput.id;
 		break;
@@ -667,9 +708,6 @@ function processTennisProcedures(whatToProcess, whichInput)
 		break;
 	case 'LOG_SERVE':
 		value_to_process = $('#select_serving_player option:selected').val();
-		break;
-	case 'UNDO':
-		value_to_process = $('#number_of_undo_txt').val();
 		break;
 	case 'POPULATE-SCOREBUG':
 		switch ($('#selectedBroadcaster').val()) {
@@ -836,14 +874,13 @@ function processTennisProcedures(whatToProcess, whichInput)
 					}
 				}
 				break;
-    		case 'UNDO':
-        		addItemsToList('LOAD_MATCH',data);
-				addItemsToList('LOAD_EVENTS',data);
-				document.getElementById('select_event_div').style.display = 'none';
-        		break;
-			case 'LOG_SCORE': case 'LOAD_MATCH': case 'LOG_SET': case 'LOG_GAME': case 'LOAD_MATCH_AFTER_STAT_LOG':
+			case 'LOG_SCORE': case 'LOAD_MATCH': case 'LOG_SET': case 'LOG_GAME': case 'LOAD_MATCH_AFTER_STAT_LOG': case 'LOG_SET_UNDO':
         		addItemsToList('LOAD_MATCH',data);
 				switch(whatToProcess) {
+				case 'LOG_SET_UNDO':
+					addItemsToList('LOAD_GAMES', data);
+					addItemsToList('LOAD_GAME_SCORES', data);
+					break;
 				case 'LOG_SCORE':
 					if(processVariousStats('CHECK-ADVANTAGE-POINT',whichInput) == false) {
 						if(data.sets[data.sets.length - 1].games[data.sets[data.sets.length - 1]
@@ -1685,77 +1722,132 @@ function addItemsToList(whatToProcess, dataToProcess)
 			break;
 		}
 		break;
+
+	case 'LOAD_GAME_SCORES':
+		
+		match_data.sets.forEach(function(set,set_index,set_arr){
+			if(set.set_number == $('#select_undo_set_number option:selected').val()) {
+				set.games.forEach(function(game,game_index,game_arr){
+					if(game.game_number == $('#select_undo_game_number option:selected').val()) {
+						$('#undo_home_score_txt').val(game.home_score);
+						$('#undo_away_score_txt').val(game.away_score);
+					}
+				});
+			}
+		});
+		
+		break;
 	
+	case 'LOAD_GAMES':
+		
+		$('#select_undo_game_number').empty();
+		
+		select = document.getElementById('select_undo_game_number');
+		match_data.sets.forEach(function(set,set_index,set_arr){
+			if(set.set_number == $('#select_undo_set_number option:selected').val()) {
+				set.games.forEach(function(game,game_index,game_arr){
+					option = document.createElement('option');
+					option.value = game.game_number;
+				    option.text = 'Game ' + game.game_number + ' [' + game.home_score + ':' + game.away_score + ']';
+				    select.appendChild(option);
+				});
+				
+			}
+		});
+		break;
+		
 	case 'LOAD_UNDO':
 
 		$('#select_event_div').empty();
 		
-		if(dataToProcess.events.length > 0) {
+		table = document.createElement('table');
+		table.setAttribute('class', 'table table-bordered');
+				
+		tbody = document.createElement('tbody');
+		row = tbody.insertRow(tbody.rows.length);
+		
+		select = document.createElement('select');
+		select.id = 'select_undo_set_number';
+		select.name = select.id;
+		match_data.sets.forEach(function(set,set_index,set_arr){
+			option = document.createElement('option');
+			option.value = set.set_number;
+		    option.text = 'Set ' + set.set_number;
+		    select.appendChild(option);
+		});
+		select.setAttribute('onchange','processUserSelection(this);');
+		header_text = document.createElement('label');
+		header_text.innerHTML = 'Select Set: '
+		header_text.htmlFor = select.id;
+		row.insertCell(0).appendChild(header_text).appendChild(select);
 
-			table = document.createElement('table');
-			table.setAttribute('class', 'table table-bordered');
-					
-			tbody = document.createElement('tbody');
-			row = tbody.insertRow(tbody.rows.length);
+		select = document.createElement('select');
+		select.id = 'select_undo_game_number';
+		select.name = select.id;
+		match_data.sets[0].games.forEach(function(game,game_index,game_arr){
+			option = document.createElement('option');
+			option.value = game.game_number;
+		    option.text = 'Game ' + game.game_number + ' [' + game.home_score + ':' + game.away_score + ']';
+		    select.appendChild(option);
+		});
+		header_text = document.createElement('label');
+		header_text.innerHTML = 'Select Game: '
+		header_text.htmlFor = select.id;
+		select.setAttribute('onchange','processUserSelection(this);');
+		row.insertCell(1).appendChild(header_text).appendChild(select);
+
+	    div = document.createElement('div');
+
+	    option = document.createElement('input');
+	    option.type = 'text';
+	    option.name = 'undo_home_score_txt';
+	    option.id = option.name;
+		header_text = document.createElement('label');
+		header_text.innerHTML = 'Home Score: '
+		header_text.htmlFor = option.id;
+	    div.append(header_text);
+		div.append(option);
+
+	    option = document.createElement('input');
+	    option.type = 'text';
+	    option.name = 'undo_away_score_txt';
+	    option.id = option.name;
+		header_text = document.createElement('label');
+		header_text.innerHTML = 'Away Score: '
+		header_text.htmlFor = option.id;
+	    div.append(header_text);
+		div.append(option);
+
+		row.insertCell(2).appendChild(div);
 			
-			select = document.createElement('select');
-			select.id = 'select_undo';
-			dataToProcess.events = dataToProcess.events.reverse();
-			var max_loop = dataToProcess.events.length;
-			if(max_loop > 5) {
-				max_loop = 5;
-			}
-			for(var i = 0; i < max_loop; i++) {
-				option = document.createElement('option');
-				option.value = dataToProcess.events[i].eventNumber;
-			    option.text = dataToProcess.events[i].eventNumber + '. ' + dataToProcess.events[i].eventType;
-			    select.appendChild(option);
-			}
-			header_text = document.createElement('label');
-			header_text.innerHTML = 'Last Five Events: '
-			header_text.htmlFor = select.id;
-			row.insertCell(0).appendChild(header_text).appendChild(select);
+	    div = document.createElement('div');
 
-		    option = document.createElement('input');
-		    option.type = 'text';
-		    option.name = 'number_of_undo_txt';
-		    option.value = '1';
-		    option.id = option.name;
-		    option.setAttribute('onblur','processUserSelection(this)');
-			header_text = document.createElement('label');
-			header_text.innerHTML = 'Number of undos: '
-			header_text.htmlFor = option.id;
-			row.insertCell(1).appendChild(header_text).appendChild(option);
-			
-		    div = document.createElement('div');
+	    option = document.createElement('input');
+	    option.type = 'button';
+	    option.name = 'log_game_undo_btn';
+	    option.id = option.name;
+	    option.value = 'Undo Game Score';
+	    option.setAttribute('onclick','processUserSelection(this);');
+	    
+	    div.append(option);
 
-		    option = document.createElement('input');
-		    option.type = 'button';
-		    option.name = 'log_undo_btn';
-		    option.id = option.name;
-		    option.value = 'Undo Last Event';
-		    option.setAttribute('onclick','processUserSelection(this);');
-		    
-		    div.append(option);
+		option = document.createElement('input');
+		option.type = 'button';
+		option.name = 'cancel_undo_btn';
+		option.id = option.name;
+		option.value = 'Cancel';
+		option.setAttribute('onclick','processUserSelection(this)');
 
-			option = document.createElement('input');
-			option.type = 'button';
-			option.name = 'cancel_undo_btn';
-			option.id = option.name;
-			option.value = 'Cancel';
-			option.setAttribute('onclick','processUserSelection(this)');
+	    div.append(document.createElement('br'));
+	    div.append(option);
 
-		    div.append(document.createElement('br'));
-		    div.append(option);
+	    row.insertCell(3).appendChild(div);
 
-		    row.insertCell(2).appendChild(div);
-
-			table.appendChild(tbody);
-			document.getElementById('select_event_div').appendChild(table);
-
-		} else {
-			return false;
-		}
+		table.appendChild(tbody);
+		
+		document.getElementById('select_event_div').appendChild(table);
+		
+		addItemsToList('LOAD_GAME_SCORES', null);
 		
 		break;
 	
@@ -1802,6 +1894,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 					option.text = match_data.homeFirstPlayer.full_name;
 				}
 				select.appendChild(option);
+				
 				option = document.createElement('option');
 				option.value = 'away';	
 				if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
@@ -1840,6 +1933,18 @@ function addItemsToList(whatToProcess, dataToProcess)
 				div.appendChild(option);
 
 				row.insertCell(3).appendChild(option);
+
+			    option = document.createElement('input');
+			    option.type = 'button';
+			    option.name = 'undo_set_btn';
+			    option.value = 'UNDO Set';
+			    option.style = 'width:80px;';
+			    option.style.backgroundColor = 'Pink';
+			    option.id = option.name;
+			    option.setAttribute('onclick','processUserSelection(this);');
+				div.appendChild(option);
+
+				row.insertCell(4).appendChild(option);
 
 				break;
 
