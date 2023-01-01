@@ -303,6 +303,9 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 			break;
 		case 74:
 			processTennisProcedures('ANIMATE-OUT-SCOREBUG_HEADER');
+			break;
+		case 83:
+			processTennisProcedures('POPULATE-MATCH_STATS');
 			break;				
 		}
 		
@@ -723,6 +726,13 @@ function processTennisProcedures(whatToProcess, whichInput)
 			break;
 		}
 		break
+	case 'POPULATE-MATCH_STATS':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/FF_MatchStats1';
+			break;
+		}
+		break;
 	case 'POPULATE-MATCHID':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
@@ -839,9 +849,9 @@ function processTennisProcedures(whatToProcess, whichInput)
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
 			if(match_data.matchType == 'singles'){
-				value_to_process = '/Default/LtCross_Court_Single_Auto' + ',' + $('#selectCross1 option:selected').val() + ',' + $('#selectCross2 option:selected').val();
+				value_to_process = '/Default/LtCross_Court_Single_Auto' + ',' + $('#selectCross1 option:selected').val();
 			}else if(match_data.matchType == 'doubles'){
-				value_to_process = '/Default/LtCross_Court_Doubles_Auto' + ',' + $('#selectCross1 option:selected').val() + ',' + $('#selectCross2 option:selected').val();
+				value_to_process = '/Default/LtCross_Court_Doubles_Auto' + ',' + $('#selectCross1 option:selected').val();
 			}
 			break;
 		}
@@ -914,7 +924,7 @@ function processTennisProcedures(whatToProcess, whichInput)
         	case 'POPULATE-LT-MATCHID_DOUBLE': case 'POPULATE-NAMESUPERDB': case 'POPULATE-LT-MATCH_RESULTDOUBLES': case 'POPULATE-FF-MATCH_RESULTSINGLES':
         	case 'POPULATE-FF-MATCH_RESULTDOUBLES': case 'POPULATE-NAMESUPER-SP': case 'POPULATE-NAMESUPER-DP': case 'POPULATE-NAMESUPER-SP1': case 'POPULATE-NAMESUPER-DP1':
         	case 'POPULATE-CROSS': case "POPULATE-LT-MATCH_SCORESINGLES": case 'POPULATE-SINGLE_MATCHPROMO': case 'POPULATE-DOUBLE_MATCHPROMO': case 'POPULATE-SINGLE_LT_MATCHPROMO':
-        	case 'POPULATE-LT_DOUBLE_MATCHPROMO': case 'POPULATE-LT-MATCH_SCOREDOUBLES':
+        	case 'POPULATE-LT_DOUBLE_MATCHPROMO': case 'POPULATE-LT-MATCH_SCOREDOUBLES': case 'POPULATE-MATCH_STATS':
         		if(confirm('Animate In?') == true){
 					switch(whatToProcess){
 					case 'POPULATE-SCOREBUG':
@@ -979,6 +989,9 @@ function processTennisProcedures(whatToProcess, whichInput)
 						break;
 					case 'POPULATE-LT_DOUBLE_MATCHPROMO':
 						processTennisProcedures('ANIMATE-LT-DOUBLE_LT_MATCHPROMO');				
+						break;
+					case 'POPULATE-MATCH_STATS':
+						processTennisProcedures('ANIMATE-MATCH_STATS');				
 						break;
 					}
 				}
@@ -1255,7 +1268,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 			switch(whatToProcess){
 				case 'SINGLE-MATCHPROMO-OPTIONS':
 					select = document.createElement('select');
-					select.style = 'width:130px';
+					select.style = 'width:300px';
 					select.id = 'selectSingleMatchPromo';
 					select.name = select.id;
 					
@@ -1295,7 +1308,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 					break;
 				case 'SINGLE-LT_MATCHPROMO-OPTIONS':
 					select = document.createElement('select');
-					select.style = 'width:130px';
+					select.style = 'width:300px';
 					select.id = 'selectSingleltMatchPromo';
 					select.name = select.id;
 					
@@ -1335,7 +1348,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 					break;
 				case 'DOUBLE-MATCHPROMO-OPTIONS':
 					select = document.createElement('select');
-					select.style = 'width:130px';
+					select.style = 'width:300px';
 					select.id = 'selectDoubleMatchPromo';
 					select.name = select.id;
 					
@@ -1376,7 +1389,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 					break;
 				case 'DOUBLE-LT_MATCHPROMO-OPTIONS':
 					select = document.createElement('select');
-					select.style = 'width:130px';
+					select.style = 'width:300px';
 					select.id = 'selectltDoubleMatchPromo';
 					select.name = select.id;
 					
@@ -1449,32 +1462,15 @@ function addItemsToList(whatToProcess, dataToProcess)
 					
 					option = document.createElement('option');
 					option.value = 'home';
-					option.text = 'Home' ;
+					option.text = match_data.homeFirstPlayer.full_name ;
 					select.appendChild(option);
 					
 					option = document.createElement('option');
 					option.value = 'away';
-					option.text = 'Away' ;
+					option.text = match_data.awayFirstPlayer.full_name ;
 					select.appendChild(option);
 					
 					row.insertCell(0).appendChild(select);
-					
-					select = document.createElement('select');
-					select.style = 'width:130px';
-					select.id = 'selectCross2';
-					select.name = select.id;
-					
-					option = document.createElement('option');
-					option.value = 'away';
-					option.text = 'Away' ;
-					select.appendChild(option);
-					
-					option = document.createElement('option');
-					option.value = 'home';
-					option.text = 'Home' ;
-					select.appendChild(option);
-					
-					row.insertCell(1).appendChild(select);
 					
 					option = document.createElement('input');
 			   	 	option.type = 'button';
@@ -1495,7 +1491,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 			
 				    div.append(option);
 				    
-				    row.insertCell(2).appendChild(div);
+				    row.insertCell(1).appendChild(div);
 				    
 					document.getElementById('select_graphic_options_div').style.display = '';
 					
@@ -2233,6 +2229,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 					if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
 					    cell.innerHTML = cell.innerHTML + '/' + match_data.awaySecondPlayer.full_name;
 					}
+					
 					match_data.sets.forEach(function(set,set_index,set_arr){
 						text = 0; 
 						set.games.forEach(function(game,game_index,game_arr){
