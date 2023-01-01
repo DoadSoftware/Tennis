@@ -44,7 +44,7 @@ public class IndexController
 	@Autowired
 	TennisService tennisService;
 	
-	public static String expiry_date = "2022-12-31";
+	public static String expiry_date = "2023-12-31";
 	public static String current_date = "";
 	public static String error_message = "";
 	public static ATP_2022 this_ATP_2022;

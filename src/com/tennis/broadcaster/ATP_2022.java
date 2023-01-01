@@ -85,7 +85,7 @@ public class ATP_2022 extends Scene {
 		case "POPULATE-NAMESUPER-SP": case "POPULATE-NAMESUPER-DP": case "POPULATE-NAMESUPER-SP1": case "POPULATE-NAMESUPER-DP1": case "POPULATE-LT-MATCH_SCORESINGLES":
 		case "POPULATE-SINGLE_LT_MATCHPROMO": case "POPULATE-LT_DOUBLE_MATCHPROMO": case "POPULATE-LT-MATCH_SCOREDOUBLES":
 		case "POPULATE-MATCHID_DOUBLE": case "POPULATE-MATCHID": case "POPULATE-FF-MATCH_RESULTSINGLES": case "POPULATE-FF-MATCH_RESULTDOUBLES": case "POPULATE-SINGLE_MATCHPROMO":	
-		case "POPULATE-DOUBLE_MATCHPROMO": case "POPULATE-MATCH_STATS":
+		case "POPULATE-DOUBLE_MATCHPROMO": case "POPULATE-MATCH_STATS": case "POPULATE-SPEED":
 		case "POPULATE-CROSS":
 			switch (whatToProcess.toUpperCase()) {
 			
@@ -216,6 +216,10 @@ public class ATP_2022 extends Scene {
 				break;
 			case "POPULATE-CROSS":
 				populateCross(print_writer, valueToProcess.split(",")[0],valueToProcess.split(",")[1],match, session_selected_broadcaster);
+				break;
+			case "POPULATE-SPEED":
+				populateSpeed(print_writer, valueToProcess.split(",")[0],Integer.valueOf(valueToProcess.split(",")[1]),match, session_selected_broadcaster);
+				break;
 			case "POPULATE-MATCH_STATS":
 				populateMatchStats(print_writer, valueToProcess.split(",")[0],match, session_selected_broadcaster);
 				break;
@@ -234,7 +238,7 @@ public class ATP_2022 extends Scene {
 		case "ANIMATE-LT-MATCH_SCORESINGLES": case "ANIMATE-LT-MATCH_SCOREDOUBLES": case "ANIMATE-LT-SINGLE_LT_MATCHPROMO": case "ANIMATE-LT-DOUBLE_LT_MATCHPROMO":
 		case "ANIMATE-IN-MATCHID_DOUBLE": case "ANIMATE-IN-MATCHID": case "ANIMATE-FF-MATCH_RESULTSINGLES": case "ANIMATE-FF-MATCH_RESULTDOUBLES":
 		case "ANIMATE-IN-SINGLE_MATCHPROMO": case "ANIMATE-IN-DOUBLE_MATCHPROMO": case "ANIMATE-MATCH_STATS":
-		case "ANIMATE-LT-CROSS":
+		case "ANIMATE-LT-CROSS": case "ANIMATE-SPEED":
 			
 		case "CLEAR-ALL":
 		case "ANIMATE-OUT-SCOREBUG": case "ANIMATE-OUT-SCOREBUG_STAT": case "ANIMATE-OUT-SCOREBUG_HEADER":
@@ -337,6 +341,10 @@ public class ATP_2022 extends Scene {
 				AnimateInGraphics(print_writer, "MATCH_SCOREDOUBLES");
 				which_graphics_onscreen = "MATCH_SCOREDOUBLES";
 				break;
+			case "ANIMATE-SPEED":
+				AnimateInGraphics(print_writer, "SPEED");
+				which_graphics_onscreen = "SPEED";
+				break;
 			case "CLEAR-ALL":
 				print_writer.println("-1 SCENE CLEANUP\0");
 				print_writer.println("-1 IMAGE CLEANUP\0");
@@ -407,7 +415,7 @@ public class ATP_2022 extends Scene {
 				case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB": case "NAMESUPER_SP": 
 				case "NAMESUPER_DP":case "NAMESUPER_SP1": case "NAMESUPER_DP1": case "MATCH_SCORESINGLES": case "MATCH_SCOREDOUBLES": case "SINGLE_LT_MATCHPROMO": case "DOUBLE_LT_MATCHPROMO":
 				case "MATCHID_DOUBLE": case "MATCHID": case "FF-MATCH_RESULTSINGLES": case "FF-MATCH_RESULTDOUBLES": case "SINGLE_MATCHPROMO": case "DOUBLE_MATCHPROMO":
-				case "CROSS": case "MATCH_STATS":
+				case "CROSS": case "MATCH_STATS": case "SPEED":
 					AnimateOutGraphics(print_writer, which_graphics_onscreen);
 					which_graphics_onscreen = "";
 					break;
@@ -428,7 +436,7 @@ public class ATP_2022 extends Scene {
 		case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB": case "NAMESUPER_SP": 
 		case "NAMESUPER_DP": case "NAMESUPER_SP1": case "NAMESUPER_DP1": case "MATCH_SCORESINGLES": case "MATCH_SCOREDOUBLES":
 		case "MATCHID_DOUBLE": case "MATCHID": case "FF-MATCH_RESULTSINGLES": case "FF-MATCH_RESULTDOUBLES": case "SINGLE_MATCHPROMO": case "DOUBLE_MATCHPROMO": case "SINGLE_LT_MATCHPROMO":
-		case "DOUBLE_LT_MATCHPROMO": case "MATCH_STATS":
+		case "DOUBLE_LT_MATCHPROMO": case "MATCH_STATS": case "SPEED":
 		case "CROSS":
 			print_writer.println("-1 RENDERER*STAGE*DIRECTOR*In START \0");
 			break;
@@ -443,7 +451,7 @@ public class ATP_2022 extends Scene {
 		case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB": case "NAMESUPER_SP": 
 		case "NAMESUPER_DP": case "NAMESUPER_SP1": case "NAMESUPER_DP1": case "MATCH_SCORESINGLES": case "MATCH_SCOREDOUBLES":
 		case "MATCHID_DOUBLE": case "MATCHID": case "FF-MATCH_RESULTSINGLES": case "FF-MATCH_RESULTDOUBLES": case "SINGLE_MATCHPROMO": case "DOUBLE_MATCHPROMO": case "SINGLE_LT_MATCHPROMO":
-		case "DOUBLE_LT_MATCHPROMO": case "MATCH_STATS":
+		case "DOUBLE_LT_MATCHPROMO": case "MATCH_STATS": case "SPEED":
 		case "CROSS":
 			print_writer.println("-1 RENDERER*STAGE*DIRECTOR*Out START \0");
 			break;
@@ -2063,6 +2071,13 @@ public class ATP_2022 extends Scene {
 			}
 		}
 		
+		print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 0.980 \0");
+	}
+	
+	public void populateSpeed(PrintWriter print_writer, String viz_sence_path,int speed,Match match,String selectedbroadcaster) {
+		
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-SPEEDHEAD" + " SET " + "SERVE SPEED" + "\0");
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "001-SPEED" + " SET " + speed + " KPH" + "\0");
 		print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 0.980 \0");
 	}
 

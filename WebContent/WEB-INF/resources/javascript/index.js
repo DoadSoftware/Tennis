@@ -170,12 +170,12 @@ function uploadFormDataToSessionObjects(whatToProcess)
 	
 }
 function processUserSelectionData(whatToProcess,dataToProcess){
-
+	//alert(whatToProcess);
 	switch (whatToProcess) {
 	case 'LOGGER_FORM_KEYPRESS':
-		if($('#log_game_undo_btn')) { // Ignore keypress when user is working with UNDO
-			return false;
-		}
+		//if($('#log_game_undo_btn')) { // Ignore keypress when user is working with UNDO
+			//return false;
+		//}
 		switch (dataToProcess) {
 		case 32:
 			processTennisProcedures('CLEAR-ALL');
@@ -306,6 +306,9 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 			break;
 		case 83:
 			processTennisProcedures('POPULATE-MATCH_STATS');
+			break;
+		case 88:
+			addItemsToList('SPEED_OPTION',null);
 			break;				
 		}
 		
@@ -580,6 +583,9 @@ function processUserSelection(whichInput)
 	case 'populate_stats_btn':
 		processTennisProcedures('POPULATE-SCOREBUG_STATS');
 		break;
+	case 'populate_speed_btn':
+		processTennisProcedures('POPULATE-SPEED');
+		break;
 	case 'populate_stats_set_btn':
 		processTennisProcedures('POPULATE-SCOREBUG_SET_STATS');
 		break;
@@ -730,6 +736,13 @@ function processTennisProcedures(whatToProcess, whichInput)
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
 			value_to_process = '/Default/FF_MatchStats1';
+			break;
+		}
+		break;
+	case 'POPULATE-SPEED':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = '/Default/LtServeSpeed_Auto' + ',' + $('#selectSpeed').val();
 			break;
 		}
 		break;
@@ -924,7 +937,7 @@ function processTennisProcedures(whatToProcess, whichInput)
         	case 'POPULATE-LT-MATCHID_DOUBLE': case 'POPULATE-NAMESUPERDB': case 'POPULATE-LT-MATCH_RESULTDOUBLES': case 'POPULATE-FF-MATCH_RESULTSINGLES':
         	case 'POPULATE-FF-MATCH_RESULTDOUBLES': case 'POPULATE-NAMESUPER-SP': case 'POPULATE-NAMESUPER-DP': case 'POPULATE-NAMESUPER-SP1': case 'POPULATE-NAMESUPER-DP1':
         	case 'POPULATE-CROSS': case "POPULATE-LT-MATCH_SCORESINGLES": case 'POPULATE-SINGLE_MATCHPROMO': case 'POPULATE-DOUBLE_MATCHPROMO': case 'POPULATE-SINGLE_LT_MATCHPROMO':
-        	case 'POPULATE-LT_DOUBLE_MATCHPROMO': case 'POPULATE-LT-MATCH_SCOREDOUBLES': case 'POPULATE-MATCH_STATS':
+        	case 'POPULATE-LT_DOUBLE_MATCHPROMO': case 'POPULATE-LT-MATCH_SCOREDOUBLES': case 'POPULATE-MATCH_STATS': case 'POPULATE-SPEED':
         		if(confirm('Animate In?') == true){
 					switch(whatToProcess){
 					case 'POPULATE-SCOREBUG':
@@ -992,6 +1005,9 @@ function processTennisProcedures(whatToProcess, whichInput)
 						break;
 					case 'POPULATE-MATCH_STATS':
 						processTennisProcedures('ANIMATE-MATCH_STATS');				
+						break;
+					case 'POPULATE-SPEED':
+						processTennisProcedures('ANIMATE-SPEED');				
 						break;
 					}
 				}
@@ -1096,7 +1112,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 	var max_cols,div,anchor,row,header_text,select,option,tr,th,thead,text,table,tbody,cellCount;
 	
 	switch (whatToProcess) {
-	case 'SCOREBUG_OPTION': case 'SCOREBUG-SET_OPTION':
+	case 'SCOREBUG_OPTION': case 'SCOREBUG-SET_OPTION': case 'SPEED_OPTION':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
 
@@ -1117,6 +1133,15 @@ function addItemsToList(whatToProcess, dataToProcess)
 			row = tbody.insertRow(tbody.rows.length);
 			
 			switch(whatToProcess){
+				case 'SPEED_OPTION':
+					select = document.createElement('input');
+					select.type = "text";
+					select.id = 'selectSpeed';
+					select.value = '';
+					
+					row.insertCell(cellCount).appendChild(select);
+					cellCount = cellCount + 1;
+					break;
 				case 'SCOREBUG_OPTION':
 					select = document.createElement('select');
 					select.style = 'width:130px';
@@ -1215,6 +1240,10 @@ function addItemsToList(whatToProcess, dataToProcess)
 			option = document.createElement('input');
 		    option.type = 'button';
 			switch (whatToProcess) {
+			case 'SPEED_OPTION':
+				option.name = 'populate_speed_btn';
+			    option.value = 'Populate Speed';
+				break;
 			case 'SCOREBUG_OPTION':
 			    option.name = 'populate_stats_btn';
 			    option.value = 'Populate Stats';
