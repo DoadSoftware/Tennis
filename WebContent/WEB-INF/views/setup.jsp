@@ -96,13 +96,24 @@
 			    </div>
 			  </div>
 			  <div class="form-group row row-bottom-margin ml-2" style="margin-bottom:5px;">
-			    <label for="tierBreakerRule" class="col-sm-4 col-form-label text-left">Tie Breaker Rule
+			    <label for="tieBreakerRule" class="col-sm-4 col-form-label text-left">Tie Breaker Rule
 			    	<i class="fas fa-asterisk fa-sm text-danger" style="font-size: 7px;"></i></label>
 			    <div class="col-sm-6 col-md-6">
-			      <select id="tierBreakerRule" name="tierBreakerRule"
+			      <select id="tieBreakerRule" name="tieBreakerRule"
 			      		class="browser-default custom-select custom-select-sm">
 				        <option value="race_to_7">Race To 7 Points</option>
 				        <option value="race_to_10">Race To 10 Points</option>
+			      </select>
+			    </div>
+			  </div>
+			  <div class="form-group row row-bottom-margin ml-2" style="margin-bottom:5px;">
+			    <label for="advantageRule" class="col-sm-4 col-form-label text-left">Advantage Rule
+			    	<i class="fas fa-asterisk fa-sm text-danger" style="font-size: 7px;"></i></label>
+			    <div class="col-sm-6 col-md-6">
+			      <select id="advantageRule" name="advantageRule"
+			      		class="browser-default custom-select custom-select-sm">
+				        <option value="normal">Normal</option>
+				        <option value="no_advantage_doubles">No advantage doubles</option>
 			      </select>
 			    </div>
 			  </div>

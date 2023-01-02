@@ -96,6 +96,8 @@ function initialiseForm(whatToProcess, dataToProcess)
 			document.getElementById('matchIdent').value = dataToProcess.matchIdent;
 			document.getElementById('categoryType').value = dataToProcess.categoryType;
 			document.getElementById('matchType').value = dataToProcess.matchType;
+			document.getElementById('tieBreakerRule').value = dataToProcess.tieBreakerRule;
+			document.getElementById('advantageRule').value = dataToProcess.advantageRule;
 			document.getElementById('homeFirstPlayerId').value = dataToProcess.homeFirstPlayerId;
 			document.getElementById('homeSecondPlayerId').value = dataToProcess.homeSecondPlayerId;
 			document.getElementById('awayFirstPlayerId').value = dataToProcess.awayFirstPlayerId;
@@ -106,6 +108,8 @@ function initialiseForm(whatToProcess, dataToProcess)
 			document.getElementById('matchIdent').value = '';
 			document.getElementById('categoryType').selectedIndex = 0;
 			document.getElementById('matchType').selectedIndex = 0;
+			document.getElementById('tieBreakerRule').selectedIndex = 0;
+			document.getElementById('advantageRule').selectedIndex = 0;
 			document.getElementById('homeFirstPlayerId').selectedIndex = 0;
 			document.getElementById('homeSecondPlayerId').selectedIndex = 0;
 			document.getElementById('awayFirstPlayerId').selectedIndex = 0;
@@ -1100,9 +1104,9 @@ function processVariousStats(whatToProcess, whichInput)
 		break;
 	case 'CHECK-TIE-BREAK-WINNER':
 		var race_number;
-		if(match_data.tierBreakerRule == 'race_to_7'){
+		if(match_data.tieBreakerRule == 'race_to_7'){
 			race_number = 7;
-		}else if(match_data.tierBreakerRule == 'race_to_10'){
+		}else if(match_data.tieBreakerRule == 'race_to_10'){
 			race_number = 10;
 		}
 		//alert(parseInt($('#homeScore').val()));
