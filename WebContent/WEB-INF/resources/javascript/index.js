@@ -173,9 +173,9 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 	//alert(whatToProcess);
 	switch (whatToProcess) {
 	case 'LOGGER_FORM_KEYPRESS':
-		//if($('#log_game_undo_btn')) { // Ignore keypress when user is working with UNDO
-			//return false;
-		//}
+		if($('#log_game_undo_btn').val()) { // Ignore keypress when user is working with UNDO
+			return false;
+		}
 		switch (dataToProcess) {
 		case 32:
 			processTennisProcedures('CLEAR-ALL');
@@ -299,7 +299,8 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 			addItemsToList('SCOREBUG-SET_OPTION',null); 
 			break;
 		case 72:
-			processTennisProcedures('POPULATE-SCOREBUG_HEADER');
+			addItemsToList('SCOREBUG-HEADER_OPTION',null);
+			//processTennisProcedures('POPULATE-SCOREBUG_HEADER');
 			break;
 		case 74:
 			processTennisProcedures('ANIMATE-OUT-SCOREBUG_HEADER');
@@ -583,6 +584,9 @@ function processUserSelection(whichInput)
 	case 'populate_stats_btn':
 		processTennisProcedures('POPULATE-SCOREBUG_STATS');
 		break;
+	case 'populate_header_btn':
+		processTennisProcedures('POPULATE-SCOREBUG_HEADER');
+		break;
 	case 'populate_speed_btn':
 		processTennisProcedures('POPULATE-SPEED');
 		break;
@@ -729,6 +733,13 @@ function processTennisProcedures(whatToProcess, whichInput)
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
 			value_to_process = $('#selectScorebugstats option:selected').val() ;
+			break;
+		}
+		break
+	case 'POPULATE-SCOREBUG_HEADER':
+		switch ($('#selectedBroadcaster').val()) {
+		case 'ATP_2022':
+			value_to_process = $('#selectScorebugHeader option:selected').val() ;
 			break;
 		}
 		break
@@ -1112,7 +1123,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 	var max_cols,div,anchor,row,header_text,select,option,tr,th,thead,text,table,tbody,cellCount;
 	
 	switch (whatToProcess) {
-	case 'SCOREBUG_OPTION': case 'SCOREBUG-SET_OPTION': case 'SPEED_OPTION':
+	case 'SCOREBUG_OPTION': case 'SCOREBUG-SET_OPTION': case 'SPEED_OPTION': case 'SCOREBUG-HEADER_OPTION':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
 
@@ -1133,6 +1144,36 @@ function addItemsToList(whatToProcess, dataToProcess)
 			row = tbody.insertRow(tbody.rows.length);
 			
 			switch(whatToProcess){
+				case 'SCOREBUG-HEADER_OPTION':
+					select = document.createElement('select');
+					select.style = 'width:130px';
+					select.id = 'selectScorebugHeader';
+					select.name = select.id;
+					
+					option = document.createElement('option');
+					option.value = 'match_point';
+					option.text = 'Match Point';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'set_point';
+					option.text = 'Set Point';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'break_point';
+					option.text = 'Break Point';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'tie_break;';
+					option.text = 'Tie Break';
+					select.appendChild(option);
+
+					select.setAttribute('onchange',"processUserSelection(this)");
+					row.insertCell(cellCount).appendChild(select);
+					cellCount = cellCount + 1;
+					break;
 				case 'SPEED_OPTION':
 					select = document.createElement('input');
 					select.type = "text";
@@ -1240,6 +1281,10 @@ function addItemsToList(whatToProcess, dataToProcess)
 			option = document.createElement('input');
 		    option.type = 'button';
 			switch (whatToProcess) {
+			case 'SCOREBUG-HEADER_OPTION':
+				option.name = 'populate_header_btn';
+			    option.value = 'Populate Header';
+				break;
 			case 'SPEED_OPTION':
 				option.name = 'populate_speed_btn';
 			    option.value = 'Populate Speed';
