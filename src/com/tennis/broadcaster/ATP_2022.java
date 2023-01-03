@@ -979,7 +979,11 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			if(match.getHomeFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			}
 			if(match.getHomeFirstPlayer().getRankingSingle() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank1" + " SET " + "" + "\0");
 			}else {
@@ -993,7 +997,11 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			if(match.getAwayFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			}
 			if(match.getAwayFirstPlayer().getRankingSingle() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank2" + " SET " + "" + "\0");
 			}else {
@@ -1113,7 +1121,12 @@ public class ATP_2022 extends Scene {
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tHeader" + " SET " + match.getMatchIdent() + "\0");
 			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tNameA1" + " SET " + match.getHomeFirstPlayer().getTicker_name() + "\0");
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			if(match.getHomeFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			}
+			
 			if(match.getHomeFirstPlayer().getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankA1" + " SET " + "" + "\0");
 			}else {
@@ -1121,7 +1134,11 @@ public class ATP_2022 extends Scene {
 			}
 			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tNameA2" + " SET " + match.getHomeSecondPlayer().getTicker_name() + "\0");
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA2" + " SET " + match.getHomeSecondPlayer().getNationality() + "\0");
+			if(match.getHomeSecondPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA2" + " SET " + match.getHomeSecondPlayer().getNationality() + "\0");
+			}
 			if(match.getHomeSecondPlayer().getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankA2" + " SET " + "" + "\0");
 			}else {
@@ -1129,7 +1146,11 @@ public class ATP_2022 extends Scene {
 			}
 			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tNameB1" + " SET " + match.getAwayFirstPlayer().getTicker_name() + "\0");
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB1" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			if(match.getAwayFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB1" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			}
 			if(match.getAwayFirstPlayer().getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankB1" + " SET " + "" + "\0");
 			}else {
@@ -1137,7 +1158,11 @@ public class ATP_2022 extends Scene {
 			}
 			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tNameB2" + " SET " + match.getAwaySecondPlayer().getTicker_name() + "\0");
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB2" + " SET " + match.getAwaySecondPlayer().getNationality() + "\0");
+			if(match.getAwaySecondPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB2" + " SET " + match.getAwaySecondPlayer().getNationality() + "\0");
+			}
 			if(match.getAwaySecondPlayer().getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankB2" + " SET " + "" + "\0");
 			}else {
@@ -1275,7 +1300,11 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			if(match.getHomeFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			}
 			if(match.getHomeFirstPlayer().getRankingSingle() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank1" + " SET " + "" + "\0");
 			}else {
@@ -1289,7 +1318,11 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			if(match.getAwayFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			}
 			if(match.getAwayFirstPlayer().getRankingSingle() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank2" + " SET " + "" + "\0");
 			}else {
@@ -1432,7 +1465,12 @@ public class ATP_2022 extends Scene {
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tHeader" + " SET " + match.getMatchIdent() + "\0");
 			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tNameA1" + " SET " + match.getHomeFirstPlayer().getTicker_name() + "\0");
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			if(match.getHomeFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			}
+			
 			if(match.getHomeFirstPlayer().getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankA1" + " SET " + "" + "\0");
 			}else {
@@ -1440,7 +1478,11 @@ public class ATP_2022 extends Scene {
 			}
 			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tNameA2" + " SET " + match.getHomeSecondPlayer().getTicker_name() + "\0");
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA2" + " SET " + match.getHomeSecondPlayer().getNationality() + "\0");
+			if(match.getHomeSecondPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA2" + " SET " + match.getHomeSecondPlayer().getNationality() + "\0");
+			}
 			if(match.getHomeSecondPlayer().getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankA2" + " SET " + "" + "\0");
 			}else {
@@ -1448,7 +1490,11 @@ public class ATP_2022 extends Scene {
 			}
 			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tNameB1" + " SET " + match.getAwayFirstPlayer().getTicker_name() + "\0");
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB1" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			if(match.getAwayFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB1" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			}
 			if(match.getAwayFirstPlayer().getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankB1" + " SET " + "" + "\0");
 			}else {
@@ -1456,7 +1502,11 @@ public class ATP_2022 extends Scene {
 			}
 			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tNameB2" + " SET " + match.getAwaySecondPlayer().getTicker_name() + "\0");
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB2" + " SET " + match.getAwaySecondPlayer().getNationality() + "\0");
+			if(match.getAwaySecondPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB2" + " SET " + match.getAwaySecondPlayer().getNationality() + "\0");
+			}
 			if(match.getAwaySecondPlayer().getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankB2" + " SET " + "" + "\0");
 			}else {
@@ -1618,8 +1668,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
-			TimeUnit.MICROSECONDS.sleep(500);
+			if(match.getHomeFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			}
+			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag1" + " SET " + flag_path + 
 					match.getHomeFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 			
@@ -1636,8 +1690,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
-			TimeUnit.MICROSECONDS.sleep(500);
+			if(match.getAwayFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			}
+			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag2" + " SET " + flag_path + 
 					match.getAwayFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 			
@@ -1791,7 +1849,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftFirstName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftLastName1" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			if(match.getHomeFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			}
+			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLeftFlag1" + " SET " + flag_path + 
 					match.getHomeFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLeftPlayerImage1" + " SET " + left_photo_path + 
@@ -1804,7 +1867,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftFirstName2" + " SET " + match.getHomeSecondPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftLastName2" + " SET " + match.getHomeSecondPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry2" + " SET " + match.getHomeSecondPlayer().getNationality() + "\0");
+			
+			if(match.getHomeSecondPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry2" + " SET " + match.getHomeSecondPlayer().getNationality() + "\0");
+			}
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLeftFlag2" + " SET " + flag_path + 
 					match.getHomeSecondPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLeftPlayerImage2" + " SET " + left_photo_path + 
@@ -1819,7 +1887,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightFirstName1" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightLastName1" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry1" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			if(match.getAwayFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry1" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			}
+			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgRightFlag1" + " SET " + flag_path + 
 					match.getAwayFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgRightPlayerImage2" + " SET " + right_photo_path + 
@@ -1832,7 +1905,11 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightFirstName2" + " SET " + match.getAwaySecondPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightLastName2" + " SET " + match.getAwaySecondPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry2" + " SET " + match.getAwaySecondPlayer().getNationality() + "\0");
+			if(match.getAwaySecondPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry2" + " SET " + match.getAwaySecondPlayer().getNationality() + "\0");
+			}
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgRightFlag2" + " SET " + flag_path + 
 					match.getAwaySecondPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgRightPlayerImage1" + " SET " + right_photo_path + 
@@ -1991,8 +2068,10 @@ public class ATP_2022 extends Scene {
 		
 		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName" + " SET " + Plyr.get(playerid-1).getFirstname() + "\0");
 		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName" + " SET " + Plyr.get(playerid-1).getSurname() + "\0");
+		
 		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag" + " SET " + flag_path + 
-				Plyr.get(playerid-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			Plyr.get(playerid-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+		
 		
 		if(Plyr.get(playerid-1).getRankingSingle() == 0) {
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed" + " SET " + "" + "\0");
@@ -2146,6 +2225,7 @@ public class ATP_2022 extends Scene {
 			case TennisUtil.HOME:
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FIRST-NAME01" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-LAST-NAME01" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
+				
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "000-FLAG-01" + " SET " + flag_path + 
 						match.getHomeFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 				
@@ -2242,8 +2322,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftFirstName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftLastName1" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
-			TimeUnit.MICROSECONDS.sleep(500);
+			if(match.getHomeFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			}
+			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLeftFlag1" + " SET " + flag_path + 
 					match.getHomeFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLeftPlayerImage1" + " SET " + left_photo_path + 
@@ -2256,8 +2340,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftFirstName2" + " SET " + match.getHomeSecondPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftLastName2" + " SET " + match.getHomeSecondPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry2" + " SET " + match.getHomeSecondPlayer().getNationality() + "\0");
-			TimeUnit.MICROSECONDS.sleep(500);
+			
+			if(match.getHomeSecondPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry2" + " SET " + match.getHomeSecondPlayer().getNationality() + "\0");
+			}
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLeftFlag2" + " SET " + flag_path + 
 					match.getHomeSecondPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLeftPlayerImage2" + " SET " + left_photo_path + 
@@ -2272,7 +2360,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightFirstName1" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightLastName1" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry1" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			if(match.getAwayFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry1" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			}
+			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgRightFlag1" + " SET " + flag_path + 
 					match.getAwayFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgRightPlayerImage2" + " SET " + right_photo_path + 
@@ -2285,7 +2378,11 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightFirstName2" + " SET " + match.getAwaySecondPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightLastName2" + " SET " + match.getAwaySecondPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry2" + " SET " + match.getAwaySecondPlayer().getNationality() + "\0");
+			if(match.getAwaySecondPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry2" + " SET " + match.getAwaySecondPlayer().getNationality() + "\0");
+			}
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgRightFlag2" + " SET " + flag_path + 
 					match.getAwaySecondPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgRightPlayerImage1" + " SET " + right_photo_path + 
@@ -2315,8 +2412,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
-			TimeUnit.MICROSECONDS.sleep(500);
+			if(match.getHomeFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			}
+			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag1" + " SET " + flag_path + 
 					match.getHomeFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 			
@@ -2333,8 +2434,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
-			TimeUnit.MICROSECONDS.sleep(500);
+			if(match.getAwayFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			}
+			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag2" + " SET " + flag_path + 
 					match.getAwayFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 			
@@ -2370,7 +2475,12 @@ public class ATP_2022 extends Scene {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getFirstname() + "\0");
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getSurname() + "\0");
 					}
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getNationality() + "\0");
+					if(Plyr.get(fix.getHomePlayerFirst()-1).getNationality() == null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + "" + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getNationality() + "\0");
+					}
+					
 					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag1" + " SET " + flag_path + 
 							Plyr.get(fix.getHomePlayerFirst()-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 					
@@ -2387,7 +2497,12 @@ public class ATP_2022 extends Scene {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getFirstname() + "\0");
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getSurname() + "\0");
 					}
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() + "\0");
+					if(Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() == null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + "" + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() + "\0");
+					}
+					
 					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag2" + " SET " + flag_path + 
 							Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 				}
@@ -2424,7 +2539,12 @@ public class ATP_2022 extends Scene {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftFirstName1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getFirstname() + "\0");
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftLastName1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getSurname() + "\0");
 					}
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getNationality() + "\0");
+					if(Plyr.get(fix.getHomePlayerFirst()-1).getNationality() == null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry1" + " SET " + "" + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getNationality() + "\0");
+					}
+					
 					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLeftFlag1" + " SET " + flag_path + 
 							Plyr.get(fix.getHomePlayerFirst()-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLeftPlayerImage1" + " SET " + left_photo_path + 
@@ -2437,7 +2557,12 @@ public class ATP_2022 extends Scene {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftFirstName2" + " SET " + Plyr.get(fix.getHomePlayerSecond()-1).getFirstname() + "\0");
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftLastName2" + " SET " + Plyr.get(fix.getHomePlayerSecond()-1).getSurname() + "\0");
 					}
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry2" + " SET " + Plyr.get(fix.getHomePlayerSecond()-1).getNationality() + "\0");
+					if(Plyr.get(fix.getHomePlayerSecond()-1).getNationality() == null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry2" + " SET " + "" + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLeftCountry2" + " SET " + Plyr.get(fix.getHomePlayerSecond()-1).getNationality() + "\0");
+					}
+					
 					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLeftFlag2" + " SET " + flag_path + 
 							Plyr.get(fix.getHomePlayerSecond()-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLeftPlayerImage2" + " SET " + left_photo_path + 
@@ -2450,7 +2575,12 @@ public class ATP_2022 extends Scene {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightFirstName1" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getFirstname() + "\0");
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightLastName1" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getSurname() + "\0");
 					}
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry1" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() + "\0");
+					if(Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() == null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry1" + " SET " + "" + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry1" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() + "\0");
+					}
+					
 					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgRightFlag1" + " SET " + flag_path + 
 							Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgRightPlayerImage2" + " SET " + right_photo_path + 
@@ -2463,7 +2593,12 @@ public class ATP_2022 extends Scene {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightFirstName2" + " SET " + Plyr.get(fix.getAwayPlayerSecond()-1).getFirstname() + "\0");
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightLastName2" + " SET " + Plyr.get(fix.getAwayPlayerSecond()-1).getSurname() + "\0");
 					}
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry2" + " SET " + Plyr.get(fix.getAwayPlayerSecond()-1).getNationality() + "\0");
+					if(Plyr.get(fix.getAwayPlayerSecond()-1).getNationality() == null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry2" + " SET " + "" + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRightCountry2" + " SET " + Plyr.get(fix.getAwayPlayerSecond()-1).getNationality() + "\0");
+					}
+					
 					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgRightFlag2" + " SET " + flag_path + 
 							Plyr.get(fix.getAwayPlayerSecond()-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
 					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgRightPlayerImage1" + " SET " + right_photo_path + 
@@ -2500,7 +2635,12 @@ public class ATP_2022 extends Scene {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getFirstname() + "\0");
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getSurname() + "\0");
 					}
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getNationality() + "\0");
+					if(Plyr.get(fix.getHomePlayerFirst()-1).getNationality() == null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + "" + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getNationality() + "\0");
+					}
+					
 					if(Plyr.get(fix.getHomePlayerFirst()-1).getRankingSingle() == 0) {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank1" + " SET " + "" + "\0");
 					}else {
@@ -2514,7 +2654,11 @@ public class ATP_2022 extends Scene {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getFirstname() + "\0");
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getSurname() + "\0");
 					}
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() + "\0");
+					if(Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() == null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + "" + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() + "\0");
+					}
 					if(Plyr.get(fix.getAwayPlayerFirst()-1).getRankingSingle() == 0) {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank2" + " SET " + "" + "\0");
 					}else {
@@ -2551,11 +2695,16 @@ public class ATP_2022 extends Scene {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstNameA1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getFirstname() + "\0");
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastNameA1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getSurname() + "\0");
 					}
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getNationality() + "\0");
+					if(Plyr.get(fix.getHomePlayerFirst()-1).getNationality() == null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA1" + " SET " + "" + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getNationality() + "\0");
+					}
+					
 					if(Plyr.get(fix.getHomePlayerFirst()-1).getRankingDouble() == 0) {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankA1" + " SET " + "" + "\0");
 					}else {
-						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankA1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getRankingSingle() + "\0");
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankA1" + " SET " + Plyr.get(fix.getHomePlayerFirst()-1).getRankingDouble() + "\0");
 					}
 					
 					if(Plyr.get(fix.getHomePlayerSecond()-1).getSurname() == null) {
@@ -2565,11 +2714,16 @@ public class ATP_2022 extends Scene {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstNameA2" + " SET " + Plyr.get(fix.getHomePlayerSecond()-1).getFirstname() + "\0");
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastNameA2" + " SET " + Plyr.get(fix.getHomePlayerSecond()-1).getSurname() + "\0");
 					}
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA2" + " SET " + Plyr.get(fix.getHomePlayerSecond()-1).getNationality() + "\0");
+					if(Plyr.get(fix.getHomePlayerSecond()-1).getNationality() == null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA2" + " SET " + "" + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA2" + " SET " + Plyr.get(fix.getHomePlayerSecond()-1).getNationality() + "\0");
+					}
+					
 					if(Plyr.get(fix.getHomePlayerSecond()-1).getRankingDouble() == 0) {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankA2" + " SET " + "" + "\0");
 					}else {
-						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankA2" + " SET " + Plyr.get(fix.getHomePlayerSecond()-1).getRankingSingle() + "\0");
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankA2" + " SET " + Plyr.get(fix.getHomePlayerSecond()-1).getRankingDouble() + "\0");
 					}
 					
 					if(Plyr.get(fix.getAwayPlayerFirst()-1).getSurname() == null) {
@@ -2579,11 +2733,16 @@ public class ATP_2022 extends Scene {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstNameB1" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getFirstname() + "\0");
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastNameB1" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getSurname() + "\0");
 					}
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB1" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() + "\0");
+					if(Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() == null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB1" + " SET " + "" + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB1" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getNationality() + "\0");
+					}
+					
 					if(Plyr.get(fix.getAwayPlayerFirst()-1).getRankingDouble() == 0) {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankB1" + " SET " + "" + "\0");
 					}else {
-						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankB1" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getRankingSingle() + "\0");
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankB1" + " SET " + Plyr.get(fix.getAwayPlayerFirst()-1).getRankingDouble() + "\0");
 					}
 					
 					if(Plyr.get(fix.getAwayPlayerSecond()-1).getSurname() == null) {
@@ -2593,11 +2752,16 @@ public class ATP_2022 extends Scene {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstNameB2" + " SET " + Plyr.get(fix.getAwayPlayerSecond()-1).getFirstname() + "\0");
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastNameB2" + " SET " + Plyr.get(fix.getAwayPlayerSecond()-1).getSurname() + "\0");
 					}
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB2" + " SET " + Plyr.get(fix.getAwayPlayerSecond()-1).getNationality() + "\0");
+					if(Plyr.get(fix.getAwayPlayerSecond()-1).getNationality() == null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB2" + " SET " + "" + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB2" + " SET " + Plyr.get(fix.getAwayPlayerSecond()-1).getNationality() + "\0");
+					}
+					
 					if(Plyr.get(fix.getAwayPlayerSecond()-1).getRankingDouble() == 0) {
 						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankB2" + " SET " + "" + "\0");
 					}else {
-						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankB2" + " SET " + Plyr.get(fix.getAwayPlayerSecond()-1).getRankingSingle() + "\0");
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankB2" + " SET " + Plyr.get(fix.getAwayPlayerSecond()-1).getRankingDouble() + "\0");
 					}
 				}
 			}
@@ -2621,7 +2785,13 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			
+			if(match.getHomeFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			}
+			
 			if(match.getHomeFirstPlayer().getRankingSingle() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank1" + " SET " + "" + "\0");
 			}else {
@@ -2635,7 +2805,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			
+			if(match.getAwayFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			}
 			if(match.getAwayFirstPlayer().getRankingSingle() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank2" + " SET " + "" + "\0");
 			}else {
@@ -2658,7 +2833,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstNameA1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastNameA1" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			if(match.getHomeFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
+			}
+			
 			if(match.getHomeFirstPlayer().getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankA1" + " SET " + "" + "\0");
 			}else {
@@ -2672,7 +2852,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstNameA2" + " SET " + match.getHomeSecondPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastNameA2" + " SET " + match.getHomeSecondPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA2" + " SET " + match.getHomeSecondPlayer().getNationality() + "\0");
+			if(match.getHomeSecondPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryA2" + " SET " + match.getHomeSecondPlayer().getNationality() + "\0");
+			}
+			
 			if(match.getHomeSecondPlayer().getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankA2" + " SET " + "" + "\0");
 			}else {
@@ -2686,7 +2871,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstNameB1" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastNameB1" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB1" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			if(match.getAwayFirstPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB1" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB1" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
+			}
+			
 			if(match.getAwayFirstPlayer().getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankB1" + " SET " + "" + "\0");
 			}else {
@@ -2700,7 +2890,12 @@ public class ATP_2022 extends Scene {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstNameB2" + " SET " + match.getAwaySecondPlayer().getFirstname() + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastNameB2" + " SET " + match.getAwaySecondPlayer().getSurname() + "\0");
 			}
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB2" + " SET " + match.getAwaySecondPlayer().getNationality() + "\0");
+			if(match.getAwaySecondPlayer().getNationality() == null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB2" + " SET " + "" + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountryB2" + " SET " + match.getAwaySecondPlayer().getNationality() + "\0");
+			}
+			
 			if(match.getAwaySecondPlayer().getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRankB2" + " SET " + "" + "\0");
 			}else {
