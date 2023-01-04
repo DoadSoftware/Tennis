@@ -33,7 +33,6 @@ import com.tennis.model.Game;
 import com.tennis.model.Match;
 import com.tennis.model.Set;
 import com.tennis.model.Stat;
-import com.tennis.model.Stats;
 import com.tennis.service.TennisService;
 import com.tennis.util.TennisFunctions;
 import com.tennis.util.TennisUtil;
@@ -53,7 +52,6 @@ public class IndexController
 	public static EventFile session_event = new EventFile();
 	public static Clock session_clock = new Clock();
 	public static Configurations session_Configurations = new Configurations();
-	public static Stats stats = new Stats();
 	
 	List<Scene> session_selected_scenes = new ArrayList<Scene>();
 	public static String session_selected_broadcaster;
@@ -304,7 +302,7 @@ public class IndexController
 
 		case "NAMESUPER_GRAPHICS-OPTIONS": case "NAMESUPER-SP_GRAPHICS-OPTIONS": case "NAMESUPER-SP1_GRAPHICS-OPTIONS": case "NAMESUPER-DP1_GRAPHICS-OPTIONS":
 		case "SINGLE-MATCHPROMO_GRAPHICS-OPTIONS": case "DOUBLE-MATCHPROMO_GRAPHICS-OPTIONS": case "SINGLE-LT_MATCHPROMO_GRAPHICS-OPTIONS": case "DOUBLE-LT_MATCHPROMO_GRAPHICS-OPTIONS":
-			return (String) this_ATP_2022.ProcessGraphicOption(whatToProcess,stats, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);
+			return (String) this_ATP_2022.ProcessGraphicOption(whatToProcess, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);
 		case TennisUtil.READ_CLOCK:
 			
 			if(new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CLOCK_XML).exists()) {
@@ -464,7 +462,7 @@ public class IndexController
 			
 			switch (session_selected_broadcaster) {
 			case TennisUtil.ATP_2022:
-				this_ATP_2022.ProcessGraphicOption(whatToProcess,stats, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);
+				this_ATP_2022.ProcessGraphicOption(whatToProcess, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);
 				break;
 			}
 			return JSONObject.fromObject(session_match).toString();

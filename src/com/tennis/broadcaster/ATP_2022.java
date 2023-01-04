@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -15,17 +17,18 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.bind.JAXBException;
 
 import com.tennis.model.Fixture;
+import com.tennis.model.LiveMatchData;
 import com.tennis.model.Match;
 import com.tennis.model.NameSuper;
 import com.tennis.model.Player;
 import com.tennis.model.Stat;
-import com.tennis.model.Stats;
 import com.tennis.model.VariousText;
 import com.tennis.service.TennisService;
 import com.tennis.util.TennisFunctions;
 import com.tennis.util.TennisUtil;
 
 import net.sf.json.JSONArray;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.tennis.containers.Scene;
 
@@ -38,12 +41,10 @@ public class ATP_2022 extends Scene {
 	public boolean is_infobar = false;
 	public long last_date = 0;
 	
-	 private String flag_path = "C:\\\\Images\\\\ATP\\\\Flag\\\\";
-	 private String left_photo_path = "C:\\\\Images\\\\ATP\\\\Left\\\\";
-	 private String right_photo_path = "C:\\\\Images\\\\ATP\\\\Right\\\\";
-	 //private String colors_path ="D:\\DOAD_In_House_Everest\\Everest_Sports\\Everest_I-League_2022\\Colours\\";
-	 
-
+	private String flag_path = "C:\\\\Images\\\\ATP\\\\Flag\\\\";
+	private String left_photo_path = "C:\\\\Images\\\\ATP\\\\Left\\\\";
+	private String right_photo_path = "C:\\\\Images\\\\ATP\\\\Right\\\\";
+	
 	public ATP_2022() {
 		super();
 	}
@@ -79,7 +80,7 @@ public class ATP_2022 extends Scene {
 		return scorebug;
 	}
 
-	public Object ProcessGraphicOption(String whatToProcess,Stats stats, Match match, TennisService tennisService,
+	public Object ProcessGraphicOption(String whatToProcess, Match match, TennisService tennisService,
 			PrintWriter print_writer, List<Scene> scenes, String valueToProcess)
 			throws InterruptedException, NumberFormatException, MalformedURLException, IOException, JAXBException {
 		switch (whatToProcess.toUpperCase()) {
@@ -223,7 +224,7 @@ public class ATP_2022 extends Scene {
 				populateSpeed(print_writer, valueToProcess.split(",")[0],Integer.valueOf(valueToProcess.split(",")[1]),match, session_selected_broadcaster);
 				break;
 			case "POPULATE-MATCH_STATS":
-				populateMatchStats(print_writer, valueToProcess.split(",")[0],stats,match, session_selected_broadcaster);
+				populateMatchStats(print_writer, valueToProcess.split(",")[0],match, session_selected_broadcaster);
 				break;
 			}
 			
@@ -495,9 +496,9 @@ public class ATP_2022 extends Scene {
 							match.getAwayFirstPlayer().getTicker_name().toUpperCase() + "\0");
 				} else if (match.getMatchType().toUpperCase().equalsIgnoreCase(TennisUtil.DOUBLES)) {
 					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tPlayerName1" + " SET " + 
-							match.getHomeFirstPlayer().getTicker_name().toUpperCase()+ " / " + match.getHomeSecondPlayer().getTicker_name().toUpperCase() + "\0");
+							match.getHomeFirstPlayer().getTicker_name().toUpperCase()+ " / " + match.getHomeSecondPlayer().getTicker_name() + "\0");
 					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tPlayerName2" + " SET " + 
-							match.getAwayFirstPlayer().getTicker_name().toUpperCase() + " / " + match.getAwaySecondPlayer().getTicker_name().toUpperCase() + "\0");
+							match.getAwayFirstPlayer().getTicker_name().toUpperCase() + " / " + match.getAwaySecondPlayer().getTicker_name() + "\0");
 				}
 			}
 			
@@ -961,6 +962,10 @@ public class ATP_2022 extends Scene {
 			print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatHeadType1"+ " SET " + "BREAK POINT" + "\0");
 		}else if(value.equalsIgnoreCase("tie_break")) {
 			print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatHeadType1"+ " SET " + "TIE-BREAK" + "\0");
+		}else if(value.equalsIgnoreCase("deuce")) {
+			print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatHeadType1"+ " SET " + "DEUCE" + "\0");
+		}else if(value.equalsIgnoreCase("match_tie_break")) {
+			print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatHeadType1"+ " SET " + "MATCH TIE-BREAK" + "\0");
 		}
 		print_writer.println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*StatType1HeadIn START \0");
 	}	
@@ -2824,7 +2829,7 @@ public class ATP_2022 extends Scene {
 			System.out.println("ERROR: Lt-Match -> Match is null");
 		} else {
 			
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tHeader" + " SET " + match.getTournament() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tHeader" + " SET " + match.getMatchIdent() + "\0");
 			
 			if(match.getHomeFirstPlayer().getSurname() == null) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstNameA1" + " SET " + "" + "\0");
@@ -2906,10 +2911,30 @@ public class ATP_2022 extends Scene {
 		}
 	}
 	
-	public void populateMatchStats(PrintWriter print_writer, String viz_sence_path,Stats stats,  Match match,String selectedbroadcaster) {
+	public void populateMatchStats(PrintWriter print_writer, String viz_sence_path,  Match match,String selectedbroadcaster) {
 		if (match == null) {
 			System.out.println("ERROR: Match-Stats -> Match is null");
 		} else {
+			
+			try {
+		         URL url = new URL("https://api.protennislive.com/feeds/MatchStats/MS011");
+		         URLConnection connection = url.openConnection();
+		         connection.connect();
+		         LiveMatchData my_data = new ObjectMapper().readValue(new URL("https://api.protennislive.com/feeds/MatchStats/MS011"), LiveMatchData.class);
+					
+					if(my_data != null) {
+						
+					} else {
+						System.out.println("Error");
+					}
+		         //System.out.println("Internet is connected");
+		      } catch (MalformedURLException e) {
+		         System.out.println("Internet is not connected");
+		      } catch (IOException e) {
+		         System.out.println("Internet is not connected");
+		      }
+			
+			
 			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tHeader" + " SET " + match.getTournament() + "\0");
 			print_writer.println("-1 RENDERER*TREE*$Main$All$TopWithMask$TopGrp$HeaderGrp$TimerGrp*ACTIVE SET 0 \0");

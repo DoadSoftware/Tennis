@@ -1170,8 +1170,18 @@ function addItemsToList(whatToProcess, dataToProcess)
 					select.appendChild(option);
 					
 					option = document.createElement('option');
-					option.value = 'tie_break;';
-					option.text = 'Tie Break';
+					option.value = 'tie_break';
+					option.text = 'Tie-Break';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'match_tie_break';
+					option.text = 'Match Tie-Break';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'deuce';
+					option.text = 'Deuce';
 					select.appendChild(option);
 
 					select.setAttribute('onchange',"processUserSelection(this)");
