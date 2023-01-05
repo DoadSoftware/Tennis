@@ -6,8 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+//import java.net.URL;
+//import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.bind.JAXBException;
 
 import com.tennis.model.Fixture;
-import com.tennis.model.LiveMatchData;
 import com.tennis.model.Match;
 import com.tennis.model.NameSuper;
 import com.tennis.model.Player;
@@ -28,7 +27,7 @@ import com.tennis.util.TennisFunctions;
 import com.tennis.util.TennisUtil;
 
 import net.sf.json.JSONArray;
-import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.tennis.containers.Scene;
 
@@ -491,14 +490,14 @@ public class ATP_2022 extends Scene {
 			if (is_this_updating == false) {
 				if (match.getMatchType().toUpperCase().equalsIgnoreCase(TennisUtil.SINGLES)) {
 					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tPlayerName1"+ " SET " + 
-							match.getHomeFirstPlayer().getTicker_name().toUpperCase() + "\0");
+							match.getHomeFirstPlayer().getTicker_name() + "\0");
 					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tPlayerName2"+ " SET " + 
-							match.getAwayFirstPlayer().getTicker_name().toUpperCase() + "\0");
+							match.getAwayFirstPlayer().getTicker_name() + "\0");
 				} else if (match.getMatchType().toUpperCase().equalsIgnoreCase(TennisUtil.DOUBLES)) {
 					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tPlayerName1" + " SET " + 
-							match.getHomeFirstPlayer().getTicker_name().toUpperCase()+ " / " + match.getHomeSecondPlayer().getTicker_name() + "\0");
+							match.getHomeFirstPlayer().getTicker_name()+ " / " + match.getHomeSecondPlayer().getTicker_name() + "\0");
 					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tPlayerName2" + " SET " + 
-							match.getAwayFirstPlayer().getTicker_name().toUpperCase() + " / " + match.getAwaySecondPlayer().getTicker_name() + "\0");
+							match.getAwayFirstPlayer().getTicker_name() + " / " + match.getAwaySecondPlayer().getTicker_name() + "\0");
 				}
 			}
 			
@@ -2916,7 +2915,7 @@ public class ATP_2022 extends Scene {
 			System.out.println("ERROR: Match-Stats -> Match is null");
 		} else {
 			
-			try {
+			/*try {
 		         URL url = new URL("https://api.protennislive.com/feeds/MatchStats/MS011");
 		         URLConnection connection = url.openConnection();
 		         connection.connect();
@@ -2932,7 +2931,7 @@ public class ATP_2022 extends Scene {
 		         System.out.println("Internet is not connected");
 		      } catch (IOException e) {
 		         System.out.println("Internet is not connected");
-		      }
+		      }*/
 			
 			
 			
