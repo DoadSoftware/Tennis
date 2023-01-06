@@ -303,6 +303,10 @@ public class IndexController
 		case "NAMESUPER_GRAPHICS-OPTIONS": case "NAMESUPER-SP_GRAPHICS-OPTIONS": case "NAMESUPER-SP1_GRAPHICS-OPTIONS": case "NAMESUPER-DP1_GRAPHICS-OPTIONS":
 		case "SINGLE-MATCHPROMO_GRAPHICS-OPTIONS": case "DOUBLE-MATCHPROMO_GRAPHICS-OPTIONS": case "SINGLE-LT_MATCHPROMO_GRAPHICS-OPTIONS": case "DOUBLE-LT_MATCHPROMO_GRAPHICS-OPTIONS":
 			return (String) this_ATP_2022.ProcessGraphicOption(whatToProcess, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);
+		case "APIDATA_GRAPHICS-OPTIONS":
+			String link = "https://api.protennislive.com/feeds/MatchStats/" + session_match.getMatchId();
+			
+			return JSONObject.fromObject(TennisFunctions.getMatchStatsApi(link)).toString();
 		case TennisUtil.READ_CLOCK:
 			
 			if(new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CLOCK_XML).exists()) {

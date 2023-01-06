@@ -94,6 +94,7 @@ function initialiseForm(whatToProcess, dataToProcess)
 			document.getElementById('matchFileName').value = dataToProcess.matchFileName;
 			document.getElementById('tournament').value = dataToProcess.tournament;
 			document.getElementById('matchIdent').value = dataToProcess.matchIdent;
+			document.getElementById('matchId').value = dataToProcess.matchId;
 			document.getElementById('categoryType').value = dataToProcess.categoryType;
 			document.getElementById('matchType').value = dataToProcess.matchType;
 			document.getElementById('tieBreakerRule').value = dataToProcess.tieBreakerRule;
@@ -106,6 +107,7 @@ function initialiseForm(whatToProcess, dataToProcess)
 			document.getElementById('matchFileName').value = '';
 			document.getElementById('tournament').value = '';
 			document.getElementById('matchIdent').value = '';
+			document.getElementById('matchId').value = '';
 			document.getElementById('categoryType').selectedIndex = 0;
 			document.getElementById('matchType').selectedIndex = 0;
 			document.getElementById('tieBreakerRule').selectedIndex = 0;
@@ -297,11 +299,24 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 			break;
 			
 		case 73:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
 			addItemsToList('SCOREBUG_OPTION',null);
+			processTennisProcedures('APIDATA_GRAPHICS-OPTIONS');
 			break;
 		case 76:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
 			addItemsToList('SCOREBUG-SET_OPTION',null); 
 			break;
+		/*case 75:
+			$("#select_event_div").hide();
+			$("#match_configuration").hide();
+			$("#tennis_div").hide();
+			addItemsToList('SCOREBUG_STATS_OPTION',null);
+			break;*/
 		case 72:
 			addItemsToList('SCOREBUG-HEADER_OPTION',null);
 			//processTennisProcedures('POPULATE-SCOREBUG_HEADER');
@@ -597,6 +612,9 @@ function processUserSelection(whichInput)
 	case 'populate_stats_set_btn':
 		processTennisProcedures('POPULATE-SCOREBUG_SET_STATS');
 		break;
+	case 'populate_stats_bar_btn':
+		processTennisProcedures('POPULATE-SCOREBUG_BAR_STATS');
+		break;
 	case 'populate_namesuper_btn':
 		processTennisProcedures('POPULATE-NAMESUPERDB');
 		break;
@@ -733,7 +751,7 @@ function processTennisProcedures(whatToProcess, whichInput)
 			break;
 		}
 		break;
-	case 'POPULATE-SCOREBUG_STATS': case 'POPULATE-SCOREBUG_SET_STATS':
+	case 'POPULATE-SCOREBUG_STATS': case 'POPULATE-SCOREBUG_SET_STATS': case 'POPULATE-SCOREBUG_BAR_STATS':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
 			value_to_process = $('#selectScorebugstats option:selected').val() ;
@@ -750,7 +768,7 @@ function processTennisProcedures(whatToProcess, whichInput)
 	case 'POPULATE-MATCH_STATS':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
-			value_to_process = '/Default/FF_MatchStats1';
+			value_to_process = '/Default/FF_MatchStats';
 			break;
 		}
 		break;
@@ -1051,6 +1069,9 @@ function processTennisProcedures(whatToProcess, whichInput)
 			case 'NAMESUPER-DP1_GRAPHICS-OPTIONS':
 				addItemsToList('NAMESUPER-DP1-OPTIONS',data);
 				break;
+			case 'APIDATA_GRAPHICS-OPTIONS':
+				addItemsToList('APIDATA-OPTIONS',data);				
+				break;	
         	}
     		processWaitingButtonSpinner('END_WAIT_TIMER');
 	    },    
@@ -1124,10 +1145,10 @@ function processVariousStats(whatToProcess, whichInput)
 }
 function addItemsToList(whatToProcess, dataToProcess)
 {
-	var max_cols,div,anchor,row,header_text,select,option,tr,th,thead,text,table,tbody,cellCount;
-	
+	var max_cols,div,anchor,row,header_text,select,option,tr,th,thead,text,table,tbody;
+	var cellCount=0;
 	switch (whatToProcess) {
-	case 'SCOREBUG_OPTION': case 'SCOREBUG-SET_OPTION': case 'SPEED_OPTION': case 'SCOREBUG-HEADER_OPTION':
+	case 'SCOREBUG_OPTION': case 'SCOREBUG-SET_OPTION': case 'SCOREBUG_STATS_OPTION': case 'SPEED_OPTION': case 'SCOREBUG-HEADER_OPTION':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
 
@@ -1148,6 +1169,41 @@ function addItemsToList(whatToProcess, dataToProcess)
 			row = tbody.insertRow(tbody.rows.length);
 			
 			switch(whatToProcess){
+				case 'SCOREBUG_STATS_OPTION':
+					select = document.createElement('select');
+					select.style = 'width:130px';
+					select.id = 'selectScorebugstats';
+					select.name = select.id;
+					
+					option = document.createElement('option');
+					option.value = 'firstServePoints';
+					option.text = '1st Serve Points Won';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'secondServePoints';
+					option.text = '2nd Serve Points Won';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'totalPointsWon';
+					option.text = 'Total Points Won';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'returnPointsWon';
+					option.text = 'Return Points Won ';
+					select.appendChild(option);
+					
+					option = document.createElement('option');
+					option.value = 'breakPoint';
+					option.text = 'Break Points Won';
+					select.appendChild(option);
+
+					select.setAttribute('onchange',"processUserSelection(this)");
+					row.insertCell(cellCount).appendChild(select);
+					cellCount = cellCount + 1;
+					break;
 				case 'SCOREBUG-HEADER_OPTION':
 					select = document.createElement('select');
 					select.style = 'width:130px';
@@ -1214,11 +1270,6 @@ function addItemsToList(whatToProcess, dataToProcess)
 					select.appendChild(option);
 					
 					option = document.createElement('option');
-					option.value = 'winner';
-					option.text = 'Winner';
-					select.appendChild(option);
-					
-					option = document.createElement('option');
 					option.value = 'ace';
 					option.text = 'Aces';
 					select.appendChild(option);
@@ -1226,11 +1277,6 @@ function addItemsToList(whatToProcess, dataToProcess)
 					option = document.createElement('option');
 					option.value = 'doubleFault';
 					option.text = 'Double Fault';
-					select.appendChild(option);
-					
-					option = document.createElement('option');
-					option.value = 'error';
-					option.text = 'Error';
 					select.appendChild(option);
 					
 					option = document.createElement('option');
@@ -1261,11 +1307,6 @@ function addItemsToList(whatToProcess, dataToProcess)
 					select.appendChild(option);
 					
 					option = document.createElement('option');
-					option.value = 'setwinner';
-					option.text = 'Winner';
-					select.appendChild(option);
-					
-					option = document.createElement('option');
 					option.value = 'setace';
 					option.text = 'Aces';
 					select.appendChild(option);
@@ -1273,11 +1314,6 @@ function addItemsToList(whatToProcess, dataToProcess)
 					option = document.createElement('option');
 					option.value = 'setdoubleFault';
 					option.text = 'Double Fault';
-					select.appendChild(option);
-					
-					option = document.createElement('option');
-					option.value = 'seterror';
-					option.text = 'Error';
 					select.appendChild(option);
 					
 					option = document.createElement('option');
@@ -1306,6 +1342,10 @@ function addItemsToList(whatToProcess, dataToProcess)
 			case 'SCOREBUG_OPTION':
 			    option.name = 'populate_stats_btn';
 			    option.value = 'Populate Stats';
+				break;
+			case 'SCOREBUG_STATS_OPTION':
+				option.name = 'populate_stats_bar_btn';
+			    option.value = 'Populate Stats Bar';
 				break;
 			case 'SCOREBUG-SET_OPTION':
 				option.name = 'populate_stats_set_btn';
@@ -1520,6 +1560,36 @@ function addItemsToList(whatToProcess, dataToProcess)
 			break;
 		}
 		break;
+	case 'APIDATA-OPTIONS':
+		var home_name,away_name;
+		api_value_home = '';
+		api_value_away = '';
+		header_text = document.createElement('h6');
+		header_text.innerHTML = 'DOAD API DATA';
+		document.getElementById('select_graphic_options_div').appendChild(header_text);
+		
+		table = document.createElement('table');
+		table.setAttribute('class', 'table table-bordered');
+				
+		tbody = document.createElement('tbody');
+
+		table.appendChild(tbody);
+		document.getElementById('select_graphic_options_div').appendChild(table);
+
+		row = tbody.insertRow(tbody.rows.length);
+		alert(dataToProcess.playerTeam1.sets[0].stats.servicestats.aces.number);
+		header_text = document.createElement('h6');
+		if(dataToProcess.playerTeam1.sets.length > 0) {
+			for(var i = 0; i <= dataToProcess.apiData.length -1; i++ ) {
+				
+			}
+			//header_text.innerHTML = header_text.innerHTML  + home_name + ' : ' + '[ ' + api_value_home + ' ]' + "<br>" + "<br>" 
+									//+ away_name  + ' : ' + '[ ' + api_value_away + ' ]';
+			row.insertCell(0).appendChild(header_text);
+			
+		}
+		break;	
+		
 	case 'NAMESUPER-OPTIONS': case 'NAMESUPER-SP-OPTIONS': case 'NAMESUPER-DP-OPTIONS': case 'NAMESUPER-SP1-OPTIONS': case 'NAMESUPER-DP1-OPTIONS':
 	case 'CROSS-OPTIONS':
 		switch ($('#selectedBroadcaster').val().toUpperCase()) {
