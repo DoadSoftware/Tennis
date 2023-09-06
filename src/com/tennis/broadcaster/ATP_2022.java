@@ -3347,7 +3347,7 @@ public class ATP_2022 extends Scene {
 				
 				print_writer.println("-1 RENDERER*TREE*$Main$All$BottomOut$BottomGrp3$AllHeader$SetNumberGrp$3$SetText1*GEOM*TEXT SET " + "1" + "\0");
 				print_writer.println("-1 RENDERER*TREE*$Main$All$BottomOut$BottomGrp3$AllHeader$SetNumberGrp$3$SetText2*GEOM*TEXT SET " + "2" + "\0");
-				print_writer.println("-1 RENDERER*TREE*$Main$All$BottomOut$BottomGrp3$AllHeader$SetNumberGrp$3$SetText2*GEOM*TEXT SET " + "2" + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main$All$BottomOut$BottomGrp3$AllHeader$SetNumberGrp$3$SetText3*GEOM*TEXT SET " + "3" + "\0");
 				
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSet1BreakingPointsA1" + " SET " + 
 						ApiMatch.getPlayerTeam1().getSets().get(1).getStats().getReturnStats().getBreakPointsConverted().getDividend() + "\0");
