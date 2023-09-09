@@ -16,10 +16,13 @@ function afterPageLoad(whichPageHasLoaded)
 {
 	switch (whichPageHasLoaded) {
 	case 'SETUP':
+		processTennisProcedures('READ_MATCH_DATA',null);
 		$('#homeFirstPlayerId').select2();
 		$('#homeSecondPlayerId').select2();
 		$('#awayFirstPlayerId').select2();
 		$('#awaySecondPlayerId').select2();
+		addItemsToList('LOAD_SELECTED_TEAM_PLAYERS', document.getElementById('homeTeamId'));
+		addItemsToList('LOAD_SELECTED_TEAM_PLAYERS', document.getElementById('awayTeamId'));
 		break;
 	case 'MATCH':
 		if(window.location.href.toLowerCase().includes('/stat_to_match')) {
@@ -930,7 +933,8 @@ function processTennisProcedures(whatToProcess, whichInput)
 					}
 				}
 				break;
-			case 'LOG_SCORE': case 'LOAD_MATCH': case 'LOG_SET': case 'LOG_GAME': case 'LOAD_MATCH_AFTER_STAT_LOG': case 'LOG_SET_UNDO':
+			case 'LOG_SCORE': case 'LOAD_MATCH': case 'LOG_SET': case 'LOG_GAME': case 'LOAD_MATCH_AFTER_STAT_LOG': 
+			case 'LOG_SET_UNDO':
         		addItemsToList('LOAD_MATCH',data);
 				switch(whatToProcess) {
 				case 'LOG_SET_UNDO':
@@ -1145,9 +1149,44 @@ function processVariousStats(whatToProcess, whichInput)
 }
 function addItemsToList(whatToProcess, dataToProcess)
 {
-	var max_cols,div,anchor,row,header_text,select,option,tr,th,thead,text,table,tbody;
-	var cellCount=0;
+	var max_cols,div,anchor,row,header_text,select,option,tr,th,thead,text,table,tbody,cellCount;
+	
+	cellCount=0;
+	
 	switch (whatToProcess) {
+	case 'LOAD_SELECTED_TEAM_PLAYERS':
+		
+		if(dataToProcess.id.includes('home')) {
+			$('#homeFirstPlayerId').empty();
+			$('#homeSecondPlayerId').empty();
+		} else {
+			$('#awayFirstPlayerId').empty();
+			$('#awaySecondPlayerId').empty();
+		}
+		if(match_data) {
+			match_data.players.forEach(function(plyr,play_index,playr_arr){
+				if(plyr.teamId == $('#' + dataToProcess.id + ' option:selected').val()){
+					option = document.createElement('option');
+					if(dataToProcess.id.includes('home')) {
+						$('#homeFirstPlayerId').append(new Option(plyr.full_name, plyr.playerId));
+						$('#homeSecondPlayerId').append(new Option(plyr.full_name, plyr.playerId));
+					} else {
+						$('#awayFirstPlayerId').append(new Option(plyr.full_name, plyr.playerId));
+						$('#awaySecondPlayerId').append(new Option(plyr.full_name, plyr.playerId));
+					}
+				}
+			});
+			if(dataToProcess.id.includes('home')) {
+				$('#homeFirstPlayerId').select2();
+				$('#homeSecondPlayerId').select2();
+			} else {
+				$('#awayFirstPlayerId').select2();
+				$('#awaySecondPlayerId').select2();
+			}
+		}
+		
+		break;
+		
 	case 'SCOREBUG_OPTION': case 'SCOREBUG-SET_OPTION': case 'SCOREBUG_STATS_OPTION': case 'SPEED_OPTION': case 'SCOREBUG-HEADER_OPTION':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
@@ -2107,8 +2146,8 @@ function addItemsToList(whatToProcess, dataToProcess)
 				text.innerHTML = 'GAME'
 				text.htmlFor = select.id;
 				
-		   		div = document.createElement('div');
-				div.style = 'text-align:center;';
+		   		//div = document.createElement('div');
+				//div.style = 'text-align:center;';
 		
 				select = document.createElement('select');
 				select.id = 'select_scoring_type';
@@ -2124,11 +2163,21 @@ function addItemsToList(whatToProcess, dataToProcess)
 				option.text = 'Tie Breaker';
 				select.appendChild(option);
 
+				option = document.createElement('option');
+				option.value = 'points';	
+				option.text = 'Points (TPL)';
+				select.appendChild(option);
+
 				text = document.createElement('label');
 				text.innerHTML = 'Score Type: '
 				text.htmlFor = select.id;
-
-				div.appendChild(text).appendChild(select);
+				
+				switch (document.getElementById('selectedBroadcaster').value){
+				case 'TPL_2023':
+					$(select).val('points');
+					break;
+				}
+				//div.appendChild(text).appendChild(select);
 				
 				row.insertCell(0).appendChild(text).appendChild(select);
 							

@@ -31,6 +31,7 @@
 			      <select id="selectedBroadcaster" name="selectedBroadcaster" class="browser-default custom-select custom-select-sm" 
 			      		onchange="processUserSelection(this)">
 			          <option value="ATP_2022">ATP 2022</option>
+			          <option value="TPL_2023">TPL 2023</option>
 			      </select>
 			    </div>
 			  </div>

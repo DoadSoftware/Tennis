@@ -111,6 +111,7 @@ public class IndexController
 		    }
 		}));
 		model.addAttribute("players", tennisService.getAllPlayer());
+		model.addAttribute("teams", tennisService.getAllTeams());
 		model.addAttribute("licence_expiry_message",
 				"Software licence expires on " + new SimpleDateFormat("E, dd MMM yyyy").format(
 				new SimpleDateFormat("yyyy-MM-dd").parse(expiry_date)));
@@ -277,6 +278,11 @@ public class IndexController
 					throws JAXBException, IllegalAccessException, InvocationTargetException, IOException, NumberFormatException, InterruptedException
 	{	
 		switch (whatToProcess.toUpperCase()) {
+		case "READ_MATCH_DATA":
+			
+			session_match = TennisFunctions.populateMatchVariables(tennisService, session_match);
+			return JSONObject.fromObject(session_match).toString();
+
 		case "LOG_SET_UNDO":
 			
 			for(Set set : session_match.getSets()) {

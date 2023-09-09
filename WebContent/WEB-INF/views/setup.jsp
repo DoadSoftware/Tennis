@@ -127,6 +127,26 @@
 			  	<table class="table table-striped table-bordered"> 
 				  <thead>
 			        <tr>
+			        	<th>Select HOME Team: 
+					      <select id="homeTeamId" name="homeTeamId" 
+					      		onchange="addItemsToList('LOAD_SELECTED_TEAM_PLAYERS', this);"
+					      		class="browser-default custom-select custom-select-sm">
+							<c:forEach items = "${teams}" var = "team">
+					          <option value="${team.teamId}">${team.teamName1}</option>
+							</c:forEach>
+					      </select>
+			        	</th>
+			        	<th>Select AWAY Team: 
+					      <select id="awayTeamId" name="awayTeamId" 
+					      		onchange="addItemsToList('LOAD_SELECTED_TEAM_PLAYERS', this);"
+					      		class="browser-default custom-select custom-select-sm">
+							<c:forEach items = "${teams}" var = "team">
+					          <option value="${team.teamId}">${team.teamName1}</option>
+							</c:forEach>
+					      </select>
+			        	</th>
+				    </tr>
+			        <tr>
 			        	<th>Select HOME First Player: 
 					      <select id="homeFirstPlayerId" name="homeFirstPlayerId" 
 					      		class="browser-default custom-select custom-select-sm">
