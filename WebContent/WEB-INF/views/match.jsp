@@ -12,14 +12,14 @@
   <script type="text/javascript" src="<c:url value="/webjars/bootstrap/3.3.6/js/bootstrap.min.js"/>"></script>
   <script type="text/javascript" src="<c:url value="/resources/javascript/index.js"/>"></script>
   <link rel="stylesheet" href="<c:url value="/webjars/bootstrap/3.3.6/css/bootstrap.min.css"/>"/>
-  <script type="text/javascript">
+  <!--  <script type="text/javascript">
 	$(document).on("keydown", function(e){
 		if (e.which >= 112 && e.which <= 123) { // Suppress default behaviour of F1 to F12
 			e.preventDefault();
 		}
 		processUserSelectionData('LOGGER_FORM_KEYPRESS',e.which);
 	});
-  </script>  
+  </script> -->
 </head>
 <body onload="afterPageLoad('MATCH');">
 <form:form name="tennis_form" autocomplete="off" action="match" method="POST" enctype="multipart/form-data">

@@ -46,6 +46,25 @@ public class Scene {
 	public void scene_load(PrintWriter print_writer, String broadcaster) throws InterruptedException
 	{
 		switch (broadcaster.toUpperCase()) {
+		case "TPL_2023":
+			System.out.println("WHICH LAYER : "+this.which_layer);
+			switch(this.which_layer.toUpperCase()) {
+			case "FRONT_LAYER":
+				print_writer.println("-1 RENDERER*FRONT_LAYER SET_OBJECT SCENE*" + this.scene_path + "\0");
+				//print_writer.println("-1 RENDERER*FRONT_LAYER INITIALIZE \0");
+				print_writer.println("-1 RENDERER*FRONT_LAYER*SCENE_DATA INITIALIZE \0");
+				//print_writer.println("-1 RENDERER*FRONT_LAYER*UPDATE SET 1");
+				TimeUnit.MILLISECONDS.sleep(500);
+				break;
+			case "MIDDLE_LAYER":
+				print_writer.println("-1 RENDERER SET_OBJECT SCENE*" + this.scene_path + "\0");
+				//print_writer.println("-1 RENDERER INITIALIZE \0");
+				print_writer.println("-1 RENDERER*SCENE_DATA INITIALIZE \0");
+				//print_writer.println("-1 RENDERER*UPDATE SET 1");
+				TimeUnit.MILLISECONDS.sleep(500);
+				break;
+			}
+			break;
 		case "ATP_2022":
 			switch(this.which_layer.toUpperCase()) {
 			case "FRONT_LAYER":

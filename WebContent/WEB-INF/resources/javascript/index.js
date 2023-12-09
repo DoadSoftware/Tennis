@@ -1,4 +1,4 @@
-var match_data,home_team_id,away_team_id;
+var match_data,home_team_id,away_team_id,match_type;
 function processWaitingButtonSpinner(whatToProcess) 
 {
 	switch (whatToProcess) {
@@ -12,6 +12,7 @@ function processWaitingButtonSpinner(whatToProcess)
 		break;
 	}
 }
+
 function afterPageLoad(whichPageHasLoaded)
 {
 	switch (whichPageHasLoaded) {
@@ -94,6 +95,9 @@ function initialiseForm(whatToProcess, dataToProcess)
 	case 'SETUP':
 		
 		if(dataToProcess) {
+			alert(dataToProcess.homeFirstPlayerId);
+			document.getElementById('homeTeamId').value = dataToProcess.homeFirstPlayer.team.teamId;
+			document.getElementById('awayTeamId').value = dataToProcess.awayFirstPlayer.team.teamId;
 			document.getElementById('matchFileName').value = dataToProcess.matchFileName;
 			document.getElementById('tournament').value = dataToProcess.tournament;
 			document.getElementById('matchIdent').value = dataToProcess.matchIdent;
@@ -107,6 +111,8 @@ function initialiseForm(whatToProcess, dataToProcess)
 			document.getElementById('awayFirstPlayerId').value = dataToProcess.awayFirstPlayerId;
 			document.getElementById('awaySecondPlayerId').value = dataToProcess.awaySecondPlayerId;
 		} else {
+			document.getElementById('homeTeamId').value = 0;
+			document.getElementById('awayTeamId').value = 0;
 			document.getElementById('matchFileName').value = '';
 			document.getElementById('tournament').value = '';
 			document.getElementById('matchIdent').value = '';
@@ -201,10 +207,10 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 			processTennisProcedures('ANIMATE-OUT-SCOREBUG_STAT');
 			break;
 		case 112:
-			processTennisProcedures('POPULATE-SCOREBUG');
+			processTennisProcedures('POPULATE-SCOREBUG');  //DONE
 			break;
 		case 113:
-			processTennisProcedures('POPULATE-MATCHID');
+			processTennisProcedures('POPULATE-MATCHID');   //DONE
 			break;
 		case 114:
 			processTennisProcedures('POPULATE-MATCHID_DOUBLE');
@@ -216,7 +222,7 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 			processTennisProcedures('POPULATE-LT-MATCHID_DOUBLE');
 			break;
 		case 117:
-			processTennisProcedures('POPULATE-LT-MATCH_RESULTSINGLES');
+			processTennisProcedures('POPULATE-LT-MATCH_RESULTSINGLES');   //DONE
 			break;
 		case 118:
 			processTennisProcedures('POPULATE-LT-MATCH_RESULTDOUBLES');
@@ -224,22 +230,32 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 		case 119:
 			processTennisProcedures('POPULATE-FF-MATCH_RESULTSINGLES');
 			break;
-		case 120:
+		/*case 120:
 			processTennisProcedures('POPULATE-FF-MATCH_RESULTDOUBLES');
+			break;*/
+		case 120:   
+			processTennisProcedures('POPULATE-FIX_AND_RES');   //DONE
 			break;
-			
 		case 121:
-			$("#select_event_div").hide();
+			$("#select_event_div").hide();                 //DONE
 			$("#match_configuration").hide();
 			$("#tennis_div").hide();
 			processTennisProcedures('NAMESUPER_GRAPHICS-OPTIONS');
 			break;
-		case 122:
+		case 122:      										//DONE
 			$("#select_event_div").hide();
 			$("#match_configuration").hide();
 			$("#tennis_div").hide();
-			home_team_id = match_data.homeFirstPlayerId;
-			away_team_id = match_data.awayFirstPlayerId;
+			match_type = match_data.matchType;
+			if(match_data.matchType == 'singles'){
+				home_team_id1 = match_data.homeFirstPlayerId;
+				away_team_id1 = match_data.awayFirstPlayerId;
+			}else if(match_data.matchType == 'doubles'){
+				home_team_id1 = match_data.homeFirstPlayerId;
+				home_team_id2 = match_data.homeSecondPlayerId;
+				away_team_id1 = match_data.awayFirstPlayerId;
+				away_team_id2 = match_data.awaySecondPlayerId;
+			}
 			processTennisProcedures('NAMESUPER-SP_GRAPHICS-OPTIONS');
 			break;
 		case 123:
@@ -494,7 +510,13 @@ function processUserSelection(whichInput)
 		} else {
 			switch ($(whichInput).attr('name')) {
 			case 'end_game_btn': 
-				if(confirm('Confirm ' + $('#select_game_winner option:selected').text() + ' wins this game?')) {
+			
+				if(parseInt($('#homeScore').val()) == parseInt($('#awayScore').val())) {
+					alert("It's a TIE");
+					processWaitingButtonSpinner('START_WAIT_TIMER');
+					processTennisProcedures('LOG_GAME','END');
+				}else{
+					confirm('Confirm ' + $('#select_game_winner option:selected').text() + ' wins this game?')
 					processWaitingButtonSpinner('START_WAIT_TIMER');
 					processTennisProcedures('LOG_GAME','END');
 				}/*else{
@@ -547,10 +569,17 @@ function processUserSelection(whichInput)
 			alert('Player dupication found. Please choose different players');
 			return false;
 		}
+		if($('#homeTeamId option:selected').val() == $('#awayTeamId option:selected').val()) {
+			alert('Team dupication found. Please choose different Teams');
+			return false;
+		}
 		if($('#matchType option:selected').val() == 'doubles') {
 			if($('#homeSecondPlayerId option:selected').val() == $('#awaySecondPlayerId option:selected').val()
 				|| $('#homeFirstPlayerId option:selected').val() == $('#awaySecondPlayerId option:selected').val()
-				|| $('#homeSecondPlayerId option:selected').val() == $('#awayFirstPlayerId option:selected').val()) {
+				|| $('#homeSecondPlayerId option:selected').val() == $('#awayFirstPlayerId option:selected').val()
+				|| $('#homeFirstPlayerId option:selected').val() == $('#homeSecondPlayerId option:selected').val()
+				|| $('#awayFirstPlayerId option:selected').val() == $('#awaySecondPlayerId option:selected').val())
+				 {
 				alert('Player dupication found. Please choose different players');
 				return false;
 			}
@@ -748,7 +777,11 @@ function processTennisProcedures(whatToProcess, whichInput)
 		value_to_process = $('#select_serving_player option:selected').val();
 		break;
 	case 'POPULATE-SCOREBUG':
+		//alert($('#selectedBroadcaster').val());
 		switch ($('#selectedBroadcaster').val()) {
+		case 'TPL_2023':
+			value_to_process = '/Default/ScoreBug';
+			break;
 		case 'ATP_2022':
 			value_to_process = '/Default/ScoreBug-Single';
 			break;
@@ -768,6 +801,13 @@ function processTennisProcedures(whatToProcess, whichInput)
 			break;
 		}
 		break
+	case 'POPULATE-FIX_AND_RES':
+		//alert($('#selectedBroadcaster').val());
+		switch ($('#selectedBroadcaster').val()) {
+		case 'TPL_2023':
+			value_to_process = '/Default/Fixtures';
+			break;
+		}
 	case 'POPULATE-MATCH_STATS':
 		switch ($('#selectedBroadcaster').val()) {
 		case 'ATP_2022':
@@ -783,7 +823,11 @@ function processTennisProcedures(whatToProcess, whichInput)
 		}
 		break;
 	case 'POPULATE-MATCHID':
+		//alert($('#selectedBroadcaster').val());
 		switch ($('#selectedBroadcaster').val()) {
+		case 'TPL_2023':
+			value_to_process = '/Default/MatchId';
+			break;
 		case 'ATP_2022':
 			value_to_process = '/Default/FF_MatchIdSingles';
 			break;
@@ -840,6 +884,9 @@ function processTennisProcedures(whatToProcess, whichInput)
 		break;
 	case 'POPULATE-LT-MATCH_RESULTSINGLES': case 'POPULATE-LT-MATCH_SCORESINGLES':
 		switch ($('#selectedBroadcaster').val()) {
+		case 'TPL_2023':
+			value_to_process = '/Default/LT_Score';
+			break;
 		case 'ATP_2022':
 			value_to_process = '/Default/LtMatchResultsSingles';
 			break;
@@ -868,6 +915,9 @@ function processTennisProcedures(whatToProcess, whichInput)
 		break;
 	case 'POPULATE-NAMESUPER-DP':
 		switch ($('#selectedBroadcaster').val()) {
+		case 'TPL_2023':
+			value_to_process = '/Default/LowerThird' + ',' + $('#selectNameSuperdp option:selected').val();
+			break;
 		case 'ATP_2022':
 			value_to_process = '/Default/LtNameSuper2' + ',' + $('#selectNameSuperdp option:selected').val(); 
 			break;
@@ -875,6 +925,10 @@ function processTennisProcedures(whatToProcess, whichInput)
 		break;
 	case 'POPULATE-NAMESUPER-SP':
 		switch ($('#selectedBroadcaster').val()) {
+		case 'TPL_2023':
+			//alert($('#selectNameSupersp option:selected').val());
+			value_to_process = '/Default/LowerThird' + ',' + $('#selectNameSupersp option:selected').val();
+			break;
 		case 'ATP_2022':
 			value_to_process = '/Default/LtNameSuper1' + ',' + $('#selectNameSupersp option:selected').val();
 			break;
@@ -907,6 +961,9 @@ function processTennisProcedures(whatToProcess, whichInput)
 		break;
 	case 'POPULATE-NAMESUPERDB':
 		switch ($('#selectedBroadcaster').val()) {
+		case 'TPL_2023':
+			value_to_process = '/Default/LowerThird' + ',' + $('#selectNameSuper option:selected').val();
+			break;
 		case 'ATP_2022':
 			value_to_process = '/Default/LtNameSuperCenter' + ',' + $('#selectNameSuper option:selected').val();
 			break;
@@ -946,7 +1003,10 @@ function processTennisProcedures(whatToProcess, whichInput)
 						if(data.sets[data.sets.length - 1].games[data.sets[data.sets.length - 1]
 							.games.length - 1].game_type == 'tie_break'){
 							processVariousStats('CHECK-TIE-BREAK-WINNER',whichInput);
-						}else {
+						}else if(data.sets[data.sets.length - 1].games[data.sets[data.sets.length - 1]
+							.games.length - 1].game_type == 'points'){
+							processVariousStats('CHECK-POINTS-WINNER',whichInput);
+						}else{
 							processVariousStats('CHECK-GAME-WINNER',whichInput);
 						}
 					}
@@ -974,11 +1034,15 @@ function processTennisProcedures(whatToProcess, whichInput)
         	case 'POPULATE-LT-MATCHID_DOUBLE': case 'POPULATE-NAMESUPERDB': case 'POPULATE-LT-MATCH_RESULTDOUBLES': case 'POPULATE-FF-MATCH_RESULTSINGLES':
         	case 'POPULATE-FF-MATCH_RESULTDOUBLES': case 'POPULATE-NAMESUPER-SP': case 'POPULATE-NAMESUPER-DP': case 'POPULATE-NAMESUPER-SP1': case 'POPULATE-NAMESUPER-DP1':
         	case 'POPULATE-CROSS': case "POPULATE-LT-MATCH_SCORESINGLES": case 'POPULATE-SINGLE_MATCHPROMO': case 'POPULATE-DOUBLE_MATCHPROMO': case 'POPULATE-SINGLE_LT_MATCHPROMO':
-        	case 'POPULATE-LT_DOUBLE_MATCHPROMO': case 'POPULATE-LT-MATCH_SCOREDOUBLES': case 'POPULATE-MATCH_STATS': case 'POPULATE-SPEED':
+        	case 'POPULATE-LT_DOUBLE_MATCHPROMO': case 'POPULATE-LT-MATCH_SCOREDOUBLES': case 'POPULATE-MATCH_STATS': case 'POPULATE-SPEED': case 'POPULATE-FIX_AND_RES':
         		if(confirm('Animate In?') == true){
 					switch(whatToProcess){
 					case 'POPULATE-SCOREBUG':
 						processTennisProcedures('ANIMATE-IN-SCOREBUG');		
+						break;
+					case 'POPULATE-FIX_AND_RES':
+						//alert('ANIMATE IN');
+						processTennisProcedures('ANIMATE-IN-FIX_AND_RES');
 						break;
 					case 'POPULATE-MATCHID':
 						processTennisProcedures('ANIMATE-IN-MATCHID');				
@@ -1117,6 +1181,7 @@ function processVariousStats(whatToProcess, whichInput)
 			processUserSelection($('#end_set_btn'));
 		}
 		break;
+		
 	case 'CHECK-GAME-WINNER':
 		if($('#homeScore').val() == 'GAME' || $('#awayScore').val() == 'GAME') {
 			if($('#homeScore').val() == 'GAME') {
@@ -1127,6 +1192,29 @@ function processVariousStats(whatToProcess, whichInput)
 			processUserSelection($('#end_game_btn'));
 		}
 		break;
+		
+	case 'CHECK-POINTS-WINNER':
+		var home_and_away_score;
+		if(match_data.tieBreakerRule == 'race_to_20'){
+			home_and_away_score = 20;
+		}else if(match_data.tieBreakerRule == 'race_to_21'){
+			home_and_away_score = 21;
+		}
+		
+		if(parseInt($('#homeScore').val()) + parseInt($('#awayScore').val()) == home_and_away_score) {
+			if(parseInt($('#homeScore').val()) > parseInt($('#awayScore').val())) {
+				$('#select_game_winner').val('home');
+				processUserSelection($('#end_game_btn'));
+			} else if (parseInt($('#awayScore').val()) > parseInt($('#homeScore').val())) {
+				$('#select_game_winner').val('away');
+				processUserSelection($('#end_game_btn'));
+			}else{
+				alert("It's a tie End the game");
+				processUserSelection($('#end_game_btn'));
+			}
+			
+		}
+	break;
 	case 'CHECK-TIE-BREAK-WINNER':
 		var race_number;
 		if(match_data.tieBreakerRule == 'race_to_7'){
@@ -1155,7 +1243,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 	
 	switch (whatToProcess) {
 	case 'LOAD_SELECTED_TEAM_PLAYERS':
-		
+	
 		if(dataToProcess.id.includes('home')) {
 			$('#homeFirstPlayerId').empty();
 			$('#homeSecondPlayerId').empty();
@@ -1163,9 +1251,10 @@ function addItemsToList(whatToProcess, dataToProcess)
 			$('#awayFirstPlayerId').empty();
 			$('#awaySecondPlayerId').empty();
 		}
+		
 		if(match_data) {
 			match_data.players.forEach(function(plyr,play_index,playr_arr){
-				if(plyr.teamId == $('#' + dataToProcess.id + ' option:selected').val()){
+				if(plyr.teamId == $('#' + dataToProcess.id).val()){
 					option = document.createElement('option');
 					if(dataToProcess.id.includes('home')) {
 						$('#homeFirstPlayerId').append(new Option(plyr.full_name, plyr.playerId));
@@ -1630,9 +1719,10 @@ function addItemsToList(whatToProcess, dataToProcess)
 		break;	
 		
 	case 'NAMESUPER-OPTIONS': case 'NAMESUPER-SP-OPTIONS': case 'NAMESUPER-DP-OPTIONS': case 'NAMESUPER-SP1-OPTIONS': case 'NAMESUPER-DP1-OPTIONS':
-	case 'CROSS-OPTIONS':
+	case 'CROSS-OPTIONS': case 'FIXTURE-OPTIONS':
+		
 		switch ($('#selectedBroadcaster').val().toUpperCase()) {
-		case 'ATP_2022':
+		case 'ATP_2022': case 'TPL_2023':
 
 			$('#select_graphic_options_div').empty();
 	
@@ -1651,6 +1741,42 @@ function addItemsToList(whatToProcess, dataToProcess)
 			row = tbody.insertRow(tbody.rows.length);
 			
 			switch(whatToProcess){
+				
+				case 'FIXTURE-OPTIONS':
+					select = document.createElement('select');
+					select.id = 'selectTeam1';
+					select.name = select.id;
+				
+					dataToProcess.forEach(function(fix,index,arr1){
+						
+					option = document.createElement('option');
+                    option.value = fix.matchnumber;
+                    option.text =  fix.matchnumber +" "+ fix.home_Team.fullname + ' Vs ' + fix.away_Team.fullname;
+                    select.appendChild(option);
+						
+                	});
+				
+					row.insertCell(cellCount).appendChild(select);
+					cellCount = cellCount + 1;
+				
+					select = document.createElement('select');
+					select.id = 'selectTeam';
+					select.name = select.id;
+					
+					option = document.createElement('option');
+					option.value = 'mens';
+                	option.text = 'Mens' ;
+                    select.appendChild(option);
+                    
+                    option = document.createElement('option');
+					option.value = 'womens';
+                	option.text = 'Womens' ;
+                    select.appendChild(option);
+					
+					row.insertCell(cellCount).appendChild(select);
+					cellCount = cellCount + 1;
+					break;
+					
 				case 'CROSS-OPTIONS':
 					select = document.createElement('select');
 					select.style = 'width:130px';
@@ -1832,17 +1958,47 @@ function addItemsToList(whatToProcess, dataToProcess)
 					select.name = select.id;
 					
 					dataToProcess.forEach(function(nsp,index,arr1){
-						if(home_team_id == nsp.playerId){
-							option = document.createElement('option');
-							option.value = nsp.playerId;
-							option.text = nsp.full_name ;
-							select.appendChild(option);
-						}
-						if(away_team_id == nsp.playerId){
-							option = document.createElement('option');
-							option.value = nsp.playerId;
-							option.text = nsp.full_name ;
-							select.appendChild(option);
+						//alert("PLAYER ID == "+nsp.playerId);
+						//alert("file id "+match_data.homeFirstPlayerId);
+						//alert("DB ID "+nsp.playerId);
+						if(match_type == 'singles'){
+							if(home_team_id1 == nsp.playerId){
+								option = document.createElement('option');
+								option.value = nsp.playerId;
+								option.text = nsp.full_name ;
+								select.appendChild(option);
+							}
+							if(away_team_id1 == nsp.playerId){
+								option = document.createElement('option');
+								option.value = nsp.playerId;
+								option.text = nsp.full_name ;
+								select.appendChild(option);
+							}
+						}else if(match_type == 'doubles'){
+							if(home_team_id1 == nsp.playerId){
+								option = document.createElement('option');
+								option.value = nsp.playerId;
+								option.text = nsp.full_name ;
+								select.appendChild(option);
+							}
+							if(home_team_id2 == nsp.playerId){
+								option = document.createElement('option');
+								option.value = nsp.playerId;
+								option.text = nsp.full_name ;
+								select.appendChild(option);
+							}
+							if(away_team_id1 == nsp.playerId){
+								option = document.createElement('option');
+								option.value = nsp.playerId;
+								option.text = nsp.full_name ;
+								select.appendChild(option);
+							}
+							if(away_team_id2 == nsp.playerId){
+								option = document.createElement('option');
+								option.value = nsp.playerId;
+								option.text = nsp.full_name ;
+								select.appendChild(option);
+							}
 						}
 					});
 					
@@ -1873,6 +2029,8 @@ function addItemsToList(whatToProcess, dataToProcess)
 					break;
 				
 				case'NAMESUPER-OPTIONS':
+					//alert(match_data.namesuperId);
+					
 					select = document.createElement('select');
 					select.style = 'width:130px';
 					select.id = 'selectNameSuper';
@@ -2068,7 +2226,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 			    option = document.createElement('input');
 			    option.type = 'button';
 			    option.name = 'start_set_btn';
-			    option.value = 'Start Set';
+			    option.value = 'Start Tie';
 			    option.style = 'width:80px;';
 			    option.style.backgroundColor = 'Pink';
 			    option.id = option.name;
@@ -2098,7 +2256,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 				select.appendChild(option);
 				
 				text = document.createElement('label');
-				text.innerHTML = 'Set Winner: '
+				text.innerHTML = 'Tie Winner: '
 				text.htmlFor = select.id;
 				text.style = 'display:none;';
 				document.getElementById('select_event_div').appendChild(text).appendChild(select);
@@ -2106,7 +2264,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 			    option = document.createElement('input');
 			    option.type = 'button';
 			    option.name = 'end_set_btn';
-			    option.value = 'End Set';
+			    option.value = 'End Tie';
 			    option.style = 'width:80px;';
 			    option.style.backgroundColor = 'Pink';
 			    option.id = option.name;
@@ -2118,7 +2276,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 			    option = document.createElement('input');
 			    option.type = 'button';
 			    option.name = 'reset_set_btn';
-			    option.value = 'RESET Set';
+			    option.value = 'RESET Tie';
 			    option.style = 'width:80px;';
 			    option.style.backgroundColor = 'Pink';
 			    option.id = option.name;
@@ -2130,7 +2288,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 			    option = document.createElement('input');
 			    option.type = 'button';
 			    option.name = 'undo_set_btn';
-			    option.value = 'UNDO Set';
+			    option.value = 'UNDO Tie';
 			    option.style = 'width:80px;';
 			    option.style.backgroundColor = 'Pink';
 			    option.id = option.name;
@@ -2413,6 +2571,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 				cell = row.insertCell(row.cells.length);
 			    switch (j) {
 				case 0:
+					//cell.innerHTML = match_data.homeFirstPlayer.team.teamName1;
 				    cell.innerHTML = match_data.homeFirstPlayer.full_name;
 					if(match_data.matchType.toLowerCase() == 'doubles' && match_data.homeSecondPlayerId > 0) {
 					    cell.innerHTML = cell.innerHTML + '/' + match_data.homeSecondPlayer.full_name;
@@ -2432,6 +2591,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 					});
 					break;
 				case 1:
+					//cell.innerHTML = match_data.awayFirstPlayer.team.teamName1;
 				    cell.innerHTML = match_data.awayFirstPlayer.full_name;
 					if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
 					    cell.innerHTML = cell.innerHTML + '/' + match_data.awaySecondPlayer.full_name;

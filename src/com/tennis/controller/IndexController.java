@@ -9,8 +9,11 @@ import java.net.Socket;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.apache.commons.beanutils.BeanUtils;
@@ -25,12 +28,15 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.tennis.containers.Scene;
 import com.tennis.containers.ScoreBug;
 import com.tennis.broadcaster.ATP_2022;
+import com.tennis.broadcaster.TPL_2023;
 import com.tennis.model.Clock;
 import com.tennis.model.Configurations;
 import com.tennis.model.Event;
 import com.tennis.model.EventFile;
+import com.tennis.model.Fixture;
 import com.tennis.model.Game;
 import com.tennis.model.Match;
+import com.tennis.model.Player;
 import com.tennis.model.Set;
 import com.tennis.model.Stat;
 import com.tennis.service.TennisService;
@@ -48,15 +54,20 @@ public class IndexController
 	public static String current_date = "";
 	public static String error_message = "";
 	public static ATP_2022 this_ATP_2022;
+	public static TPL_2023 this_TPL_2023;
 	public static Match session_match = new Match();
 	public static EventFile session_event = new EventFile();
 	public static Clock session_clock = new Clock();
 	public static Configurations session_Configurations = new Configurations();
 	
 	List<Scene> session_selected_scenes = new ArrayList<Scene>();
-	public static String session_selected_broadcaster;
+	public static String session_selected_broadcaster="";
 	public static Socket session_socket;
 	public static PrintWriter print_writer;
+	public static List<File> all_match_files;
+	public static List<Fixture> all_db_fixture;
+	public static File this_file = null;
+	
 	
 	@RequestMapping(value = {"/","/initialise"}, method={RequestMethod.GET,RequestMethod.POST}) 
 	public String initialisePage(ModelMap model) throws JAXBException, IOException, ParseException 
@@ -73,7 +84,16 @@ public class IndexController
 		    }
 		}));
 
-		model.addAttribute("match_files", new File(TennisUtil.TENNIS_DIRECTORY 
+//		model.addAttribute("match_files", new File(TennisUtil.TENNIS_DIRECTORY 
+//				+ TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
+//			@Override
+//		    public boolean accept(File pathname) {
+//		        String name = pathname.getName().toLowerCase();
+//		        return name.endsWith(".xml") && pathname.isFile();
+//		    }
+//		}));
+		
+		all_match_files = Arrays.asList(new File(TennisUtil.TENNIS_DIRECTORY 
 				+ TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
 			@Override
 		    public boolean accept(File pathname) {
@@ -81,6 +101,9 @@ public class IndexController
 		        return name.endsWith(".xml") && pathname.isFile();
 		    }
 		}));
+		model.addAttribute("match_files",all_match_files);
+		
+		all_db_fixture = tennisService.getFixtures();
 		
 		if(new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CONFIGURATIONS_DIRECTORY + TennisUtil.OUTPUT_XML).exists()) {
 			session_Configurations = (Configurations)JAXBContext.newInstance(
@@ -103,13 +126,7 @@ public class IndexController
 	public String setupPage(ModelMap model) throws JAXBException, IllegalAccessException, 
 		InvocationTargetException, IOException, ParseException  
 	{
-		model.addAttribute("match_files", new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
-			@Override
-		    public boolean accept(File pathname) {
-		        String name = pathname.getName().toLowerCase();
-		        return name.endsWith(".xml") && pathname.isFile();
-		    }
-		}));
+		model.addAttribute("match_files", all_match_files);
 		model.addAttribute("players", tennisService.getAllPlayer());
 		model.addAttribute("teams", tennisService.getAllTeams());
 		model.addAttribute("licence_expiry_message",
@@ -146,13 +163,15 @@ public class IndexController
 			
 		}else {
 			
-			model.addAttribute("match_files", new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
+			all_match_files = Arrays.asList(new File(TennisUtil.TENNIS_DIRECTORY 
+					+ TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
 				@Override
 			    public boolean accept(File pathname) {
 			        String name = pathname.getName().toLowerCase();
 			        return name.endsWith(".xml") && pathname.isFile();
 			    }
 			}));
+			model.addAttribute("match_files",all_match_files);
 
 			model.addAttribute("licence_expiry_message",
 				"Software licence expires on " + new SimpleDateFormat("E, dd MMM yyyy").format(
@@ -176,6 +195,13 @@ public class IndexController
 			session_selected_broadcaster = selectedBroadcaster;
 			
 			switch (session_selected_broadcaster.toUpperCase()) {
+			case TennisUtil.TPL_2023:
+				session_selected_scenes.add(new Scene("/Default/ScoreBug","FRONT_LAYER")); // Front layer
+				session_selected_scenes.add(new Scene("","MIDDLE_LAYER"));
+				session_selected_scenes.get(0).scene_load(print_writer, session_selected_broadcaster);
+				this_TPL_2023 = new TPL_2023();
+				this_TPL_2023.scorebug = new ScoreBug();
+				break;
 			case TennisUtil.ATP_2022:
 				session_selected_scenes.add(new Scene("/Default/ScoreBug-Single","FRONT_LAYER")); // Front layer
 				session_selected_scenes.add(new Scene("","MIDDLE_LAYER"));
@@ -210,13 +236,15 @@ public class IndexController
 			
 		}else {
 		
-			model.addAttribute("match_files", new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
+			all_match_files = Arrays.asList(new File(TennisUtil.TENNIS_DIRECTORY 
+					+ TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
 				@Override
 			    public boolean accept(File pathname) {
 			        String name = pathname.getName().toLowerCase();
 			        return name.endsWith(".xml") && pathname.isFile();
 			    }
 			}));
+			model.addAttribute("match_files", all_match_files);
 			model.addAttribute("licence_expiry_message",
 				"Software licence expires on " + new SimpleDateFormat("E, dd MMM yyyy").format(
 				new SimpleDateFormat("yyyy-MM-dd").parse(expiry_date)));
@@ -277,6 +305,9 @@ public class IndexController
 			@RequestParam(value = "valueToProcess", required = false, defaultValue = "") String valueToProcess)
 					throws JAXBException, IllegalAccessException, InvocationTargetException, IOException, NumberFormatException, InterruptedException
 	{	
+		
+		
+		
 		switch (whatToProcess.toUpperCase()) {
 		case "READ_MATCH_DATA":
 			
@@ -305,10 +336,15 @@ public class IndexController
 					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + session_match.getMatchFileName()));
 
 			return JSONObject.fromObject(session_match).toString();
-
 		case "NAMESUPER_GRAPHICS-OPTIONS": case "NAMESUPER-SP_GRAPHICS-OPTIONS": case "NAMESUPER-SP1_GRAPHICS-OPTIONS": case "NAMESUPER-DP1_GRAPHICS-OPTIONS":
 		case "SINGLE-MATCHPROMO_GRAPHICS-OPTIONS": case "DOUBLE-MATCHPROMO_GRAPHICS-OPTIONS": case "SINGLE-LT_MATCHPROMO_GRAPHICS-OPTIONS": case "DOUBLE-LT_MATCHPROMO_GRAPHICS-OPTIONS":
-			return (String) this_ATP_2022.ProcessGraphicOption(whatToProcess, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);
+			switch(session_selected_broadcaster) {
+			case TennisUtil.ATP_2022:
+				return (String) this_ATP_2022.ProcessGraphicOption(whatToProcess, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);
+			case TennisUtil.TPL_2023:
+				return (String) this_TPL_2023.ProcessGraphicOption(whatToProcess, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);
+			}
+			
 		case "APIDATA_GRAPHICS-OPTIONS":
 			String link = "https://api.protennislive.com/feeds/MatchStats/" + session_match.getMatchId();
 			
@@ -320,6 +356,9 @@ public class IndexController
 					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CLOCK_XML)));
 			}
 			switch (session_selected_broadcaster) {
+			case TennisUtil.TPL_2023:
+				this_TPL_2023.updateScoreBug(session_selected_scenes, session_match, tennisService, print_writer);
+				break;
 			case TennisUtil.ATP_2022:
 				this_ATP_2022.updateScoreBug(session_selected_scenes, session_match, print_writer);
 				break;
@@ -327,15 +366,69 @@ public class IndexController
 			return JSONObject.fromObject(session_match).toString();
 			
 		case TennisUtil.LOAD_MATCH: case TennisUtil.LOAD_SETUP: case "LOAD_MATCH_AFTER_STAT_LOG": case "READ_MATCH_FOR_STATS":
-
+			
 			switch (whatToProcess.toUpperCase()) {
 			case TennisUtil.LOAD_MATCH: case TennisUtil.LOAD_SETUP: 
 				session_match = TennisFunctions.populateMatchVariables(tennisService, 
 						(Match) JAXBContext.newInstance(Match.class).createUnmarshaller().unmarshal(
 						new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + valueToProcess)));
-			}
-			
-			return JSONObject.fromObject(session_match).toString();
+				switch(whatToProcess.toUpperCase()) {
+				case TennisUtil.LOAD_MATCH:
+					
+					switch (session_selected_broadcaster) {
+					case TennisUtil.TPL_2023:
+						if(all_db_fixture != null) {
+							Fixture curr_fixture = all_db_fixture.stream().filter(fix -> 
+							fix.getMatchfilename().equalsIgnoreCase(session_match.getMatchFileName())).findAny().orElse(null);						
+							Match this_match = new Match();
+							session_match.setHome_total_score(0);
+							session_match.setAway_total_score(0);
+							
+							if(curr_fixture != null) {
+								for (Fixture fixture : all_db_fixture.stream().filter(fix -> fix.getMatchNumber()==curr_fixture.getMatchNumber()).collect(Collectors.toList())) {
+									this_file = all_match_files.stream().filter(fil -> fil.getName().equalsIgnoreCase(fixture.getMatchfilename())).findAny().orElse(null);
+									if(this_file != null) {
+										if(!this_file.getName().equalsIgnoreCase(session_match.getMatchFileName())) {
+											this_match = TennisFunctions.populateMatchVariables(tennisService, 
+													(Match) JAXBContext.newInstance(Match.class).createUnmarshaller().unmarshal(
+													new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + this_file.getName())));
+											if(session_match.getHomeFirstPlayer().getTeamId()==this_match.getHomeFirstPlayer().getTeamId()
+													|| session_match.getHomeFirstPlayer().getTeamId()==this_match.getAwayFirstPlayer().getTeamId()
+													|| session_match.getAwayFirstPlayer().getTeamId()==this_match.getAwayFirstPlayer().getTeamId()
+													|| session_match.getAwayFirstPlayer().getTeamId()==this_match.getAwayFirstPlayer().getTeamId())
+												{
+												if(this_match.getSets() != null) {
+														for (Set set : this_match.getSets()) {
+															for (Game game : set.getGames()) {
+																if(session_match.getHomeFirstPlayer().getTeamId()==this_match.getHomeFirstPlayer().getTeamId()) {
+																	session_match.setHome_total_score(session_match.getHome_total_score()+Integer.valueOf(game.getHome_score()));
+																}else if(session_match.getHomeFirstPlayer().getTeamId()==this_match.getAwayFirstPlayer().getTeamId()) {												
+																	session_match.setHome_total_score(session_match.getHome_total_score()+Integer.valueOf(game.getAway_score()));
+																}
+																
+																if(session_match.getAwayFirstPlayer().getTeamId()==this_match.getAwayFirstPlayer().getTeamId()) {
+																	session_match.setAway_total_score(session_match.getAway_total_score()+Integer.valueOf(game.getAway_score()));
+																}else if(session_match.getAwayFirstPlayer().getTeamId()==this_match.getHomeFirstPlayer().getTeamId()) {
+																	session_match.setAway_total_score(session_match.getAway_total_score()+Integer.valueOf(game.getHome_score()));
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						break;
+						}
+					break;
+					}
+				break;
+				}
+				System.out.println(session_match.getHome_total_score());
+				System.out.println(session_match.getAway_total_score());
+				return JSONObject.fromObject(session_match).toString();
 			
 		case TennisUtil.LOG_SET:
 			
@@ -383,19 +476,67 @@ public class IndexController
 					session_match.getSets().get(session_match.getSets().size()-1).getGames().remove(
 							session_match.getSets().get(session_match.getSets().size()-1).getGames().size()-1);
 				} else if(valueToProcess.toUpperCase().contains(TennisUtil.END)) {
-					session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
-						session_match.getSets().get(session_match.getSets().size()-1)
-						.getGames().size()-1).setGame_status(TennisUtil.END);
-					session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
-							session_match.getSets().get(session_match.getSets().size()-1)
-							.getGames().size()-1).setGame_winner(valueToProcess.split(",")[1]);
+					
+					switch (session_Configurations.getBroadcaster().toUpperCase()) {
+					case TennisUtil.TPL_2023:
+						if(Integer.valueOf(session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
+									session_match.getSets().get(session_match.getSets().size()-1)
+									.getGames().size()-1).getHome_score()) == Integer.valueOf(session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
+									session_match.getSets().get(session_match.getSets().size()-1)
+									.getGames().size()-1).getAway_score())) {
+									
+							session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
+								session_match.getSets().get(session_match.getSets().size()-1)
+								.getGames().size()-1).setGame_status(TennisUtil.END);
+							session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
+									session_match.getSets().get(session_match.getSets().size()-1)
+									.getGames().size()-1).setGame_winner("TIE");
+						}else {
+							session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
+								session_match.getSets().get(session_match.getSets().size()-1)
+								.getGames().size()-1).setGame_status(TennisUtil.END);
+							session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
+									session_match.getSets().get(session_match.getSets().size()-1)
+									.getGames().size()-1).setGame_winner(valueToProcess.split(",")[1]);
+						}
+						break;
+
+					default:
+						session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
+								session_match.getSets().get(session_match.getSets().size()-1)
+								.getGames().size()-1).setGame_status(TennisUtil.END);
+							session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
+									session_match.getSets().get(session_match.getSets().size()-1)
+									.getGames().size()-1).setGame_winner(valueToProcess.split(",")[1]);
+						break;
+					}
 				}
+				
+				
+				int curr_game_home_score = Integer.valueOf(session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
+						session_match.getSets().get(session_match.getSets().size()-1)
+						.getGames().size()-1).getHome_score());
+				
+				int curr_game_away_score = Integer.valueOf(session_match.getSets().get(session_match.getSets().size()-1).getGames().get(
+						session_match.getSets().get(session_match.getSets().size()-1)
+						.getGames().size()-1).getAway_score());
+				
+				int home_past_total_score = session_match.getHome_total_score();
+				int away_past_total_score = session_match.getAway_total_score();
+				
+				String home_team = session_match.getHomeFirstPlayer().getTeam().getTeamName1();
+				String away_team = session_match.getAwayFirstPlayer().getTeam().getTeamName1();
+				
+//				System.out.println(home_past_total_score+curr_game_home_score);
+//				System.out.println(away_past_total_score+curr_game_away_score);
+				
+				System.out.println(home_team +" : "+(home_past_total_score+curr_game_home_score));
+				System.out.println(away_team+" : "+(away_past_total_score+curr_game_away_score));
 				break;
 			}
 
 			JAXBContext.newInstance(Match.class).createMarshaller().marshal(session_match, 
 					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + session_match.getMatchFileName()));
-			
 			return JSONObject.fromObject(session_match).toString();
 
 		case TennisUtil.LOG_STAT:
@@ -471,6 +612,9 @@ public class IndexController
 		default:
 			
 			switch (session_selected_broadcaster) {
+			case TennisUtil.TPL_2023:
+				this_TPL_2023.ProcessGraphicOption(whatToProcess, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);
+				break;
 			case TennisUtil.ATP_2022:
 				this_ATP_2022.ProcessGraphicOption(whatToProcess, session_match, tennisService, print_writer, session_selected_scenes, valueToProcess);
 				break;

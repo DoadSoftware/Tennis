@@ -3,24 +3,35 @@ package com.tennis.broadcaster;
 import com.tennis.containers.ScoreBug;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.tennis.model.Fixture;
+import com.tennis.model.Game;
 import com.tennis.model.LiveMatchStatsAPI;
 import com.tennis.model.Match;
 import com.tennis.model.NameSuper;
 import com.tennis.model.Player;
+import com.tennis.model.Result;
+import com.tennis.model.Set;
+import com.tennis.model.Team;
 import com.tennis.model.VariousText;
 import com.tennis.service.TennisService;
+import com.tennis.service.impl.TennisServiceImpl;
 import com.tennis.util.TennisFunctions;
 import com.tennis.util.TennisUtil;
 
@@ -30,49 +41,33 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tennis.containers.Scene;
 
-public class ATP_2022 extends Scene {
+public class TPL_2023 extends Scene {
 
-	public String session_selected_broadcaster = "ATP_2022";
+	public String session_selected_broadcaster = "TPL_2023";
 
 	public ScoreBug scorebug = new ScoreBug();
 	public String which_graphics_onscreen = "";
 	public boolean is_infobar = false;
 	public long last_date = 0;
+	int pastHomeScore = 0;
+	int pastAwayScore = 0;
+	int homeWon = 0;
+	int awayWon = 0;
+	boolean isVisited = false;
+	//TennisService tennisService;
 	
-	private String flag_path = "C:\\\\Images\\\\ATP\\\\Flag\\\\";
+	private String flag_path = "C:\\\\Images\\\\TPL\\\\Logos\\\\";
 	private String left_photo_path = "C:\\\\Images\\\\ATP\\\\Left\\\\";
 	private String right_photo_path = "C:\\\\Images\\\\ATP\\\\Right\\\\";
 	
-	public ATP_2022() {
+	public TPL_2023() {
 		super();
 	}
 
-	public ScoreBug updateScoreBug(List<Scene> scenes, Match match, PrintWriter print_writer)
-			throws InterruptedException, MalformedURLException, IOException {
+	public ScoreBug updateScoreBug(List<Scene> scenes, Match match, TennisService tennisService, PrintWriter print_writer)
+			throws InterruptedException, MalformedURLException, IOException, JAXBException {
 		if (scorebug.isScorebug_on_screen() == true) {
-			scorebug = populateScoreBug(true, scorebug, print_writer, scenes.get(0).getScene_path(), match,session_selected_broadcaster);
-			
-			if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getGame_status().equalsIgnoreCase(TennisUtil.START)
-				&& (match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getHome_score().equalsIgnoreCase(TennisUtil.GAME)||
-					match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getAway_score().equalsIgnoreCase(TennisUtil.GAME)||
-					match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getHome_score().equalsIgnoreCase(TennisUtil.ADVANTAGE)||
-					match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getAway_score().equalsIgnoreCase(TennisUtil.ADVANTAGE))){
-					
-					scorebug = populateGameScore(false, scorebug, print_writer, match, session_selected_broadcaster);
-					
-			}else if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getGame_type().equalsIgnoreCase(TennisUtil.NORMAL)
-					&& match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getGame_status().equalsIgnoreCase(TennisUtil.START)
-					&& (Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getHome_score()) > 0
-					|| Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getAway_score()) > 0)) {
-				scorebug = populateGameScore(false, scorebug, print_writer, match, session_selected_broadcaster);
-			}else if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getGame_type().equalsIgnoreCase(TennisUtil.TIE_BREAK)
-					&& match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getGame_status().equalsIgnoreCase(TennisUtil.START)
-					&& (Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getHome_score()) > 0
-					|| Integer.valueOf(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getAway_score()) > 0)) {
-				scorebug = populateGameScore(false, scorebug, print_writer, match, session_selected_broadcaster);
-			}else {
-				scorebug = populateGameScore(true, scorebug, print_writer, match, session_selected_broadcaster);
-			}
+			scorebug = populateScoreBug(true, scorebug, print_writer, scenes.get(0).getScene_path(), match, tennisService,session_selected_broadcaster);
 			//scorebug = populateGameScore(true, scorebug, print_writer, match, session_selected_broadcaster);
 		}
 		return scorebug;
@@ -88,7 +83,7 @@ public class ATP_2022 extends Scene {
 		case "POPULATE-SINGLE_LT_MATCHPROMO": case "POPULATE-LT_DOUBLE_MATCHPROMO": case "POPULATE-LT-MATCH_SCOREDOUBLES":
 		case "POPULATE-MATCHID_DOUBLE": case "POPULATE-MATCHID": case "POPULATE-FF-MATCH_RESULTSINGLES": case "POPULATE-FF-MATCH_RESULTDOUBLES": case "POPULATE-SINGLE_MATCHPROMO":	
 		case "POPULATE-DOUBLE_MATCHPROMO": case "POPULATE-MATCH_STATS": case "POPULATE-SPEED":
-		case "POPULATE-CROSS":
+		case "POPULATE-CROSS": case "POPULATE-FIX_AND_RES":
 			switch (whatToProcess.toUpperCase()) {
 			
 			case "POPULATE-SCOREBUG_STATS": case "POPULATE-SCOREBUG_SET_STATS": case "POPULATE-SCOREBUG_HEADER": case "POPULATE-SCOREBUG_BAR_STATS":
@@ -104,7 +99,7 @@ public class ATP_2022 extends Scene {
 			}
 			switch (whatToProcess.toUpperCase()) {
 			case "POPULATE-SCOREBUG":
-				populateScoreBug(false, scorebug, print_writer, valueToProcess.split(",")[0], match,session_selected_broadcaster);
+				populateScoreBug(false, scorebug, print_writer, valueToProcess.split(",")[0], match,tennisService,session_selected_broadcaster);
 				break;
 			case "POPULATE-SCOREBUG_HEADER":
 				populateScoreBugHeader(false,scorebug,print_writer,valueToProcess.split(",")[0],match,session_selected_broadcaster);
@@ -197,7 +192,7 @@ public class ATP_2022 extends Scene {
 				populateLtMatchScoreDoubles(print_writer, valueToProcess.split(",")[0], match,session_selected_broadcaster);
 				break;
 			case "POPULATE-LT-MATCH_RESULTSINGLES":
-				populateLtMatchResultSingles(print_writer, valueToProcess.split(",")[0], match,session_selected_broadcaster);
+				populateLtMatchResultSingles(print_writer, valueToProcess.split(",")[0], match, tennisService,session_selected_broadcaster);
 				break;
 			case "POPULATE-FF-MATCH_RESULTSINGLES":
 				populateFFMatchResultSingles(print_writer, valueToProcess.split(",")[0], match,session_selected_broadcaster);
@@ -213,6 +208,9 @@ public class ATP_2022 extends Scene {
 				break;
 			case "POPULATE-MATCHID":
 				populateMatchId(print_writer, valueToProcess.split(",")[0],match, session_selected_broadcaster);
+				break;
+			case "POPULATE-FIX_AND_RES":
+				populateFixAndResult(print_writer, valueToProcess.split(",")[0], tennisService.getResults(), tennisService.getAllTeams(),match,session_selected_broadcaster);
 				break;
 			case "POPULATE-SINGLE_MATCHPROMO":
 				populateMatchPromo(print_writer, valueToProcess.split(",")[0],Integer.valueOf(valueToProcess.split(",")[1]),tennisService.getFixtures(),
@@ -269,7 +267,9 @@ public class ATP_2022 extends Scene {
 			
 		case "NAMESUPER_GRAPHICS-OPTIONS": 
 			return JSONArray.fromObject(tennisService.getNameSupers()).toString();
-		case "NAMESUPER-SP_GRAPHICS-OPTIONS": case "NAMESUPER-SP1_GRAPHICS-OPTIONS": case "NAMESUPER-DP1_GRAPHICS-OPTIONS":
+		case "NAMESUPER-SP_GRAPHICS-OPTIONS":
+			return JSONArray.fromObject(tennisService.getAllPlayer()).toString();
+		case "NAMESUPER-SP1_GRAPHICS-OPTIONS": case "NAMESUPER-DP1_GRAPHICS-OPTIONS":
 			return JSONArray.fromObject(tennisService.getAllPlayer()).toString();
 		case "SINGLE-MATCHPROMO_GRAPHICS-OPTIONS": case "DOUBLE-MATCHPROMO_GRAPHICS-OPTIONS": case "SINGLE-LT_MATCHPROMO_GRAPHICS-OPTIONS": case "DOUBLE-LT_MATCHPROMO_GRAPHICS-OPTIONS":
 			return JSONArray.fromObject(TennisFunctions.processAllFixtures(tennisService)).toString();
@@ -280,7 +280,7 @@ public class ATP_2022 extends Scene {
 		case "ANIMATE-LT-MATCH_SCORESINGLES": case "ANIMATE-LT-MATCH_SCOREDOUBLES": case "ANIMATE-LT-SINGLE_LT_MATCHPROMO": case "ANIMATE-LT-DOUBLE_LT_MATCHPROMO":
 		case "ANIMATE-IN-MATCHID_DOUBLE": case "ANIMATE-IN-MATCHID": case "ANIMATE-FF-MATCH_RESULTSINGLES": case "ANIMATE-FF-MATCH_RESULTDOUBLES":
 		case "ANIMATE-IN-SINGLE_MATCHPROMO": case "ANIMATE-IN-DOUBLE_MATCHPROMO": case "ANIMATE-MATCH_STATS":
-		case "ANIMATE-LT-CROSS": case "ANIMATE-SPEED":
+		case "ANIMATE-LT-CROSS": case "ANIMATE-SPEED": case "ANIMATE-IN-FIX_AND_RES":
 			
 		case "CLEAR-ALL":
 		case "ANIMATE-OUT-SCOREBUG": case "ANIMATE-OUT-SCOREBUG_STAT": case "ANIMATE-OUT-SCOREBUG_HEADER":
@@ -291,10 +291,8 @@ public class ATP_2022 extends Scene {
 			case "ANIMATE-IN-SCOREBUG":
 				AnimateInGraphics(print_writer, "SCOREBUG");
 				TimeUnit.SECONDS.sleep(1);
-				if(match.getSets().get(0).getGames().get(0).getGame_status().equalsIgnoreCase(TennisUtil.END)) {
-					print_writer.println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*SoreAllIn START \0");
-					TimeUnit.SECONDS.sleep(1);
-				}
+				print_writer.println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*SoreAllIn START \0");
+				TimeUnit.SECONDS.sleep(1);
 				which_graphics_onscreen = "SCOREBUG";
 				is_infobar = true;
 				scorebug.setScorebug_on_screen(true);
@@ -362,6 +360,10 @@ public class ATP_2022 extends Scene {
 			case "ANIMATE-LT-MATCH_SCORESINGLES":
 				AnimateInGraphics(print_writer, "MATCH_SCORESINGLES");
 				which_graphics_onscreen = "MATCH_SCORESINGLES";
+				break;
+			case "ANIMATE-IN-FIX_AND_RES":
+				AnimateInGraphics(print_writer, "FIX_AND_RES");
+				which_graphics_onscreen = "FIX_AND_RES";
 				break;
 			case "ANIMATE-IN-SINGLE_MATCHPROMO":
 				AnimateInGraphics(print_writer, "SINGLE_MATCHPROMO");
@@ -463,7 +465,7 @@ public class ATP_2022 extends Scene {
 				case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB": case "NAMESUPER_SP": 
 				case "NAMESUPER_DP":case "NAMESUPER_SP1": case "NAMESUPER_DP1": case "MATCH_SCORESINGLES": case "MATCH_SCOREDOUBLES": case "SINGLE_LT_MATCHPROMO": case "DOUBLE_LT_MATCHPROMO":
 				case "MATCHID_DOUBLE": case "MATCHID": case "FF-MATCH_RESULTSINGLES": case "FF-MATCH_RESULTDOUBLES": case "SINGLE_MATCHPROMO": case "DOUBLE_MATCHPROMO":
-				case "CROSS": case "MATCH_STATS": case "SPEED":
+				case "CROSS": case "MATCH_STATS": case "SPEED": case "FIX_AND_RES":
 					AnimateOutGraphics(print_writer, which_graphics_onscreen);
 					which_graphics_onscreen = "";
 					break;
@@ -484,7 +486,7 @@ public class ATP_2022 extends Scene {
 		case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB": case "NAMESUPER_SP": 
 		case "NAMESUPER_DP": case "NAMESUPER_SP1": case "NAMESUPER_DP1": case "MATCH_SCORESINGLES": case "MATCH_SCOREDOUBLES":
 		case "MATCHID_DOUBLE": case "MATCHID": case "FF-MATCH_RESULTSINGLES": case "FF-MATCH_RESULTDOUBLES": case "SINGLE_MATCHPROMO": case "DOUBLE_MATCHPROMO": case "SINGLE_LT_MATCHPROMO":
-		case "DOUBLE_LT_MATCHPROMO": case "MATCH_STATS": case "SPEED":
+		case "DOUBLE_LT_MATCHPROMO": case "MATCH_STATS": case "SPEED": case "FIX_AND_RES":
 		case "CROSS":
 			print_writer.println("-1 RENDERER*STAGE*DIRECTOR*In START \0");
 			break;
@@ -499,7 +501,7 @@ public class ATP_2022 extends Scene {
 		case "LT-MATCH_RESULTSINGLES": case "LT-MATCH_RESULTDOUBLES": case "LT_MATCHID": case "LT-MATCHID_DOUBLE": case "NAMESUPERDB": case "NAMESUPER_SP": 
 		case "NAMESUPER_DP": case "NAMESUPER_SP1": case "NAMESUPER_DP1": case "MATCH_SCORESINGLES": case "MATCH_SCOREDOUBLES":
 		case "MATCHID_DOUBLE": case "MATCHID": case "FF-MATCH_RESULTSINGLES": case "FF-MATCH_RESULTDOUBLES": case "SINGLE_MATCHPROMO": case "DOUBLE_MATCHPROMO": case "SINGLE_LT_MATCHPROMO":
-		case "DOUBLE_LT_MATCHPROMO": case "MATCH_STATS": case "SPEED":
+		case "DOUBLE_LT_MATCHPROMO": case "MATCH_STATS": case "SPEED": case "FIX_AND_RES":
 		case "CROSS":
 			print_writer.println("-1 RENDERER*STAGE*DIRECTOR*Out START \0");
 			break;
@@ -527,189 +529,121 @@ public class ATP_2022 extends Scene {
 		return allLines;
 	}
 	
-	public ScoreBug populateScoreBug(boolean is_this_updating, ScoreBug scorebug, PrintWriter print_writer,String viz_sence_path, Match match, String selectedbroadcaster) throws IOException {
+	public ScoreBug populateScoreBug(boolean is_this_updating, ScoreBug scorebug, PrintWriter print_writer,String viz_sence_path, Match match, TennisService tennisService, String selectedbroadcaster) throws IOException, JAXBException {
 		if (match == null) {
 			System.out.println("ERROR: ScoreBug -> Match is null");
 		} else {
-			getSpeed("SPEED");
-			
+			int currHomeScore = 0;
+			int currAwayScore = 0;
 			if (is_this_updating == false) {
+				if(match.getSets() != null) {
+					if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getHomeFirstPlayer().getPlayerId() ||
+							match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getHomeSecondPlayer().getPlayerId()) {
+						print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$Scorebug$Header_Sub_Grp$SelectServe*FUNCTION*Omo*vis_con SET 1 \0");
+					}else if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getAwayFirstPlayer().getPlayerId() || 
+							match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getAwaySecondPlayer().getPlayerId()) {
+						print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$Scorebug$Header_Sub_Grp$SelectServe*FUNCTION*Omo*vis_con SET 1 \0");
+					}else {
+						print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$Scorebug$Header_Sub_Grp$SelectServe*FUNCTION*Omo*vis_con SET 0 \0");
+					}
+				}
+
+				
 				if (match.getMatchType().toUpperCase().equalsIgnoreCase(TennisUtil.SINGLES)) {
-					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tPlayerName1"+ " SET " + 
+					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName1"+ " SET " + 
 							match.getHomeFirstPlayer().getTicker_name() + "\0");
-					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tPlayerName2"+ " SET " + 
+					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName2"+ " SET " + 
 							match.getAwayFirstPlayer().getTicker_name() + "\0");
 				} else if (match.getMatchType().toUpperCase().equalsIgnoreCase(TennisUtil.DOUBLES)) {
-					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tPlayerName1" + " SET " + 
+					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName1" + " SET " + 
 							match.getHomeFirstPlayer().getTicker_name()+ " / " + match.getHomeSecondPlayer().getTicker_name() + "\0");
-					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tPlayerName2" + " SET " + 
+					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName2" + " SET " + 
 							match.getAwayFirstPlayer().getTicker_name() + " / " + match.getAwaySecondPlayer().getTicker_name() + "\0");
 				}
-			}
-			
-			List<String> home_data = new ArrayList<String>();
-			List<String> away_data = new ArrayList<String>();
+				
+				List<Fixture> all_db_fixture;
+				List<File> all_match_files;
+				File this_file = null;
+				Match this_match = null;
+				//Match curr_match = null;
+				
+				all_match_files = Arrays.asList(new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
+					@Override
+					public boolean accept(File pathname) {
+						String name = pathname.getName().toLowerCase();
+						return name.endsWith(".xml") && pathname.isFile();
+					}
+				}));
+				all_db_fixture = tennisService.getFixtures();
+				
+				if(all_db_fixture != null) {
+					Fixture curr_fixture = all_db_fixture.stream().filter(fix -> 
+					fix.getMatchfilename().equalsIgnoreCase(match.getMatchFileName())).findAny().orElse(null);		
+					if(curr_fixture != null) {
+						pastHomeScore = 0;
+						pastAwayScore = 0;
+						for (Fixture fixture : all_db_fixture.stream().filter(fix -> fix.getMatchNumber()==curr_fixture.getMatchNumber()).collect(Collectors.toList())) {
+							this_file = all_match_files.stream().filter(fil -> fil.getName().equalsIgnoreCase(fixture.getMatchfilename())).findAny().orElse(null);
+							if(this_file != null) {
+								if(!this_file.getName().equalsIgnoreCase(match.getMatchFileName())) {
+									this_match = TennisFunctions.populateMatchVariables(tennisService, 
+											(Match) JAXBContext.newInstance(Match.class).createUnmarshaller().unmarshal(
+											new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + this_file.getName())));
+									if(match.getHomeFirstPlayer().getTeamId()==this_match.getHomeFirstPlayer().getTeamId()
+											|| match.getHomeFirstPlayer().getTeamId()==this_match.getAwayFirstPlayer().getTeamId()
+											|| match.getAwayFirstPlayer().getTeamId()==this_match.getAwayFirstPlayer().getTeamId()
+											|| match.getAwayFirstPlayer().getTeamId()==this_match.getAwayFirstPlayer().getTeamId())
+										{
+											
+											for (Set set : this_match.getSets()) {
+												for (Game game : set.getGames()) {
+													if(is_this_updating == false) {
+														pastHomeScore = pastHomeScore + Integer.valueOf(game.getHome_score());
+														pastAwayScore = pastAwayScore + Integer.valueOf(game.getAway_score());
 
-			if (match.getSets() != null) {
-				for (int i = 0; i <= match.getSets().size() - 1; i++) {
-					int home = 0, away = 0;
-					for (int j = 0; j <= match.getSets().get(i).getGames().size() - 1; j++) {
-						if (match.getSets().get(i).getGames().get(j).getGame_winner() != null) {
-							if (match.getSets().get(i).getGames().get(j).getGame_winner().toUpperCase()
-									.equalsIgnoreCase("HOME")) {
-								home = home + 1;
-							} else if (match.getSets().get(i).getGames().get(j).getGame_winner().toUpperCase()
-									.equalsIgnoreCase("AWAY")) {
-								away = away + 1;
+														System.out.println("pastHomeScore "+pastHomeScore);
+														System.out.println("pastAwayScore "+pastAwayScore);
+													}
+												}
+											}
+										}
+									}
+								}
 							}
 						}
 					}
-					home_data.add(i, String.valueOf(home));
-					away_data.add(i, String.valueOf(away));
-				}
+					if(match.getMatchType().equalsIgnoreCase("SINGLES") && match.getCategoryType().equalsIgnoreCase("MENS")) {
+						print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + " tGameType " + " SET " + " MS " + "\0");
+					}else if(match.getMatchType().equalsIgnoreCase("SINGLES") && match.getCategoryType().equalsIgnoreCase("WOMENS")) {
+						print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + " tGameType " + " SET " + " WS " + "\0");
+					}else if(match.getMatchType().equalsIgnoreCase("DOUBLE") && match.getCategoryType().equalsIgnoreCase("MENS")) {
+						print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + " tGameType " + " SET " + " MD " + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + " tGameType " + " SET " + " XD " + "\0");
+					}
+					
 			}
-
-			if (match.getSets() != null) {
-				if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getHomeFirstPlayer().getPlayerId() ||
-						match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getHomeSecondPlayer().getPlayerId()) {
-					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$All$MainScoreBug$ServiceDot*FUNCTION*Omo*vis_con SET 1 \0");
-				}else if(match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getAwayFirstPlayer().getPlayerId() || 
-						match.getSets().get(match.getSets().size()-1).getGames().get(match.getSets().get(match.getSets().size()-1).getGames().size()-1).getServing_player() == match.getAwaySecondPlayer().getPlayerId()) {
-					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$All$MainScoreBug$ServiceDot*FUNCTION*Omo*vis_con SET 2 \0");
-				}else {
-					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$All$MainScoreBug$ServiceDot*FUNCTION*Omo*vis_con SET 0 \0");
-				}
-				for (int i = 0; i <= match.getSets().size() - 1; i++) {
-					if (match.getSets().get(i).getSet_status().toUpperCase().equalsIgnoreCase("START")||match.getSets().get(i).getSet_status().toUpperCase().equalsIgnoreCase("END")) {
-						if(i==0) {
-							if(is_this_updating == false) {
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$All$TopGrp$ScoreGrp$TopScore$SetOmo*FUNCTION*Omo*vis_con SET 0 \0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$All$BottomGrp$ScoreGrp$BottomScore$SetOmo*FUNCTION*Omo*vis_con SET 0 \0");
-							}
-							if (home_data.get(0).equalsIgnoreCase("0") && away_data.get(0).equalsIgnoreCase("0")) {
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "	+ "tTopRunningSet" + " SET " + "0" + "\0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomRunningSet" + " SET " + "0" + "\0");
-							} else {
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopRunningSet" + " SET " + home_data.get(0) + "\0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomRunningSet" + " SET " + away_data.get(0) + "\0");
-							}
-						}else if(i==1) {
-							if(is_this_updating == false) {
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$All$TopGrp$ScoreGrp$TopScore$SetOmo*FUNCTION*Omo*vis_con SET 1 \0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$All$BottomGrp$ScoreGrp$BottomScore$SetOmo*FUNCTION*Omo*vis_con SET 1 \0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopSetScore1" + " SET " + home_data.get(0) + "\0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomSetScore1" + " SET " + away_data.get(0) + "\0");
-								
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore1" + " SET " + "" + "\0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore1" + " SET " + "" + "\0");
-								
-								if(Integer.valueOf(home_data.get(0)) > Integer.valueOf(away_data.get(0))) {
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopSetStatus1" + " SET " + "1" + "\0");
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomSetStatus1" + " SET " + "0" + "\0");
-								}else if(Integer.valueOf(home_data.get(0))  < Integer.valueOf(away_data.get(0))) {
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopSetStatus1" + " SET " + "0" + "\0");
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomSetStatus1" + " SET " + "1" + "\0");
-								}
-								
-								if(match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_type().equalsIgnoreCase(TennisUtil.TIE_BREAK)&&
-										match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_status().equalsIgnoreCase(TennisUtil.END)) {
-									//if(match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.HOME)) {
-										print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore1" + " SET " + 
-												match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getAway_score() + "\0");
-									//}else if(match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
-										print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore1" + " SET " + 
-												match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getHome_score() + "\0");
-									//}
-								}
-								
-							}
-							
-							if (home_data.get(0).equalsIgnoreCase("0") && away_data.get(0).equalsIgnoreCase("0")) {
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "	+ "tTopRunningSet" + " SET " + "0" + "\0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomRunningSet" + " SET " + "0" + "\0");
-							} else {
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopRunningSet" + " SET " + home_data.get(1) + "\0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomRunningSet" + " SET " + away_data.get(1) + "\0");
-							}
-						}else if(i==2) {
-							if(is_this_updating == false) {
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$All$TopGrp$ScoreGrp$TopScore$SetOmo*FUNCTION*Omo*vis_con SET 2 \0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$All$BottomGrp$ScoreGrp$BottomScore$SetOmo*FUNCTION*Omo*vis_con SET 2 \0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopSetScore1" + " SET " + home_data.get(0) + "\0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomSetScore1" + " SET " + away_data.get(0) + "\0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopSetScore2" + " SET " + home_data.get(1) + "\0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomSetScore2" + " SET " + away_data.get(1) + "\0");
-								
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore1" + " SET " + "" + "\0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore1" + " SET " + "" + "\0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore2" + " SET " + "" + "\0");
-								print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore2" + " SET " + "" + "\0");
-								
-								if(Integer.valueOf(home_data.get(0)) > Integer.valueOf(away_data.get(0))) {
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopSetStatus1" + " SET " + "1" + "\0");
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomSetStatus1" + " SET " + "0" + "\0");
-								}else if(Integer.valueOf(home_data.get(0))  < Integer.valueOf(away_data.get(0))) {
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopSetStatus1" + " SET " + "0" + "\0");
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomSetStatus1" + " SET " + "1" + "\0");
-								}
-								
-								if(Integer.valueOf(home_data.get(1))  > Integer.valueOf(away_data.get(1))) {
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopSetStatus2" + " SET " + "1" + "\0");
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomSetStatus2" + " SET " + "0" + "\0");
-								}else if(Integer.valueOf(home_data.get(1))  < Integer.valueOf(away_data.get(1))) {
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopSetStatus2" + " SET " + "0" + "\0");
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomSetStatus2" + " SET " + "1" + "\0");
-								}
-								
-								if(match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_type().equalsIgnoreCase(TennisUtil.TIE_BREAK)&&
-										match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_status().equalsIgnoreCase(TennisUtil.END)) {
-									//if(match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.HOME)) {
-										print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore1" + " SET " + 
-												match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getAway_score() + "\0");
-									//}else if(match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
-										print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore1" + " SET " + 
-												match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getHome_score() + "\0");
-									//}
-								}
-								
-								if(match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getGame_type().equalsIgnoreCase(TennisUtil.TIE_BREAK)&&
-										match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getGame_status().equalsIgnoreCase(TennisUtil.END)) {
-									//if(match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.HOME)) {
-										print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore2" + " SET " + 
-												match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getAway_score() + "\0");
-									//}else if(match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
-										print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore2" + " SET " + 
-												match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getHome_score() + "\0");
-									//}
-								}
-							}
-							
-							
-							if(match.getMatchType().equalsIgnoreCase(TennisUtil.DOUBLES) && 
-									match.getSets().get(2).getGames().get(0).getGame_type().equalsIgnoreCase(TennisUtil.TIE_BREAK)) {
-								
-								if(match.getSets().get(2).getGames().get(0).getHome_score().equalsIgnoreCase("0") && 
-										match.getSets().get(2).getGames().get(0).getAway_score().equalsIgnoreCase("0")) {
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "	+ "tTopRunningSet" + " SET " + "0" + "\0");
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomRunningSet" + " SET " + "0" + "\0");
-								}else {
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopRunningSet" + " SET " + match.getSets().get(2).getGames().get(0).getHome_score() + "\0");
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomRunningSet" + " SET " + match.getSets().get(2).getGames().get(0).getAway_score() + "\0");
-								}
-								
-							}else {
-								if (home_data.get(0).equalsIgnoreCase("0") && away_data.get(0).equalsIgnoreCase("0")) {
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "	+ "tTopRunningSet" + " SET " + "0" + "\0");
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomRunningSet" + " SET " + "0" + "\0");
-								} else {
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tTopRunningSet" + " SET " + home_data.get(2) + "\0");
-									print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON "+ "tBottomRunningSet" + " SET " + away_data.get(2) + "\0");
-								}
-							}
-							
-						}
+			//System.out.println("FOR FILE "+match.getMatchFileName());
+			if(match.getSets() != null) {
+				for (Set set : match.getSets()) {
+					for (Game game : set.getGames()) {
+						 currHomeScore = Integer.valueOf(game.getHome_score());
+						 currAwayScore = Integer.valueOf(game.getAway_score());
+						print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + " tStatValue1 " + " SET "+  currHomeScore + "\0");
+						print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + " tStatValue2 " +" SET "+ currAwayScore + "\0");
 					}
 				}
+				
+				if(pastHomeScore == 0 && pastAwayScore == 0) {
+					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$Scorebug$Header_Sub_Grp$TOTAL*ACTIVE SET 0 \0");
+				}else if(pastHomeScore>0 || pastAwayScore>0) {
+					print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main$Scorebug$Header_Sub_Grp$TOTAL*ACTIVE SET 1 \0");
+				}
+				print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSetValue1" + " SET " + (pastHomeScore + currHomeScore) + "\0");
+				print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSetValue2" + " SET " + (pastAwayScore + currAwayScore) + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSetValue1" + " SET " + (pastHomeScore + currHomeScore) + "\0");
+				print_writer.println("-1 RENDERER*FRONT_LAYER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSetValue2" + " SET " + (pastAwayScore + currAwayScore) + "\0");
 			}
 		}
 		return scorebug;
@@ -1293,175 +1227,122 @@ public class ATP_2022 extends Scene {
 		}
 	}
 	
-	public void populateLtMatchResultSingles(PrintWriter print_writer, String viz_sence_path, Match match,String selectedbroadcaster) {
+	public void populateLtMatchResultSingles(PrintWriter print_writer, String viz_sence_path, Match match,TennisService tennisService,String selectedbroadcaster) throws JAXBException {
 		if (match == null) {
 			System.out.println("ERROR: MATCH RESULT -> Match is null");
 		} else {
+				isVisited = false;
+				homeWon = 0;
+				awayWon = 0;
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tGameType1" + " SET " + "WS" + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tGameType2" + " SET " + "MS" + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tGameType3" + " SET " + "XD" + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tGameType4" + " SET " + "MD" + "\0");
+				for(int row = 1; row<=4; row++) {
+					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatValueA"+ row +  " SET " + "0" + "\0");
+					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatValueB"+ row + " SET " + "0" + "\0");
+
+				}
+							
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTeamName1" + " SET " + match.getHomeFirstPlayer().getTeam().getTeamName1() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTeamName2" + " SET " + match.getAwayFirstPlayer().getTeam().getTeamName1() + "\0");
 			
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tHeader" + " SET " + match.getMatchIdent() + "\0");
+			//print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatValueA1" + " SET " + + "\0");
+//			for(int i=1; i<=4; i++) {
+//				print_writer.println("-1 RENDERER*TREE*$Main$LT_sCORE$Header_Sub_Grp$Set" +i+"*ACTIVE SET 0 \0");
+//			}
 			
 			
-			if(match.getHomeFirstPlayer().getSurname() == null) {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + "" + "\0");
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
-			}else {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
-			}
-			if(match.getHomeFirstPlayer().getNationality() == null) {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + "" + "\0");
-			}else {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
-			}
-			if(match.getHomeFirstPlayer().getRankingSingle() == 0) {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank1" + " SET " + "" + "\0");
-			}else {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank1" + " SET " + match.getHomeFirstPlayer().getRankingSingle() + "\0");
-			}
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgTeamLogo1" + " SET " + flag_path + match.getHomeFirstPlayer().getTeam().getTeamName4() + TennisUtil.PNG_EXTENSION + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgTeamLogo2" + " SET " + flag_path + match.getAwayFirstPlayer().getTeam().getTeamName4() + TennisUtil.PNG_EXTENSION + "\0");
+			List<Fixture> all_db_fixture;
+			List<File> all_match_files;
+			File this_file = null;
+			Match this_match = null;
+			//Match curr_match = null;
 			
-			if(match.getAwayFirstPlayer().getSurname() == null) {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + "" + "\0");
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
-			}else {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
-			}
-			if(match.getAwayFirstPlayer().getNationality() == null) {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + "" + "\0");
-			}else {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
-			}
-			if(match.getAwayFirstPlayer().getRankingSingle() == 0) {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank2" + " SET " + "" + "\0");
-			}else {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tRank2" + " SET " + match.getAwayFirstPlayer().getRankingSingle() + "\0");
-			}
+			all_match_files = Arrays.asList(new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
+				@Override
+				public boolean accept(File pathname) {
+					String name = pathname.getName().toLowerCase();
+					return name.endsWith(".xml") && pathname.isFile();
+				}
+			}));
+			all_db_fixture = tennisService.getFixtures();
 			
-			List<String> home_data = new ArrayList<String>();
-			List<String> away_data = new ArrayList<String>();
-			
-			if(match.getSets() != null) {
-				
-				for (int i = 0; i <= match.getSets().size() - 1; i++) {
-					int home = 0, away = 0;
-					for (int j = 0; j <= match.getSets().get(i).getGames().size() - 1; j++) {
-						if (match.getSets().get(i).getGames().get(j).getGame_winner() != null) {
-							if (match.getSets().get(i).getGames().get(j).getGame_winner().equalsIgnoreCase(TennisUtil.HOME)) {
-								home = home + 1;
-							} else if (match.getSets().get(i).getGames().get(j).getGame_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
-								away = away + 1;
+			if(all_db_fixture != null) {
+				Fixture curr_fixture = all_db_fixture.stream().filter(fix -> 
+				fix.getMatchfilename().equalsIgnoreCase(match.getMatchFileName())).findAny().orElse(null);						
+				//Match this_match = new Match();
+				if(curr_fixture != null) {
+					int row = 1;
+					int homeScore = 0;
+					int awayScore = 0;
+					int totalHomeScore = 0;
+					int totalAwayScore = 0;
+					pastHomeScore = 0;
+					pastAwayScore = 0;
+					for (Fixture fixture : all_db_fixture.stream().filter(fix -> fix.getMatchNumber()==curr_fixture.getMatchNumber()).collect(Collectors.toList())) {
+						this_file = all_match_files.stream().filter(fil -> fil.getName().equalsIgnoreCase(fixture.getMatchfilename())).findAny().orElse(null);
+						if(this_file != null) {
+							if(!this_file.getName().equalsIgnoreCase(match.getMatchFileName())) {
+								this_match = TennisFunctions.populateMatchVariables(tennisService, 
+										(Match) JAXBContext.newInstance(Match.class).createUnmarshaller().unmarshal(
+										new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY + this_file.getName())));
+								if(match.getHomeFirstPlayer().getTeamId()==this_match.getHomeFirstPlayer().getTeamId()
+										|| match.getHomeFirstPlayer().getTeamId()==this_match.getAwayFirstPlayer().getTeamId()
+										|| match.getAwayFirstPlayer().getTeamId()==this_match.getAwayFirstPlayer().getTeamId()
+										|| match.getAwayFirstPlayer().getTeamId()==this_match.getAwayFirstPlayer().getTeamId())
+									{
+										
+										for (Set set : this_match.getSets()) {
+											for (Game game : set.getGames()) {
+												 homeScore = Integer.valueOf(game.getHome_score());
+												 awayScore = Integer.valueOf(game.getAway_score());
+												 
+												 pastHomeScore = pastHomeScore + homeScore;
+												 pastAwayScore = pastAwayScore + awayScore;
+											}
+										}
+//										if((homeScore+awayScore)>=20) {
+//											if(homeScore>awayScore) {
+//												homeWon++;
+//											}else if(awayScore>homeScore){
+//												awayWon++;
+//											}else {
+//												
+//											}
+//										}
+										//tPoints1
+									}
+								print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatValueA"+ row +  " SET " + homeScore + "\0");
+								print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatValueB"+ row + " SET " + awayScore + "\0");
+								row++;
+								}
+									if(match.getSets() != null) {
+										for (Set set : match.getSets()) {
+											for (Game game : set.getGames()) {
+												 homeScore = Integer.valueOf(game.getHome_score());
+												 awayScore = Integer.valueOf(game.getAway_score());
+											}
+										}
+										totalHomeScore = (pastHomeScore + homeScore);
+										totalAwayScore =(pastAwayScore + awayScore);
+										print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatValueA"+ row +  " SET " + homeScore + "\0");
+										print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatValueB"+ row + " SET " + awayScore + "\0");
+									}else {
+										print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatValueA"+ row +  " SET " + "0" + "\0");
+										print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tStatValueB"+ row + " SET " + "0" + "\0");
+									}
+									//print_writer.println("-1 RENDERER*TREE*$Main$LT_sCORE$Header_Sub_Grp$Set" +row+"*ACTIVE SET 1 \0");
+									print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tPoints1" + " SET " + totalHomeScore + "\0");
+									print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tPoints2" + " SET " + totalAwayScore + "\0");
+									
+								
 							}
 						}
 					}
-					home_data.add(i, String.valueOf(home));
-					away_data.add(i, String.valueOf(away));
 				}
-				
-				if(match.getSets().size() == 2) {
-					if(match.getSets().get(0).getSet_winner().equalsIgnoreCase(TennisUtil.HOME) && match.getSets().get(1).getSet_winner().equalsIgnoreCase(TennisUtil.HOME)) {
-						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "vSetStatus" + " SET " + "0" + "\0");
-					}else if(match.getSets().get(0).getSet_winner().equalsIgnoreCase(TennisUtil.AWAY) && match.getSets().get(1).getSet_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
-						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "vSetStatus" + " SET " + "5" + "\0");
-					}
-					
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore1" + " SET " + "" + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore1" + " SET " + "" + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore2" + " SET " + "" + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore2" + " SET " + "" + "\0");
-					
-					
-					if(match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_type().equalsIgnoreCase(TennisUtil.TIE_BREAK)&&
-							match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_status().equalsIgnoreCase(TennisUtil.END)) {
-						//if(match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.HOME)) {
-							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore1" + " SET " + 
-									match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getAway_score() + "\0");
-						//}else if(match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
-							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore1" + " SET " + 
-									match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getHome_score() + "\0");
-						//}
-					}
-					
-					if(match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getGame_type().equalsIgnoreCase(TennisUtil.TIE_BREAK)&&
-							match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getGame_status().equalsIgnoreCase(TennisUtil.END)) {
-						//if(match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.HOME)) {
-							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore2" + " SET " + 
-									match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getAway_score() + "\0");
-						//}else if(match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
-							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore2" + " SET " + 
-									match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getHome_score() + "\0");
-						//}
-					}
-					
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopSetScore1" + " SET " + home_data.get(0) + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopSetScore2" + " SET " + home_data.get(1) + "\0");
-					
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomSetScore1" + " SET " + away_data.get(0) + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomSetScore2" + " SET " + away_data.get(1)+ "\0");
-					
-				}else if(match.getSets().size() == 3) {
-					if(match.getSets().get(0).getSet_winner().equalsIgnoreCase(TennisUtil.HOME) && match.getSets().get(1).getSet_winner().equalsIgnoreCase(TennisUtil.AWAY)
-							&& match.getSets().get(2).getSet_winner().equalsIgnoreCase(TennisUtil.HOME)) {
-						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "vSetStatus" + " SET " + "1" + "\0");
-					}else if(match.getSets().get(0).getSet_winner().equalsIgnoreCase(TennisUtil.AWAY) && match.getSets().get(1).getSet_winner().equalsIgnoreCase(TennisUtil.HOME)
-							&& match.getSets().get(2).getSet_winner().equalsIgnoreCase(TennisUtil.HOME)) {
-						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "vSetStatus" + " SET " + "2" + "\0");
-					}else if(match.getSets().get(0).getSet_winner().equalsIgnoreCase(TennisUtil.HOME) && match.getSets().get(1).getSet_winner().equalsIgnoreCase(TennisUtil.AWAY)
-							&& match.getSets().get(2).getSet_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
-						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "vSetStatus" + " SET " + "3" + "\0");
-					}else if(match.getSets().get(0).getSet_winner().equalsIgnoreCase(TennisUtil.AWAY) && match.getSets().get(1).getSet_winner().equalsIgnoreCase(TennisUtil.HOME)
-							&& match.getSets().get(2).getSet_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
-						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "vSetStatus" + " SET " + "4" + "\0");
-					}
-					
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore1" + " SET " + "" + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore1" + " SET " + "" + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore2" + " SET " + "" + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore2" + " SET " + "" + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore3" + " SET " + "" + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore3" + " SET " + "" + "\0");
-					
-					if(match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_type().equalsIgnoreCase(TennisUtil.TIE_BREAK)&&
-							match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_status().equalsIgnoreCase(TennisUtil.END)) {
-						//if(match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.HOME)) {
-							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore1" + " SET " + 
-									match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getAway_score() + "\0");
-						//}else if(match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
-							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore1" + " SET " + 
-									match.getSets().get(0).getGames().get(match.getSets().get(0).getGames().size()-1).getHome_score() + "\0");
-						//}
-					}
-					
-					if(match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getGame_type().equalsIgnoreCase(TennisUtil.TIE_BREAK)&&
-							match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getGame_status().equalsIgnoreCase(TennisUtil.END)) {
-						//if(match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.HOME)) {
-							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore2" + " SET " + 
-									match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getAway_score() + "\0");
-						//}else if(match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
-							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore2" + " SET " + 
-									match.getSets().get(1).getGames().get(match.getSets().get(1).getGames().size()-1).getHome_score() + "\0");
-						//}
-					}
-					
-					if(match.getSets().get(2).getGames().get(match.getSets().get(2).getGames().size()-1).getGame_type().equalsIgnoreCase(TennisUtil.TIE_BREAK)&&
-							match.getSets().get(2).getGames().get(match.getSets().get(2).getGames().size()-1).getGame_status().equalsIgnoreCase(TennisUtil.END)) {
-						//if(match.getSets().get(2).getGames().get(match.getSets().get(2).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.HOME)) {
-							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomTieBreakScore3" + " SET " + 
-									match.getSets().get(2).getGames().get(match.getSets().get(2).getGames().size()-1).getAway_score() + "\0");
-						//}else if(match.getSets().get(2).getGames().get(match.getSets().get(2).getGames().size()-1).getGame_winner().equalsIgnoreCase(TennisUtil.AWAY)) {
-							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopTieBreakScore3" + " SET " + 
-									match.getSets().get(2).getGames().get(match.getSets().get(2).getGames().size()-1).getHome_score() + "\0");
-						//}
-					}
-					
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopSetScore1" + " SET " + home_data.get(0) + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopSetScore2" + " SET " + home_data.get(1) + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTopSetScore3" + " SET " + home_data.get(2) + "\0");
-					
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomSetScore1" + " SET " + away_data.get(0) + "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomSetScore2" + " SET " + away_data.get(1)+ "\0");
-					print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tBottomSetScore3" + " SET " + away_data.get(2)+ "\0");
-				}
-			}
 			print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 1.220 \0");
 		}
 	}
@@ -2066,35 +1947,70 @@ public class ATP_2022 extends Scene {
 	
 	public void populateNameSuperDB(PrintWriter print_writer, String viz_sence_path,int namesuperId,List<NameSuper> NameSuper,Match match,String selectedbroadcaster) {
 		
-		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + NameSuper.get(namesuperId-1).getFirstname() + "\0");
-		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + NameSuper.get(namesuperId-1).getSurname() + "\0");
-		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tInfo" + " SET " + NameSuper.get(namesuperId-1).getSubLine() + "\0");
-		
-		print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 0.980 \0");
+		if(NameSuper.get(namesuperId-1).getFirstname()==null) {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName" + " SET " + NameSuper.get(namesuperId-1).getSurname() + "\0");
+		}else if(NameSuper.get(namesuperId-1).getSurname()==null) {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName" + " SET " + NameSuper.get(namesuperId-1).getFirstname() + "\0");
+		}else {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName" + " SET " + NameSuper.get(namesuperId-1).getFirstname() +" "+ NameSuper.get(namesuperId-1).getSurname() + "\0");
+		}
+		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tDesignation" + " SET " + NameSuper.get(namesuperId-1).getSubHeader() + "\0");
+		//lgLogo
+		print_writer.println("-1 RENDERER*TREE*$Main$LT$Base$GP*ACTIVE SET 0 " + "\0");
+//		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + NameSuper.get(namesuperId-1).getFirstname() + "\0");
+//		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + NameSuper.get(namesuperId-1).getSurname() + "\0");
+//		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tInfo" + " SET " + NameSuper.get(namesuperId-1).getSubLine() + "\0");
+
+//		print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 0.980 \0");
 	}
 	public void populateNameSuperSP(PrintWriter print_writer, String viz_sence_path,int playerid,List<Player> Plyr,List<VariousText>vt,Match match,String selectedbroadcaster) {
-		
-		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName" + " SET " + Plyr.get(playerid-1).getFirstname() + "\0");
-		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName" + " SET " + Plyr.get(playerid-1).getSurname() + "\0");
-		
-		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag" + " SET " + flag_path + 
-			Plyr.get(playerid-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
-		
-		
-		if(Plyr.get(playerid-1).getRankingSingle() == 0) {
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed" + " SET " + "" + "\0");
+		//tName
+		//lgLogo
+		//tDesignation
+		if(Plyr.get(playerid-1).getFirstname()==null) {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName" + " SET " + Plyr.get(playerid-1).getSurname() + "\0");
+		}else if(Plyr.get(playerid-1).getSurname()==null) {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName" + " SET " + Plyr.get(playerid-1).getFirstname() + "\0");
 		}else {
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed" + " SET " + Plyr.get(playerid-1).getRankingSingle() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName" + " SET " + Plyr.get(playerid-1).getFirstname()+ " " +Plyr.get(playerid-1).getSurname() + "\0");
 		}
-		
-		for(VariousText vtext : vt) {
-			if(vtext.getVariousType().equalsIgnoreCase("NameSuperSingle") && vtext.getUseThis().equalsIgnoreCase("Yes")) {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tInfo" + " SET " + vtext.getVariousText().toUpperCase() + "\0");
-				break;
-			}else {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tInfo" + " SET " + "TATA OPEN MAHARASHTRA 2023" + "\0");
-			}
+		//match.getPlayers().get(0).getTeamId()
+		if(Plyr.get(playerid-1).getTeamId()==match.getHomeFirstPlayer().getTeamId()) {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLogo" + " SET " + flag_path + match.getHomeFirstPlayer().getTeam().getTeamName4() + TennisUtil.PNG_EXTENSION + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tDesignation" + " SET " + match.getHomeFirstPlayer().getTeam().getTeamName1() + "\0");
+		}else if(Plyr.get(playerid-1).getTeamId()==match.getAwayFirstPlayer().getTeamId()) {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLogo" + " SET " + flag_path + match.getAwayFirstPlayer().getTeam().getTeamName4() + TennisUtil.PNG_EXTENSION + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tDesignation" + " SET " + match.getAwayFirstPlayer().getTeam().getTeamName1() + "\0");
+		}else if(Plyr.get(playerid-1).getTeamId()==match.getHomeSecondPlayer().getTeamId()) {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLogo" + " SET " + flag_path + match.getHomeSecondPlayer().getTeam().getTeamName4() + TennisUtil.PNG_EXTENSION + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tDesignation" + " SET " + match.getHomeSecondPlayer().getTeam().getTeamName1() + "\0");
+		}else if(Plyr.get(playerid-1).getTeamId()==match.getAwayFirstPlayer().getTeamId()) {
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLogo" + " SET " + flag_path + match.getAwaySecondPlayer().getTeam().getTeamName4() + TennisUtil.PNG_EXTENSION + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tDesignation" + " SET " + match.getAwaySecondPlayer().getTeam().getTeamName1() + "\0");
 		}
+//		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLogo" + " SET " + flag_path + Plyr.get(playerid-1).getTeamId() + TennisUtil.PNG_EXTENSION + "\0");
+//		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName" + " SET " + Plyr.get(playerid-1).getFirstname() + "\0");
+//		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName" + " SET " + Plyr.get(playerid-1).getFirstname() + "\0");
+//		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName" + " SET " + Plyr.get(playerid-1).getSurname() + "\0");
+//		
+//		print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag" + " SET " + flag_path + 
+//			Plyr.get(playerid-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+//		
+//		
+//		if(Plyr.get(playerid-1).getRankingSingle() == 0) {
+//			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed" + " SET " + "" + "\0");
+//		}else {
+//			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed" + " SET " + Plyr.get(playerid-1).getRankingSingle() + "\0");
+//		}
+//		
+//		for(VariousText vtext : vt) {
+//			if(vtext.getVariousType().equalsIgnoreCase("NameSuperSingle") && vtext.getUseThis().equalsIgnoreCase("Yes")) {
+//				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tInfo" + " SET " + vtext.getVariousText().toUpperCase() + "\0");
+//				break;
+//			}else {
+//				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tInfo" + " SET " + "TATA OPEN MAHARASHTRA 2023" + "\0");
+//			}
+//		}
 		print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 0.980 \0");
 	}
 	public void populateNameSuperSP1(PrintWriter print_writer, String viz_sence_path,int playerid,List<Player> Plyr,List<VariousText>vt,Match match,String selectedbroadcaster) {
@@ -2122,12 +2038,21 @@ public class ATP_2022 extends Scene {
 	}
 	public void populateNameSuperDP(PrintWriter print_writer, String viz_sence_path,String teamtype,List<Player> Plyr,List<VariousText>vt,Match match,String selectedbroadcaster) {
 		
+		//lgLogo
+		//tDesignation
+		//tName
 		switch(teamtype.toUpperCase()) {
 		case TennisUtil.HOME:
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + Plyr.get(match.getHomeFirstPlayerId()-1).getFirstname() + "\0");
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + Plyr.get(match.getHomeFirstPlayerId()-1).getSurname() + "\0");
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag1" + " SET " + flag_path + 
-					Plyr.get(match.getHomeFirstPlayerId()-1).getNationality() + TennisUtil.PNG_EXTENSION + "\0");
+			if(Plyr.get(match.getHomeFirstPlayerId()-1).getFirstname()==null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName" + " SET " + Plyr.get(match.getHomeFirstPlayerId()-1).getSurname() + "\0");
+			}else if(Plyr.get(match.getHomeFirstPlayerId()-1).getFirstname()==null) {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName" + " SET " + Plyr.get(match.getHomeFirstPlayerId()-1).getFirstname() + "\0");
+			}else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tName" + " SET " + Plyr.get(match.getHomeFirstPlayerId()-1).getFirstname() + " " + Plyr.get(match.getHomeFirstPlayerId()-1).getSurname() + "\0");
+			}
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tDesignation" + " SET " + Plyr.get(match.getHomeFirstPlayerId()-1).getTeam().getTeamName1() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgLogo" + " SET " + flag_path + 
+					Plyr.get(match.getHomeFirstPlayerId()-1).getTeam().getTeamName4() + TennisUtil.PNG_EXTENSION + "\0");
 			
 			if(Plyr.get(match.getHomeFirstPlayerId()-1).getRankingDouble() == 0) {
 				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeed1" + " SET " + "" + "\0");
@@ -2314,7 +2239,6 @@ public class ATP_2022 extends Scene {
 		if (match == null) {
 			System.out.println("ERROR: H2H -> Match is null");
 		} else {
-			
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tHeader" + " SET " + match.getTournament() + "\0");
 			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSubHeader" + " SET " + match.getMatchIdent() + "\0");
 			
@@ -2404,55 +2328,92 @@ public class ATP_2022 extends Scene {
 			System.out.println("ERROR: H2H -> Match is null");
 		} else {
 			
-			//print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tHeader" + " SET " + match.getTournament() + "\0");
-			//print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSubHeader" + " SET " + match.getCategoryType().toUpperCase() + " " + match.getMatchType().toUpperCase()
-					//+ " - " + match.getMatchIdent() + "\0");
-			//print_writer.println("-1 RENDERER*TREE*$Main$All$BottomOut$BottomGrp$BottttomGrp*FUNCTION*Omo*vis_con SET 0 \0");
-			print_writer.println("-1 RENDERER*TREE*$Main$All$TopGrp$HeaderGrp$Header*GEOM*TEXT SET " + match.getMatchIdent() + "\0");
-			print_writer.println("-1 RENDERER*TREE*$Main$All$TopWithMask$TopGrp$HeaderGrp$Duration*ACTIVE SET 0 \0");
 			
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "vResults" + " SET " + "0" + "\0");
-			
-			if(match.getHomeFirstPlayer().getSurname() == null) {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + "" + "\0");
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
-			}else {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName1" + " SET " + match.getHomeFirstPlayer().getFirstname() + "\0");
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName1" + " SET " + match.getHomeFirstPlayer().getSurname() + "\0");
-			}
-			if(match.getHomeFirstPlayer().getNationality() == null) {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + "" + "\0");
-			}else {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry1" + " SET " + match.getHomeFirstPlayer().getNationality() + "\0");
-			}
-			
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag1" + " SET " + flag_path + 
-					match.getHomeFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
-			
-			print_writer.println("-1 RENDERER*TREE*$Main$All$BottomGrp$LeftPlayerGrp$Noggi*TEXTURE*IMAGE SET " + left_photo_path + 
-					match.getHomeFirstPlayer().getPhoto() + TennisUtil.PNG_EXTENSION + "\0");
-			
-			print_writer.println("-1 RENDERER*TREE*$Main$All$BottomGrp$RightPlayerGrp$Noggi*TEXTURE*IMAGE SET " + right_photo_path + 
-					match.getAwayFirstPlayer().getPhoto() + TennisUtil.PNG_EXTENSION + "\0");
-			
-			if(match.getAwayFirstPlayer().getSurname() == null) {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + "" + "\0");
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
-			}else {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFirstName2" + " SET " + match.getAwayFirstPlayer().getFirstname() + "\0");
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tLastName2" + " SET " + match.getAwayFirstPlayer().getSurname() + "\0");
-			}
-			if(match.getAwayFirstPlayer().getNationality() == null) {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + "" + "\0");
-			}else {
-				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tCountry2" + " SET " + match.getAwayFirstPlayer().getNationality() + "\0");
-			}
-			
-			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgFlag2" + " SET " + flag_path + 
-					match.getAwayFirstPlayer().getNationality() + TennisUtil.PNG_EXTENSION + "\0");
-			
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tHeader" + " SET " + "TENNIS PREMIER LEAGUE 2023" + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSubHeader" + " SET " + match.getMatchIdent() + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgTeamLogo1" + " SET " + flag_path + match.getHomeFirstPlayer().getTeam().getTeamName4() + TennisUtil.PNG_EXTENSION + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "lgTeamLogo2" + " SET " + flag_path + match.getAwayFirstPlayer().getTeam().getTeamName4() + TennisUtil.PNG_EXTENSION + "\0");
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tFooter" + " SET " + " LIVE FROM BHELAWADI STADIUM - PUNE" + "\0");
 			print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_sence_path + " C:/Temp/Preview.png In 2.520 \0");
 		}
+	}
+	
+	public void populateFixAndResult(PrintWriter print_writer, String viz_scene_path, List<Result> result,List<Team> team, Match match, String selectedbroadcaster) {
+		if (match == null) {
+			System.out.println("ERROR: FIX & RES -> Match is null");
+		} else {
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tHeader" + " SET " + " FIXTURES & RESULTS " + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSubHeader" + " SET " + "LIVE FROM BELAWADI STADIUM - PUNE" + "\0");
+				int row = 1;
+				String Date = "";
+				Calendar cal = Calendar.getInstance();
+				//cal.add(Calendar.DATE, +1);
+				Date =  new SimpleDateFormat("dd-MM-yyyy").format(cal.getTime());
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tDate1" + " SET " + "TONIGHT" + "\0");
+				print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tDate2" + " SET " + "TOMORROW" + "\0");
+				//tSeparator1
+			for(Result  res : result) {
+				
+				if(res.getDate().equalsIgnoreCase(Date)) {
+					if(res.getMatchResult()!= null) {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeparator"+ row + " SET " + res.getMatchResult() + "\0");
+					}else {
+						print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeparator"+ row + " SET " + "V" + "\0");
+					}
+					for(Team tm : team) {
+						if(Integer.valueOf(res.getHomeTeam()) == tm.getTeamId()) {
+							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTeamNameA"+row+" SET "+tm.getTeamName1() + "\0");
+						}
+						if(Integer.valueOf(res.getAwayTeam()) == tm.getTeamId()){
+							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTeamNameB"+row+" SET " +tm.getTeamName1() + "\0");
+						}
+					}
+				}else {
+					if(isVisited==false) {
+						cal.add(Calendar.DATE, +1);
+						Date =  new SimpleDateFormat("dd-MM-yyyy").format(cal.getTime());
+						isVisited = true;
+					}
+					if(res.getDate().equalsIgnoreCase(Date)) {
+						if(res.getMatchResult()!= null) {
+							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeparator"+ row + " SET " + res.getMatchResult() + "\0");
+						}else {
+							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeparator"+ row + " SET " + "V" + "\0");
+						}
+						for(Team tm : team) {
+							if(Integer.valueOf(res.getHomeTeam()) == tm.getTeamId()) {
+								print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTeamNameA"+row+" SET "+tm.getTeamName1() + "\0");
+							}
+							if(Integer.valueOf(res.getAwayTeam()) == tm.getTeamId()){
+								print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTeamNameB"+row+" SET " +tm.getTeamName1() + "\0");
+							}
+						}
+					}else {
+						if(res.getMatchResult()!= null) {
+							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeparator"+ row + " SET " + res.getMatchResult() + "\0");
+						}else {
+							print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tSeparator"+ row + " SET " + "V" + "\0");
+						}
+						for(Team tm : team) {
+							if(Integer.valueOf(res.getHomeTeam()) == tm.getTeamId()) {
+								print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTeamNameA"+row+" SET "+tm.getTeamName1() + "\0");
+							}
+							if(Integer.valueOf(res.getAwayTeam()) == tm.getTeamId()){
+								print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tTeamNameB"+row+" SET " +tm.getTeamName1() + "\0");
+							}
+							
+						}
+					}
+				}
+				row++;
+			}
+			cal.add(Calendar.DATE, +1);
+			Date =  new SimpleDateFormat("dd-MM-yyyy").format(cal.getTime());
+			print_writer.println("-1 RENDERER*TREE*$Main*FUNCTION*ControlObject*in SET ON " + "tDate3" + " SET " + Date + "\0");
+			
+			print_writer.println("-1 RENDERER PREVIEW SCENE*" + viz_scene_path + " C:/Temp/Preview.png In 2.520 \0");
+		}
+
 	}
 	
 	public void populateMatchPromo(PrintWriter print_writer, String viz_sence_path,int fixid,List<Fixture> fixture,List<Player> Plyr,List<VariousText>vt,Match match,String selectedbroadcaster) {

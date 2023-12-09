@@ -108,6 +108,8 @@
 			    <div class="col-sm-6 col-md-6">
 			      <select id="tieBreakerRule" name="tieBreakerRule"
 			      		class="browser-default custom-select custom-select-sm">
+				        <option value="race_to_20">Sum To 20 Points</option>
+				        <option value="race_to_21">Sum To 21 Points</option>
 				        <option value="race_to_7">Race To 7 Points</option>
 				        <option value="race_to_10">Race To 10 Points</option>
 			      </select>
@@ -131,6 +133,7 @@
 					      <select id="homeTeamId" name="homeTeamId" 
 					      		onchange="addItemsToList('LOAD_SELECTED_TEAM_PLAYERS', this);"
 					      		class="browser-default custom-select custom-select-sm">
+					      		<option value=""></option>
 							<c:forEach items = "${teams}" var = "team">
 					          <option value="${team.teamId}">${team.teamName1}</option>
 							</c:forEach>
@@ -140,8 +143,9 @@
 					      <select id="awayTeamId" name="awayTeamId" 
 					      		onchange="addItemsToList('LOAD_SELECTED_TEAM_PLAYERS', this);"
 					      		class="browser-default custom-select custom-select-sm">
+					      		<option value=""></option>
 							<c:forEach items = "${teams}" var = "team">
-					          <option value="${team.teamId}">${team.teamName1}</option>
+					          <option value="${team.teamId}" >${team.teamName1}</option>
 							</c:forEach>
 					      </select>
 			        	</th>
@@ -151,7 +155,7 @@
 					      <select id="homeFirstPlayerId" name="homeFirstPlayerId" 
 					      		class="browser-default custom-select custom-select-sm">
 							<c:forEach items = "${players}" var = "player">
-					          <option value="${player.playerId}">${player.full_name}</option>
+					          <option value="${player.playerId}" >${player.full_name}</option>
 							</c:forEach>
 					      </select>
 			        	</th>
