@@ -75,8 +75,7 @@ public class IndexController
 		if(current_date == null || current_date.isEmpty()) {
 			current_date = TennisFunctions.getOnlineCurrentDate();
 		}
-		model.addAttribute("session_viz_scenes", new File(TennisUtil.TENNIS_DIRECTORY + 
-				TennisUtil.SCENES_DIRECTORY).listFiles(new FileFilter() {
+		model.addAttribute("session_viz_scenes", new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.SCENES_DIRECTORY).listFiles(new FileFilter() {
 			@Override
 		    public boolean accept(File pathname) {
 		        String name = pathname.getName().toLowerCase();
@@ -93,8 +92,7 @@ public class IndexController
 //		    }
 //		}));
 		
-		all_match_files = Arrays.asList(new File(TennisUtil.TENNIS_DIRECTORY 
-				+ TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
+		all_match_files = Arrays.asList(new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
 			@Override
 		    public boolean accept(File pathname) {
 		        String name = pathname.getName().toLowerCase();
@@ -105,16 +103,13 @@ public class IndexController
 		
 		all_db_fixture = tennisService.getFixtures();
 		
-		if(new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CONFIGURATIONS_DIRECTORY + TennisUtil.OUTPUT_XML).exists()) {
-			session_Configurations = (Configurations)JAXBContext.newInstance(
-					Configurations.class).createUnmarshaller().unmarshal(
-					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CONFIGURATIONS_DIRECTORY 
-					+ TennisUtil.OUTPUT_XML));
+		if(new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CONFIGURATIONS_DIRECTORY + TennisUtil.LOGGER_XML).exists()) {
+			session_Configurations = (Configurations)JAXBContext.newInstance(Configurations.class).createUnmarshaller().unmarshal(
+					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CONFIGURATIONS_DIRECTORY + TennisUtil.LOGGER_XML));
 		} else {
 			session_Configurations = new Configurations();
 			JAXBContext.newInstance(Configurations.class).createMarshaller().marshal(session_Configurations, 
-					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CONFIGURATIONS_DIRECTORY + 
-					TennisUtil.OUTPUT_XML));
+					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CONFIGURATIONS_DIRECTORY + TennisUtil.LOGGER_XML));
 		}
 		
 		model.addAttribute("session_Configurations",session_Configurations);
@@ -163,8 +158,7 @@ public class IndexController
 			
 		}else {
 			
-			all_match_files = Arrays.asList(new File(TennisUtil.TENNIS_DIRECTORY 
-					+ TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
+			all_match_files = Arrays.asList(new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
 				@Override
 			    public boolean accept(File pathname) {
 			        String name = pathname.getName().toLowerCase();
@@ -187,7 +181,7 @@ public class IndexController
 			session_Configurations.setBroadcaster(selectedBroadcaster);
 			session_Configurations.setVizscene(vizScene);
 			session_Configurations.setIpAddress(vizIPAddresss);
-			if(!vizPortNumber.trim().isEmpty()) {
+			if(Integer.valueOf(vizPortNumber) != 0) {
 				session_Configurations.setPortNumber(Integer.valueOf(vizPortNumber));
 				session_socket = new Socket(vizIPAddresss, Integer.valueOf(vizPortNumber));
 				print_writer = new PrintWriter(session_socket.getOutputStream(), true);
@@ -195,13 +189,6 @@ public class IndexController
 			session_selected_broadcaster = selectedBroadcaster;
 			
 			switch (session_selected_broadcaster.toUpperCase()) {
-			case TennisUtil.TPL_2023:
-				session_selected_scenes.add(new Scene("/Default/ScoreBug","FRONT_LAYER")); // Front layer
-				session_selected_scenes.add(new Scene("","MIDDLE_LAYER"));
-				session_selected_scenes.get(0).scene_load(print_writer, session_selected_broadcaster);
-				this_TPL_2023 = new TPL_2023();
-				this_TPL_2023.scorebug = new ScoreBug();
-				break;
 			case TennisUtil.ATP_2022:
 				session_selected_scenes.add(new Scene("/Default/ScoreBug-Single","FRONT_LAYER")); // Front layer
 				session_selected_scenes.add(new Scene("","MIDDLE_LAYER"));
@@ -212,8 +199,7 @@ public class IndexController
 			}
 			
 			JAXBContext.newInstance(Configurations.class).createMarshaller().marshal(session_Configurations, 
-					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CONFIGURATIONS_DIRECTORY + 
-					TennisUtil.OUTPUT_XML));
+					new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.CONFIGURATIONS_DIRECTORY + TennisUtil.LOGGER_XML));
 			
 			model.addAttribute("session_selected_broadcaster", session_selected_broadcaster);
 			
@@ -236,8 +222,7 @@ public class IndexController
 			
 		}else {
 		
-			all_match_files = Arrays.asList(new File(TennisUtil.TENNIS_DIRECTORY 
-					+ TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
+			all_match_files = Arrays.asList(new File(TennisUtil.TENNIS_DIRECTORY + TennisUtil.MATCHES_DIRECTORY).listFiles(new FileFilter() {
 				@Override
 			    public boolean accept(File pathname) {
 			        String name = pathname.getName().toLowerCase();
