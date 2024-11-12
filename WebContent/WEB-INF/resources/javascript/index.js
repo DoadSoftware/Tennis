@@ -1199,6 +1199,8 @@ function processVariousStats(whatToProcess, whichInput)
 			home_and_away_score = 20;
 		}else if(match_data.tieBreakerRule == 'race_to_21'){
 			home_and_away_score = 21;
+		}else if(match_data.tieBreakerRule == 'race_to_25'){
+			home_and_away_score = 25;
 		}
 		
 		if(parseInt($('#homeScore').val()) + parseInt($('#awayScore').val()) == home_and_away_score) {

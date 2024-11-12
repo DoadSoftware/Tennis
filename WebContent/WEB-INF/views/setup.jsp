@@ -108,6 +108,7 @@
 			    <div class="col-sm-6 col-md-6">
 			      <select id="tieBreakerRule" name="tieBreakerRule"
 			      		class="browser-default custom-select custom-select-sm">
+			      		<option value="race_to_25">Sum To 25 Points</option>
 				        <option value="race_to_20">Sum To 20 Points</option>
 				        <option value="race_to_21">Sum To 21 Points</option>
 				        <option value="race_to_7">Race To 7 Points</option>
