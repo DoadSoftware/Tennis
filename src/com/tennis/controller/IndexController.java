@@ -411,8 +411,6 @@ public class IndexController
 					}
 				break;
 				}
-				System.out.println(session_match.getHome_total_score());
-				System.out.println(session_match.getAway_total_score());
 				return JSONObject.fromObject(session_match).toString();
 			
 		case TennisUtil.LOG_SET:

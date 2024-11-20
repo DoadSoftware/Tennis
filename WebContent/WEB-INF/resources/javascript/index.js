@@ -93,9 +93,7 @@ function initialiseForm(whatToProcess, dataToProcess)
 		break;
 	
 	case 'SETUP':
-		
 		if(dataToProcess) {
-			alert(dataToProcess.homeFirstPlayerId);
 			document.getElementById('homeTeamId').value = dataToProcess.homeFirstPlayer.team.teamId;
 			document.getElementById('awayTeamId').value = dataToProcess.awayFirstPlayer.team.teamId;
 			document.getElementById('matchFileName').value = dataToProcess.matchFileName;
@@ -1246,13 +1244,13 @@ function addItemsToList(whatToProcess, dataToProcess)
 	switch (whatToProcess) {
 	case 'LOAD_SELECTED_TEAM_PLAYERS':
 	
-		if(dataToProcess.id.includes('home')) {
+		/*if(dataToProcess.id.includes('home')) {
 			$('#homeFirstPlayerId').empty();
 			$('#homeSecondPlayerId').empty();
 		} else {
 			$('#awayFirstPlayerId').empty();
 			$('#awaySecondPlayerId').empty();
-		}
+		}*/
 		
 		if(match_data) {
 			match_data.players.forEach(function(plyr,play_index,playr_arr){
