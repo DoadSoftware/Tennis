@@ -548,7 +548,7 @@ function processUserSelection(whichInput)
 	case 'matchFileName':
 		if(document.getElementById('matchFileName').value) {
 			document.getElementById('matchFileName').value = 
-				document.getElementById('matchFileName').value.replace('.xml','') + '.xml';
+				document.getElementById('matchFileName').value.replace('.json','') + '.json';
 		}
 		break;
 	case 'save_match_btn': case 'reset_match_btn':
@@ -1252,27 +1252,41 @@ function addItemsToList(whatToProcess, dataToProcess)
 			$('#awaySecondPlayerId').empty();
 		}*/
 		
-		if(match_data) {
-			match_data.players.forEach(function(plyr,play_index,playr_arr){
-				if(plyr.teamId == $('#' + dataToProcess.id).val()){
-					option = document.createElement('option');
-					if(dataToProcess.id.includes('home')) {
-						$('#homeFirstPlayerId').append(new Option(plyr.full_name, plyr.playerId));
-						$('#homeSecondPlayerId').append(new Option(plyr.full_name, plyr.playerId));
-					} else {
-						$('#awayFirstPlayerId').append(new Option(plyr.full_name, plyr.playerId));
-						$('#awaySecondPlayerId').append(new Option(plyr.full_name, plyr.playerId));
-					}
-				}
-			});
-			if(dataToProcess.id.includes('home')) {
-				$('#homeFirstPlayerId').select2();
-				$('#homeSecondPlayerId').select2();
-			} else {
-				$('#awayFirstPlayerId').select2();
-				$('#awaySecondPlayerId').select2();
-			}
+		if (match_data) {
+		    match_data.players.forEach(function(plyr) {
+		        if (plyr.teamId == $('#' + dataToProcess.id).val()) {
+		            option = document.createElement('option');
+		            if (dataToProcess.id.includes('home')) {
+		                $('#homeFirstPlayerId').append(new Option(plyr.full_name, plyr.playerId));
+		                if ($('#matchType').val() == 'doubles') {
+		                    $('#homeSecondPlayerId').append(new Option(plyr.full_name, plyr.playerId));
+		                } else {
+		                    $('#homeSecondPlayerId').val('0');
+		                }
+		            } else {
+		                $('#awayFirstPlayerId').append(new Option(plyr.full_name, plyr.playerId));
+		                if ($('#matchType').val() == 'doubles') {
+		                    $('#awaySecondPlayerId').append(new Option(plyr.full_name, plyr.playerId));
+		                } else {
+		                    $('#awaySecondPlayerId').val('0');
+		                }
+		            }
+		        }
+		    });
+		
+		    if (dataToProcess.id.includes('home')) {
+		        $('#homeFirstPlayerId').select2();
+		        if ($('#matchType').val() == 'doubles') {
+		            $('#homeSecondPlayerId').select2();
+		        }
+		    } else {
+		        $('#awayFirstPlayerId').select2();
+		        if ($('#matchType').val() == 'doubles') {
+		            $('#awaySecondPlayerId').select2();
+		        }
+		    }
 		}
+
 		
 		break;
 		

@@ -38,7 +38,7 @@
 		  		<i class="fas fa-window-close"></i> Back</button>
 	         </div>
 			  <div class="form-group row row-bottom-margin ml-2" style="margin-bottom:5px;">
-			    <label for="select_existing_football_matches" class="col-sm-4 col-form-label text-left">Select Cricket Match 
+			    <label for="select_existing_football_matches" class="col-sm-4 col-form-label text-left">Select Tennis Match 
 			    	<i class="fas fa-asterisk fa-sm text-danger" style="font-size: 7px;"></i></label>
 			    <div class="col-sm-6 col-md-6">
 			      <select id="select_existing_tennis_matches" name="select_existing_tennis_matches" 
