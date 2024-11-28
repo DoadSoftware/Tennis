@@ -1286,8 +1286,6 @@ function addItemsToList(whatToProcess, dataToProcess)
 		        }
 		    }
 		}
-
-		
 		break;
 		
 	case 'SCOREBUG_OPTION': case 'SCOREBUG-SET_OPTION': case 'SCOREBUG_STATS_OPTION': case 'SPEED_OPTION': case 'SCOREBUG-HEADER_OPTION':

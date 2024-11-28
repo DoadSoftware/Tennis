@@ -155,17 +155,17 @@
 			        	<th>Select HOME First Player: 
 					      <select id="homeFirstPlayerId" name="homeFirstPlayerId" 
 					      		class="browser-default custom-select custom-select-sm">
-							<c:forEach items = "${players}" var = "player">
-					          <option value="${player.playerId}" >${player.full_name}</option>
-							</c:forEach>
+							<!-- <c:forEach items = "${players}" var = "player">
+								<option value="${player.playerId}" >${player.full_name}</option>
+							</c:forEach>-->
 					      </select>
 			        	</th>
 			        	<th>Select AWAY First Player: 
 					      <select id="awayFirstPlayerId" name="awayFirstPlayerId" 
 					      		class="browser-default custom-select custom-select-sm">
-							<c:forEach items = "${players}" var = "player">
+							<!--<c:forEach items = "${players}" var = "player">
 					          <option value="${player.playerId}">${player.full_name}</option>
-							</c:forEach>
+							</c:forEach>-->
 					      </select>
 			        	</th>
 				    </tr>
@@ -173,17 +173,17 @@
 			        	<th>Select HOME Second Player: 
 					      <select id="homeSecondPlayerId" name="homeSecondPlayerId" 
 					      		class="browser-default custom-select custom-select-sm">
-							<c:forEach items = "${players}" var = "player">
+							<!--<c:forEach items = "${players}" var = "player">
 					          <option value="${player.playerId}">${player.full_name}</option>
-							</c:forEach>
+							</c:forEach>-->
 					      </select>
 			        	</th>
 			        	<th>Select AWAY Second Player: 
 					      <select id="awaySecondPlayerId" name="awaySecondPlayerId" 
 					      		class="browser-default custom-select custom-select-sm">
-							<c:forEach items = "${players}" var = "player">
+							<!--<c:forEach items = "${players}" var = "player">
 					          <option value="${player.playerId}">${player.full_name}</option>
-							</c:forEach>
+							</c:forEach>-->
 					      </select>
 			        	</th>
 				    </tr>
