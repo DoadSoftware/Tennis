@@ -108,6 +108,7 @@ function initialiseForm(whatToProcess, dataToProcess)
 			document.getElementById('homeSecondPlayerId').value = dataToProcess.homeSecondPlayerId;
 			document.getElementById('awayFirstPlayerId').value = dataToProcess.awayFirstPlayerId;
 			document.getElementById('awaySecondPlayerId').value = dataToProcess.awaySecondPlayerId;
+			
 		} else {
 			document.getElementById('homeTeamId').value = 0;
 			document.getElementById('awayTeamId').value = 0;
