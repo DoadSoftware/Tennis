@@ -2356,7 +2356,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 			    option.type = 'button';
 			    option.name = 'start_game_btn';
 			    option.value = 'Start Game';
-			    option.style = 'width:80px;';
+			    option.style = 'width:85px;';
 			    option.style.backgroundColor = 'LightGreen';
 			    option.id = option.name;
 			    option.setAttribute('onclick','processUserSelection(this);');
@@ -2405,7 +2405,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 			    option.type = 'button';
 			    option.name = 'reset_game_btn';
 			    option.value = 'RESET Game';
-			    option.style = 'width:80px;';
+			    option.style = 'width:100px;';
 			    option.style.backgroundColor = 'LightGreen';
 			    //option.style.color = 'Red';
 			    option.id = option.name;
@@ -2458,19 +2458,23 @@ function addItemsToList(whatToProcess, dataToProcess)
 		    			switch (j) {
 		    			case 0: //home
 							text = 'home';
+							let name ='';
 							if(match_data.matchType.toLowerCase() == 'doubles' && match_data.homeSecondPlayerId > 0) {
-								header_text.innerHTML = match_data.homeFirstPlayer.full_name + '/' + match_data.homeSecondPlayer.full_name;
+								name = match_data.homeFirstPlayer.full_name + '/' + match_data.homeSecondPlayer.full_name;
 							} else {
-								header_text.innerHTML = match_data.homeFirstPlayer.full_name;
+								name = match_data.homeFirstPlayer.full_name;
 							}
+							header_text.innerHTML = name + ' <br>[<span style="color: #FF5733;"> '+match_data.homeFirstPlayer.team.teamName1 + '</span> ]';
 		    				break;
 		    			case 2: //away
 							text = 'away';
+							let Away_name ='';
 							if(match_data.matchType.toLowerCase() == 'doubles' && match_data.awaySecondPlayerId > 0) {
-								header_text.innerHTML = match_data.awayFirstPlayer.full_name + '/' + match_data.awaySecondPlayer.full_name;
+								Away_name = match_data.awayFirstPlayer.full_name + '/' + match_data.awaySecondPlayer.full_name;
 							} else {
-								header_text.innerHTML = match_data.awayFirstPlayer.full_name;
+								Away_name = match_data.awayFirstPlayer.full_name;
 							}
+							header_text.innerHTML = Away_name +'<br> [ <span style="color: #FF5733;">' + match_data.awayFirstPlayer.team.teamName1 + '</span> ]';
 		    				break;
 						}
 						div.appendChild(header_text);
